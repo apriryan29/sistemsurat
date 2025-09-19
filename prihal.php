@@ -31,9 +31,8 @@ if (!isset($_SESSION['username'])) {
 							<div class="form-group mb-3">
 								<label for="example-select">Kategori</label>
 								<select class="form-control" id="example-select">
-				<!-- Pilihan Kategori Surat -->
+									<!-- Pilihan Kategori Surat -->
 									<option selected>Pilih Kategori</option>
-									<option value="SPPD">Perjalanan Dinas [SPPD]</option>
 									<option value="undangan">Surat Undangan</option>
 									<option value="tugas">Surat Tugas</option>
 									<option value="sk">Surat Keputusan</option>
@@ -47,37 +46,37 @@ if (!isset($_SESSION['username'])) {
 					</form>
 				<!-- Input Data Surat Masuk Selesai -->
  
-				<!-- model surat SPPD -->
-				<div class="modal fade" id="sppdModal" tabindex="-1" role="dialog" aria-labelledby="sppdModalLabel" aria-hidden="true">
+				<!-- model surat Tugas -->
+				<div class="modal fade" id="tugasModal" tabindex="-1" role="dialog" aria-labelledby="tugasModalLabel" aria-hidden="true">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h5 class="modal-title" id="sppdModalLabel">Isi Surat Pemberitahuan</h5>
+								<h5 class="modal-title" id="tugasModalLabel">Isi Surat Tugas</h5>
 								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 									<span aria-hidden="true">&times;</span>
 								</button>
 							</div>
 							<div class="modal-body">
-								<!-- Form pengisian Surat SPPD -->
+								<!-- Form pengisian Surat Tugas -->
 								<form>
 									<div class="form-group">
-										<label for="judul">Judul Template Surat Pemberitahuan</label>
+										<label for="judul">Judul Template Surat Tugas</label>
 										<input type="text" class="form-control" id="judul" placeholder="Masukkan Judul Template">
 									</div>
 									<div class="form-group">
-										<label for="perihal">Tentang Surat Pemberitahuan</label>
-										<input type="text" class="form-control" id="perihal" placeholder="Masukkan Perihal">
+										<label for="perihal">Tentang Surat Tugas</label>
+										<input type="text" class="form-control" id="perihal" placeholder="Masukkan Perihal Surat Tugas">
 									</div>
 									<div class="form-group">
 										<label for="pembuka">Pembuka</label>
-										<textarea class="form-control" id="pembuka" placeholder="Masukkan Pembuka Surat"></textarea>
+										<textarea type="text" class="form-control" id="pembuka" placeholder="Masukkan Pembuka Surat"></textarea>
 									</div>
 									<div class="form-group">
-										<label for="isi">Isi Surat</label>
-										<textarea type="text" class="form-control" id="isi" placeholder="Masukkan Isi Surat"></textarea>
+										<label for="isi">Penutup</label>
+										<textarea type="text" class="form-control" id="isi" placeholder="Masukkan Penutup Surat"></textarea>
 									</div>
 									<div class="form-group">
-										<label for="pengingat">Penutup</label>
+										<label for="penutup">Penutup</label>
 										<textarea type="text" class="form-control" id="penutup" placeholder="Masukkan Penutup Surat"></textarea>
 									</div>
 								</form>
@@ -89,7 +88,8 @@ if (!isset($_SESSION['username'])) {
 						</div>
 					</div>
 				</div>
-				<!-- model surat SPPD SELESAI -->
+				<!-- model surat Keputusan SELESAI -->
+
 
 				<!-- model surat Keputusan -->
 				<div class="modal fade" id="skModal" tabindex="-1" role="dialog" aria-labelledby="skModalLabel" aria-hidden="true">
@@ -294,14 +294,14 @@ function navigateToPage() {
     // Menampilkan jendela model sesuai dengan kategori yang dipilih
     
     switch (selectedValue) {
-        case 'SPPD':
-            $('#sppdModal').modal('show');
-            break;
         case 'Dinas Pendidikan':
             pageUrl = '#';
             break;
         case 'sk':
             $('#skModal').modal('show');
+            return;
+        case 'tugas':
+            $('#tugasModal').modal('show');
             return;
         case 'pemberitahuan':
             $('#tahuModal').modal('show');
