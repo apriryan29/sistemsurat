@@ -83,7 +83,6 @@ $result = $config->query("SELECT * FROM tb_loker");
                                             <th>No.</th>
                                             <th>Nama Loker</th>
                                             <th>Kategori</th>
-                                            <th>Total Surat</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -96,7 +95,6 @@ $result = $config->query("SELECT * FROM tb_loker");
                                                     <td>{$row_number}</td>
                                                     <td>{$row['loker']}</td>
                                                     <td>{$row['kategori_loker']}</td>
-                                                    <td>{$row['id_loker']}</td>
                                                     <td>
                                                         <ul class='nav'>
                                                             <li class='nav-item'>
