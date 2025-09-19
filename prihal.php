@@ -47,6 +47,50 @@ if (!isset($_SESSION['username'])) {
 					</form>
 				<!-- Input Data Surat Masuk Selesai -->
  
+				<!-- model surat SPPD -->
+				<div class="modal fade" id="sppdModal" tabindex="-1" role="dialog" aria-labelledby="sppdModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="sppdModalLabel">Isi Surat Pemberitahuan</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<!-- Form pengisian Surat SPPD -->
+								<form>
+									<div class="form-group">
+										<label for="judul">Judul Template Surat Pemberitahuan</label>
+										<input type="text" class="form-control" id="judul" placeholder="Masukkan Judul Template">
+									</div>
+									<div class="form-group">
+										<label for="perihal">Tentang Surat Pemberitahuan</label>
+										<input type="text" class="form-control" id="perihal" placeholder="Masukkan Perihal">
+									</div>
+									<div class="form-group">
+										<label for="pembuka">Pembuka</label>
+										<textarea class="form-control" id="pembuka" placeholder="Masukkan Pembuka Surat"></textarea>
+									</div>
+									<div class="form-group">
+										<label for="isi">Isi Surat</label>
+										<textarea type="text" class="form-control" id="isi" placeholder="Masukkan Isi Surat"></textarea>
+									</div>
+									<div class="form-group">
+										<label for="pengingat">Penutup</label>
+										<textarea type="text" class="form-control" id="penutup" placeholder="Masukkan Penutup Surat"></textarea>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+								<button type="button" class="btn btn-primary">Simpan</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- model surat SPPD SELESAI -->
+
 				<!-- model surat Keputusan -->
 				<div class="modal fade" id="skModal" tabindex="-1" role="dialog" aria-labelledby="skModalLabel" aria-hidden="true">
 					<div class="modal-dialog" role="document">
@@ -74,27 +118,27 @@ if (!isset($_SESSION['username'])) {
 									</div>
 									<div class="form-group">
 										<label for="perhatian">Memperhatikan</label>
-										<input type="text" class="form-control" id="perhatian" placeholder="Masukkan Isi Memperhatikan Surat">
+										<textarea type="text" class="form-control" id="perhatian" placeholder="Masukkan Isi Memperhatikan Surat"></textarea>
 									</div>
 									<div class="form-group">
 										<label for="menimbang">Menimbang</label>
-										<input type="text" class="form-control" id="menimbang" placeholder="Masukkan Isi Menimbang Surat">
+										<textarea type="text" class="form-control" id="menimbang" placeholder="Masukkan Isi Menimbang Surat"></textarea>
 									</div>
 									<div class="form-group">
 										<label for="pengingat">Mengingat</label>
-										<input type="text" class="form-control" id="pengingat" placeholder="Masukkan Isi Mengingat Surat">
+										<textarea type="text" class="form-control" id="pengingat" placeholder="Masukkan Isi Mengingat Surat"></textarea>
 									</div>
 									<div class="form-group">
 										<label for="tetap">Ketetapan Poin 2</label>
-										<input type="text" class="form-control" id="tetap" placeholder="Masukkan Ketetapan">
+										<textarea type="text" class="form-control" id="tetap" placeholder="Masukkan Ketetapan"></textarea>
 									</div>
 									<div class="form-group">
 										<label for="tetap">Ketetapan Poin 3</label>
-										<input type="text" class="form-control" id="tetap" placeholder="Masukkan Ketetapan">
+										<textarea type="text" class="form-control" id="tetap" placeholder="Masukkan Ketetapan"></textarea>
 									</div>
 									<div class="form-group">
 										<label for="tetap">Ketetapan Poin 4</label>
-										<input type="text" class="form-control" id="tetap" placeholder="Masukkan Ketetapan">
+										<textarea type="text" class="form-control" id="tetap" placeholder="Masukkan Ketetapan"></textarea>
 									</div>
 									<div class="form-group">
 										<label for="penutup">Penutup</label>
@@ -110,6 +154,51 @@ if (!isset($_SESSION['username'])) {
 					</div>
 				</div>
 				<!-- model surat Keputusan SELESAI -->
+
+				
+				<!-- model surat Pemberitahuan -->
+				<div class="modal fade" id="tahuModal" tabindex="-1" role="dialog" aria-labelledby="tahuModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="tahuModalLabel">Isi Surat Pemberitahuan</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<!-- Form pengisian Surat Pemberitahuan -->
+								<form>
+									<div class="form-group">
+										<label for="judul">Judul Template Surat Pemberitahuan</label>
+										<input type="text" class="form-control" id="judul" placeholder="Masukkan Judul Template">
+									</div>
+									<div class="form-group">
+										<label for="perihal">Tentang Surat Pemberitahuan</label>
+										<input type="text" class="form-control" id="perihal" placeholder="Masukkan Perihal">
+									</div>
+									<div class="form-group">
+										<label for="pembuka">Pembuka</label>
+										<textarea class="form-control" id="pembuka" placeholder="Masukkan Pembuka Surat"></textarea>
+									</div>
+									<div class="form-group">
+										<label for="isi">Isi Surat</label>
+										<textarea type="text" class="form-control" id="isi" placeholder="Masukkan Isi Surat"></textarea>
+									</div>
+									<div class="form-group">
+										<label for="pengingat">Penutup</label>
+										<textarea type="text" class="form-control" id="penutup" placeholder="Masukkan Penutup Surat"></textarea>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+								<button type="button" class="btn btn-primary">Simpan</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- model surat pemberitahuan SELESAI -->
 			</div>
 		</div>
 	</div>
@@ -206,7 +295,7 @@ function navigateToPage() {
     
     switch (selectedValue) {
         case 'SPPD':
-            pageUrl = '#';
+            $('#sppdModal').modal('show');
             break;
         case 'Dinas Pendidikan':
             pageUrl = '#';
@@ -215,7 +304,7 @@ function navigateToPage() {
             $('#skModal').modal('show');
             return;
         case 'pemberitahuan':
-            $('#pemberitahuanModal').modal('show');
+            $('#tahuModal').modal('show');
             return;
         case 'Lainnya':
             $('#').modal('show');
