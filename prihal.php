@@ -85,6 +85,18 @@ if (!isset($_SESSION['username'])) {
 										<input type="text" class="form-control" id="pengingat" placeholder="Masukkan Isi Mengingat Surat">
 									</div>
 									<div class="form-group">
+										<label for="tetap">Ketetapan Poin 2</label>
+										<input type="text" class="form-control" id="tetap" placeholder="Masukkan Ketetapan">
+									</div>
+									<div class="form-group">
+										<label for="tetap">Ketetapan Poin 3</label>
+										<input type="text" class="form-control" id="tetap" placeholder="Masukkan Ketetapan">
+									</div>
+									<div class="form-group">
+										<label for="tetap">Ketetapan Poin 4</label>
+										<input type="text" class="form-control" id="tetap" placeholder="Masukkan Ketetapan">
+									</div>
+									<div class="form-group">
 										<label for="penutup">Penutup</label>
 										<input type="text" class="form-control" id="penutup" placeholder="Masukkan Penutup Surat">
 									</div>
