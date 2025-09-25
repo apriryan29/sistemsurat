@@ -32,22 +32,32 @@ $sekolah = $result->fetch_assoc();
 
 </head>
 <body>
+
+<!-- CSS untuk ukuran kertas -->
 <style>
         @media print {
             @page {
                 size: A4;
-                margin: 20mm; /* Atur margin sesuai kebutuhan */
+                margin: 20mm;
             }
             body {
-                margin: 0; /* Hapus margin default */
+                margin: 0;
             }
         }
 
+        @media print and (size: F4) {
+            @page {
+                size: 215.9mm 330.2mm;
+                margin: 20mm;
+            }
+        }
         .kop-surat {
-            margin-bottom: 20px; /* Margin bawah untuk kop surat */
+            margin-bottom: 20px;
         }
     </style>
 
+
+<!-- Kop Surat siap cetak -->
 <div class="container">
     <table style="width: 100%; border-collapse: collapse; margin-top: 18px;">
         <tr>
@@ -76,7 +86,30 @@ $sekolah = $result->fetch_assoc();
     <hr style="border: 1px solid black; margin: 0.8px 0;">
 </div>
 
+
+<!-- Skrip untuk perintah cetak -->
 <script language=javascript>
+  function setPageSize(size) {
+        const style = document.createElement('style');
+        if (size === 'F4') {
+            style.innerHTML = `
+                @media print {
+                    @page {
+                        size: 215.9mm 330.2mm;
+                    }
+                }
+            `;
+        } else {
+            style.innerHTML = `
+                @media print {
+                    @page {
+                        size: A4;
+                    }
+                }
+            `;
+        }
+        document.head.appendChild(style);
+    }
     function printWindow() {
         bV = parseInt(navigator.appVersion);
         if (bV >= 4) window.print();
