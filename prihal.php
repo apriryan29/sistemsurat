@@ -46,6 +46,51 @@ if (!isset($_SESSION['username'])) {
 					</form>
 				<!-- Input Data Surat Masuk Selesai -->
  
+
+				<!-- model surat Undangan -->
+				<div class="modal fade" id="undanganModal" tabindex="-1" role="dialog" aria-labelledby="undanganModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="undanganModalLabel">Isi Surat Tugas</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<!-- Form pengisian Surat Undangan -->
+								<form>
+									<div class="form-group">
+										<label for="judul">Judul Template Surat Undangan</label>
+										<input type="text" class="form-control" id="judul" placeholder="Masukkan Judul Template">
+									</div>
+									<div class="form-group">
+										<label for="perihal">Tentang Surat Undangan</label>
+										<input type="text" class="form-control" id="perihal" placeholder="Masukkan Perihal Surat Undangan">
+									</div>
+									<div class="form-group">
+										<label for="pembuka">Pembuka</label>
+										<textarea type="text" class="form-control" id="pembuka" placeholder="Masukkan Pembuka Surat"></textarea>
+									</div>
+									<div class="form-group">
+										<label for="isi">Tengah</label>
+										<textarea type="text" class="form-control" id="isi" placeholder="Masukkan Tengah Surat"></textarea>
+									</div>
+									<div class="form-group">
+										<label for="penutup">Penutup</label>
+										<textarea type="text" class="form-control" id="penutup" placeholder="Masukkan Penutup Surat"></textarea>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+								<button type="button" class="btn btn-primary">Simpan</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- model surat Tugas SELESAI -->
+
 				<!-- model surat Tugas -->
 				<div class="modal fade" id="tugasModal" tabindex="-1" role="dialog" aria-labelledby="tugasModalLabel" aria-hidden="true">
 					<div class="modal-dialog" role="document">
@@ -88,7 +133,7 @@ if (!isset($_SESSION['username'])) {
 						</div>
 					</div>
 				</div>
-				<!-- model surat Keputusan SELESAI -->
+				<!-- model surat Tugas SELESAI -->
 
 
 				<!-- model surat Keputusan -->
@@ -294,9 +339,9 @@ function navigateToPage() {
     // Menampilkan jendela model sesuai dengan kategori yang dipilih
     
     switch (selectedValue) {
-        case 'Dinas Pendidikan':
-            pageUrl = '#';
-            break;
+        case 'undangan':
+            $('#undanganModal').modal('show');
+            return;
         case 'sk':
             $('#skModal').modal('show');
             return;
