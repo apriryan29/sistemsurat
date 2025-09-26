@@ -5,12 +5,12 @@
 
 <div style="font-family: 'Times New Roman'; color: black;">
     <div style="text-align: center; margin-top: 3rem;">
-        <p style="font-weight: bold; font-size: 20px;"><u>SURAT KEPUTUSAN KEPALA SEKOLAH</u> <br>Nomor :</p>
-        <p style="font-weight: bold; font-size: 20px;">Tentang <br>................</p>
+        <p style="font-weight: bold; font-size: 24px;"><u>SURAT KEPUTUSAN KEPALA SEKOLAH</u> <br>Nomor :</p>
+        <p style="font-weight: bold; font-size: 24px;">Tentang <br>................</p>
     </div>
 
-    <div style="text-align: justify;  padding-left:2rem; padding-right: 3rem; font-size: 18px;">
-        <div style="padding-top: 1rem;">Keputusan Kepala Sekolah</div>
+    <div style="text-align: justify;  padding-left:2rem; padding-right: 3rem; font-size: 22px;">
+        <div style="padding-top: 3rem;">Keputusan Kepala Sekolah</div>
         <table>
             <tr style="vertical-align: top;">
                 <td style="padding-right: 5rem;">
@@ -93,7 +93,7 @@
                 sebagaimana mestinya
         </div>
 
-        <table>
+        <table style="margin-top: 5rem;">
             <tr>
                 <td></td>
                 <td></td>
@@ -116,7 +116,7 @@
             <tr>
                 <td></td>
                 <td></td>
-                <td colspan="3" style="padding-left: 35rem; padding-top: 5rem;">Budi M...hjadayugdahda...., S.Sos</td>
+                <td colspan="3" style="padding-left: 35rem; padding-top: 7rem;">Budi M...hjadayugdahda...., S.Sos</td>
             </tr>
             <tr>
                 <td colspan="5" style="padding-top: 1rem;">Tembusan kepada Yth :</td>

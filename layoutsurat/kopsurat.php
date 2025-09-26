@@ -39,6 +39,7 @@ $sekolah = $result->fetch_assoc();
             @page {
                 size: A4;
                 margin: 20mm;
+                margin-top: 5mm;
             }
             body {
                 margin: 0;
