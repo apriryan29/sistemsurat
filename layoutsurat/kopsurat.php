@@ -55,10 +55,8 @@ $sekolah = $result->fetch_assoc();
             margin-bottom: 20px;
         }
     </style>
-
-
 <!-- Kop Surat siap cetak -->
-<div class="container">
+<div class="container" style="font-family: 'Times New Roman';">
     <table style="width: 100%; border-collapse: collapse; margin-top: 18px;">
         <tr>
             <td style="width: 15%; text-align: right; vertical-align: center;">
@@ -85,7 +83,6 @@ $sekolah = $result->fetch_assoc();
     <hr style="border: 3px solid black; margin: 5px 0;">
     <hr style="border: 1px solid black; margin: 0.8px 0;">
 </div>
-
 
 <!-- Skrip untuk perintah cetak -->
 <script language=javascript>
