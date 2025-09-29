@@ -55,6 +55,10 @@ $sekolah = $result->fetch_assoc();
         .kop-surat {
             margin-bottom: 20px;
         }
+        .page-break {
+        page-break-before: always; /* Mulai dari halaman baru */
+        }
+
     </style>
 <!-- Kop Surat siap cetak -->
 <div class="container" style="font-family: 'Times New Roman';">
