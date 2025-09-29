@@ -4,13 +4,13 @@
 
 
 <div style="font-family: 'Times New Roman'; color: black;">
-    <div style="text-align: center; margin-top: 3rem;">
+    <div style="text-align: center; margin-top: 2rem;">
         <p style="font-weight: bold; font-size: 24px;"><u>SURAT KEPUTUSAN KEPALA SEKOLAH</u> <br>Nomor :</p>
         <p style="font-weight: bold; font-size: 24px;">Tentang <br>................</p>
     </div>
 
     <div style="text-align: justify;  padding-left:2rem; padding-right: 3rem; font-size: 22px;">
-        <div style="padding-top: 3rem;">Keputusan Kepala Sekolah</div>
+        <div style="padding-top: 1rem;">Keputusan Kepala Sekolah</div>
         <table>
             <tr style="vertical-align: top;">
                 <td style="padding-right: 5rem;">
@@ -93,7 +93,7 @@
                 sebagaimana mestinya
         </div>
 
-        <table style="margin-top: 5rem;">
+        <table style="margin-top: 2rem;">
             <tr>
                 <td></td>
                 <td></td>

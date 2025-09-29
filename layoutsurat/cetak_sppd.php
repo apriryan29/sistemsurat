@@ -79,8 +79,8 @@
             <td style="padding-right: 21rem;">Pemegang SPPD</td>
             <td colspan="2">Kepala Tata Usaha</td>
         </tr>
-            <td style="padding-bottom: 8rem;">(.........................)</td>
-            <td colspan="2" style="padding-bottom: 8rem;">(..............................)</td>
+            <td style="padding-top: 8rem;">(.........................)</td>
+            <td colspan="2" style="padding-top: 8rem;">(..............................)</td>
         </tr>
     </table>
 

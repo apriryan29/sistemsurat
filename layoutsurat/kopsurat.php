@@ -37,7 +37,7 @@ $sekolah = $result->fetch_assoc();
 <style>
         @media print {
             @page {
-                size: A4;
+                size: 215.9mm 330.2mm;
                 margin: 20mm;
                 margin-top: 5mm;
             }
@@ -46,12 +46,6 @@ $sekolah = $result->fetch_assoc();
             }
         }
 
-        @media print and (size: F4) {
-            @page {
-                size: 215.9mm 330.2mm;
-                margin: 20mm;
-            }
-        }
         .kop-surat {
             margin-bottom: 20px;
         }
