@@ -1,9 +1,9 @@
-<?php 
-    include'kopsurat.php'
+<?php
+    include 'kopsurat.php'
 ?>
 
-
 <div style="font-family: 'Times New Roman'; color: black; margin-right: 2rem; margin-left: 1rem;">
+<!-- TABEL TANGGAL DAN NOMOR SURAT -->
     <table style="font-size: 22px; width: 100%; ">
         <tr>
             <td style="width: 7%;">Nomor</td>
@@ -32,14 +32,13 @@
         </tr>
     </table>
 
-<!-- ISI SURAT -->
     <table style="font-size: 22px; width: 90%; margin-left:5rem; text-align: justify;">
         <tr>
-            <td style="padding-top: 3rem;">Bismillahirohmanirrohim <br> Assalamualaikum wr. wb.</td>
+            <td colspan="3" style="padding-top: 3rem;">Bismillahirohmanirrohim <br> Assalamualaikum wr. wb.</td>
         </tr>
         <!-- Pembuka -->
         <tr>
-            <td style="padding-top: 1rem;">Puji syTrkur kita panjatkan kehadirat Alloh SWT yang telah memberikan taufiq dan
+            <td colspan="3" style="padding-top: 1rem; text-indent: 3rem;">Puji syTrkur kita panjatkan kehadirat Alloh SWT yang telah memberikan taufiq dan
             hidayah-Nya kepada kita semua, sholar,vat dan salam semoga selalu tercurah kepada junjungan
             kita Nabi Agung Muhammad SAW dan keluarga para sahabat serta pengikutnya sampai akhir
             zaman- Amiin.
@@ -47,25 +46,36 @@
         </tr>
         <!-- Isi Pembuka -->
         <tr>
-            <td style="padding-top: 1rem;">Dengan ini kami beritahukan kepada Bapak/[bu selaku ora11g tua/rvali rnurid kelas X . XI
+            <td colspan="3" style="padding-top: 1rem; text-indent: 3rem;">Dengan ini kami beritahukan kepada Bapak/[bu selaku ora11g tua/rvali rnurid kelas X . XI
             dan XII bahwa dalam rangka syiar SMK Muhammadiyah Sampang kami menyelenggarakan
             pengumpulan dan distribusi zakat fitrah. Berdasarkan hal tersebut kami berharap siswa/siswi
             kelas X. XI, dan XIl dapatmenyalurkanzakat fitrahnyadi sekolah dengan ketentuan sebagai
             berikut:
             </td>
         </tr>
-        <!-- ISI SURAT -->
         <tr>
-            <td style="padding-top: 1rem;">1. Jika berupa beras, maka seberat 3 Kg
-            2. Jika berupa uang, maka sebesar Rp. 40.000 , (Empat puluh ribu rupiah )
-            3. Untuk pengumpulan Z,akat Fitrah kelas X, XI dan XiI kepada wali kelas
-            masing- masing.
-            4. Zakat Fitrah dikumpulkan rnulai tanggal 10 Maret 2025 sld22Maret2025
-            </td>
+            <td style="padding-left: 5rem; padding-top: 1rem; width: 35%;">Hari / Tanggal</td>
+            <td style="padding-top: 1rem;">:</td>
+            <td style="padding-top: 1rem;">Selasa, 9 Maret 2025</td>
+        </tr>
+        <tr>
+            <td style="padding-left: 5rem;">Waktu</td>
+            <td>:</td>
+            <td>Pukul 10.00 s/d Selesai</td>
+        </tr>
+        <tr>
+            <td style="padding-left: 5rem;">Tempat</td>
+            <td>:</td>
+            <td>Aula SMK Muhammadiyah Sampang</td>
+        </tr>
+        <tr>
+            <td style="padding-left: 5rem;">Acara</td>
+            <td>:</td>
+            <td>Rapat Wali Murid Awal Semester</td>
         </tr>
         <!-- Isi Penutup -->
         <tr>
-            <td style="padding-top: 1rem;">Demikian pemberitahuan ini kami sampaikan atas perhatian dan kerjasaman,va yang baik
+            <td colspan="3" style="padding-top: 1rem; text-indent: 3rem;">Demikian pemberitahuan ini kami sampaikan atas perhatian dan kerjasaman,va yang baik
             kami ucapkan terima kasih" semoga putra/putri Bapak/lbu menjadi anak 1,ang sholih l sholihah
             </td>
         </tr>
@@ -74,6 +84,7 @@
         </tr>
     </table>
 
+    
     <!-- Tabel Tanda Tangan -->
     <table style="font-size: 22px; width: 100%;">
         <tr>
