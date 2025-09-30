@@ -34,24 +34,24 @@
                 <td>Cilacap, 3 Februari 1995</td>
             </tr>
             <tr>
-                <td>Tempat, Tanggal lahir</td>
+                <td>Nama Orang Tua</td>
                 <td>:</td>
-                <td>Cilacap, 3 Februari 1995</td>
+                <td>Ahmad Suripto</td>
             </tr>
             <tr>
-                <td>NIS</td>
+                <td>Asal Sekolah</td>
                 <td>:</td>
-                <td>Cilacap, 3 Februari 1995</td>
+                <td>SMK Muhammadiyah Sampang</td>
             </tr>
             <tr>
-                <td>Tempat, Tanggal lahir</td>
+                <td>Nomor Seri Ijazah</td>
                 <td>:</td>
-                <td>Cilacap, 3 Februari 1995</td>
+                <td>DN- SMK 987246113</td>
             </tr>
             <tr>
-                <td>NIS</td>
+                <td>Tahun Pelajaran</td>
                 <td>:</td>
-                <td>Cilacap, 3 Februari 1995</td>
+                <td>2012/2013</td>
             </tr>
             <tr>
                 <td colspan="3" style="padding-top: 2rem;">Bahwa Orang Tua Tersebut bernama :</td>
@@ -85,7 +85,7 @@
             <td style="padding-left: 40rem;">Kepala Sekolah</td>
         </tr>
         <tr>
-            <td style="padding-top: 8rem; padding-left: 40rem;">Budi Martanto, S.S <br>NBM. 1084 462</td>
+            <td style="padding-top: 8rem; padding-left: 40rem;">Budi Martanto, S.S <br>NIP. -</td>
         </tr>
     </table>
 </div>
