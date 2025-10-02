@@ -2,6 +2,12 @@
 require_once '../include/config.php';
 require_once '../include/functions.php';
 
+$save_success = false;
+if ($save_success) { // Gantilah dengan kondisi sebenarnya
+    header("Location: ../suratkeluar.php");
+    exit();
+}
+
 $sql = "SELECT * FROM tb_sekolah LIMIT 1"; // Adjust query as needed
 $result = $config->query($sql);
 $sekolah = $result->fetch_assoc();
@@ -107,10 +113,18 @@ $sekolah = $result->fetch_assoc();
         document.head.appendChild(style);
     }
     function printWindow() {
-        bV = parseInt(navigator.appVersion);
-        if (bV >= 4) window.print();
+        window.print();
     }
-    printWindow();
+
+    window.onload = function() {
+        printWindow(); // Cetak otomatis saat halaman dimuat
+    };
+
+    window.onafterprint = function() {
+        window.location.href = '../suratkeluar.php'; // Kembali setelah pencetakan selesai
+    };
+    window.onbeforeprint = function() {
+    };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
