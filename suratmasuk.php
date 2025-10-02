@@ -119,7 +119,7 @@ if (isset($_POST['suratmasuk'])) {
                     $errorMsg = "File harus diunggah untuk data baru.";
                     $uploadOk = false;
                 } else {
-                    $stmt = $config->prepare("INSERT INTO tb_masuk (nomor, instansi, tanggal, kategori, loker, hal, nama_file) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    $stmt = $config->prepare("INSERT INTO tb_masuk (nomor, instansi, tanggal, kategori, id_loker, hal, nama_file) VALUES (?, ?, ?, ?, ?, ?, ?)");
                     if ($stmt) {
                         $stmt->bind_param("sssssss", $nomor, $instansi, $tanggal, $kategori, $loker, $hal, $newFilePath);
                         if ($stmt->execute()) {

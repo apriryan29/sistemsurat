@@ -48,7 +48,7 @@ if (isset($_POST['edit_id'])) {
     $menetapkan_5 = isset($_POST['menetapkan_5']) ? $_POST['menetapkan_5'] : '';
 
     $stmt = $config->prepare("UPDATE tb_perihal SET tentang=?, judul=?, kategori=?, pembuka=?, isi=?, penutup=?, memperhatikan=?, menimbang=?, mengingat=?, menetapkan_2=?, menetapkan_3=?, menetapkan_4=?, menetapkan_5=? WHERE id_perihal=?");
-    $stmt->bind_param("ssssssssssssssi", $tentang, $judul, $kategori, $pembuka, $isi, $penutup, $memperhatikan, $menimbang, $mengingat, $menetapkan_2, $menetapkan_3, $menetapkan_4, $menetapkan_5, $id);
+    $stmt->bind_param("sssssssssssssi", $tentang, $judul, $kategori, $pembuka, $isi, $penutup, $memperhatikan, $menimbang, $mengingat, $menetapkan_2, $menetapkan_3, $menetapkan_4, $menetapkan_5, $id);
     $stmt->execute();
     $stmt->close();
 }
@@ -69,7 +69,7 @@ include 'include/header.php';
 
 <main role="main" class="main-content">
 <div class="container-fluid">
-
+  <h2 class="mb-4 page-title">Perihal</h2>
     <!-- Pilih kategori -->
     <div class="card shadow mb-4">
         <form action="#">

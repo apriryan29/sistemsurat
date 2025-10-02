@@ -154,7 +154,7 @@ if (!isset($_SESSION['username'])) {
 							
 							switch (selectedValue) {
 								case 'SPPD':
-									pageUrl = '#';
+									pageUrl = 'layoutsurat/cetak_sppd.php';
 									break;
 								case 'Dinas Pendidikan':
 									pageUrl = '#';
