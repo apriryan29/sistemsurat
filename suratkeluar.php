@@ -47,20 +47,20 @@ if (!isset($_SESSION['username'])) {
                                     <input type="text" class="form-control" name="nomor_surat" placeholder="Contoh: 001/IV.4/A/2025" required>
                                 </div>
                                 <div class="form-group">
+                                    <label for="kode-surat">Nomor Surat</label>
+                                    <input type="text" class="form-control" name="kode_surat" placeholder="Contoh: 001/IV.4/A/2025" required>
+                                </div>
+                                <div class="form-group">
                                     <label for="tanggal">Tanggal</label>
                                     <input class="form-control" name="tanggal" type="date" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="tujuan">Tujuan</label>
-                                    <input type="text" class="form-control" name="tujuan" placeholder="Masukkan Tujuan" required>
+                                    <label for="tentang">Tentang Perihal SK</label>
+                                    <input class="form-control" name="tentang" type="text" placeholder="Masukkan Prihal Surat Keputusan" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="perihal">Perihal</label>
-                                    <input type="text" class="form-control" name="perihal" placeholder="Masukkan Perihal" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="isi">Isi Surat</label>
-                                    <textarea class="form-control" name="isi" placeholder="Masukkan Isi Surat" required></textarea>
+                                    <label for="isi">Ketetapan Poin Pertama</label>
+                                    <textarea class="form-control" name="isi" placeholder="Masukkan Ketetapan Surat Keputusan" required></textarea>
                                 </div>
                                 <input type="hidden" name="kategori" value="sk">
                                 <div class="modal-footer">
@@ -71,7 +71,6 @@ if (!isset($_SESSION['username'])) {
                         </div>
                     </div>
                 </div>
-            </div>
 
             <!-- Modal untuk Surat Pemberitahuan -->
             <div class="modal fade" id="pemberitahuanModal" tabindex="-1" role="dialog" aria-labelledby="pemberitahuanModalLabel" aria-hidden="true">
