@@ -34,6 +34,7 @@ if (!isset($_SESSION['username'])) {
             <?php include'out/sk.php'?>
             <?php include'out/sppd.php' ?>
             <?php include'out/tahu.php' ?>
+            <?php include'out/tugas.php' ?>
             </div>
             
         </div>
