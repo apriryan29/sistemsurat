@@ -116,7 +116,7 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
         </tr>
         <tr>
             <td style="padding-right: 21rem;">Pemegang SPPD</td>
-            <td colspan="2">Kepala Tata Usaha</td>
+            <td colspan="2"><?php $pejabat = $_POST['pejabat']; echo $pejabat; ?></td>
         </tr>
             <td style="padding-top: 8rem;"><?php $pegawai = $_POST['pegawai']; echo $pegawai; ?></td>
             <td colspan="2" style="padding-top: 8rem;">(..............................)</td> <!-- perlu penyesuaian nama pejabat -->
@@ -132,7 +132,7 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
                         <tr>
                             <td>Tiba di</td>
                             <td>:</td>
-                            <td>SMK YPE Sampang</td>
+                            <td><?php $tempat = $_POST['tempat']; echo $tempat; ?></td>
                         </tr>
                         <tr>
                             <td>Pada Tanggal</td>
@@ -151,7 +151,7 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
                         <tr>
                             <td>Ke</td>
                             <td>:</td>
-                            <td>SMK YPE Sampang</td>
+                            <td><?php $tempat = $_POST['tempat']; echo $tempat; ?></td>
                         </tr>
                         <tr>
                             <td>Pada Tanggal</td>
@@ -188,7 +188,7 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
                             <td colspan="3" style="padding-top: 3rem;">Pejabat yang berwenang/ <br>Pejabat lainnya yang ditunjuk</td>
                         </tr>
                         <tr>
-                            <td colspan="3" style="text-align: center; padding-top: 3rem;">Kepala Tata Usaha</td>
+                            <td colspan="3" style="text-align: center; padding-top: 3rem;"><?php $pejabat = $_POST['pejabat']; echo $pejabat; ?></td>
                         </tr>
                         <tr>
                             <td colspan="3" style="text-align: center;">SMK Muhammadiyah Sampang</td>

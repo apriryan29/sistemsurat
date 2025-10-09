@@ -63,7 +63,7 @@ $result_kode = $config->query($sql_kode);
                         <input type="text" class="form-control" name="tujuan" placeholder="Masukkan Tujuan" required>
                     </div>
                     <div class="form-group">
-                        <label for="lampiran">Dikirim Kepada</label>
+                        <label for="lampiran">Lampiran Surat</label>
                         <input type="text" class="form-control" name="lampiran" placeholder="Masukkan Jumlah Lampiran" required>
                     </div>
                     <div class="form-group">
