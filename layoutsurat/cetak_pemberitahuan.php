@@ -1,5 +1,20 @@
 <?php 
-    include'kopsurat.php'
+include 'kopsurat.php';
+include '../include/config.php';
+
+$nomor_surat = $_POST['nomor_surat'];
+$isi = $_POST['isi'];
+$lamp = $_POST['lampiran'];
+$tujuan = $_POST['tujuan'];
+
+if (isset($_POST['tentang'])) {
+    $tentangId = $_POST['tentang'];
+
+    // Ambil data tentang berdasarkan ID
+    $sql_tentang = "SELECT * FROM tb_perihal WHERE id_perihal = $tentangId";
+    $result_tentang = $config->query($sql_tentang);
+    $tentangData = $result_tentang->fetch_assoc();
+}
 ?>
 
 
@@ -8,24 +23,52 @@
         <tr>
             <td style="width: 7%;">Nomor</td>
             <td>:</td>
-            <td>208/III.4.AU/A/2025</td>
-            <td style="text-align: end;">Sampang, 7 Maret 2025</td>
+            <td><?php echo $nomor_surat; ?></td>
+            <td style="text-align: end;">Sampang,
+                <?php
+                    // Array untuk nama bulan dalam bahasa Indonesia
+                    $bulanIndo = [
+                        1 => 'Januari',
+                        2 => 'Februari',
+                        3 => 'Maret',
+                        4 => 'April',
+                        5 => 'Mei',
+                        6 => 'Juni',
+                        7 => 'Juli',
+                        8 => 'Agustus',
+                        9 => 'September',
+                        10 => 'Oktober',
+                        11 => 'November',
+                        12 => 'Desember'
+                    ];
+
+                    // Ambil tanggal saat ini
+                    $tanggal = date('j'); // Hari
+                    $bulan = $bulanIndo[date('n')]; // Bulan
+                    $tahun = date('Y'); // Tahun
+
+                    // Format tanggal dalam bahasa Indonesia
+                    $tanggalFormat = "$tanggal $bulan $tahun";
+
+                    echo $tanggalFormat;
+                    ?>
+            </td>
         </tr>
         <tr>
             <td>Lamp</td>
             <td>:</td>
-            <td colspan="2">-</td>
+            <td colspan="2"><?php echo $lamp; ?></td>
         </tr>
         <tr>
             <td>Perihal</td>
             <td>:</td>
-            <td colspan="2">Pemberitahuan Zakat Fitrah</td>
+            <td colspan="2"><?php echo $tentangData['tentang']; ?></td>
         </tr>
         <tr>
             <td colspan="4" style="padding-top: 2rem; padding-left: 5rem;">Kepada Yth.</td>
         </tr>
         <tr>
-            <td colspan="4" style="padding-left: 5rem;">Bapak/Ibu Wali Murid</td>
+            <td colspan="4" style="padding-left: 5rem;"><?php echo $tujuan; ?></td>
         </tr>
         <tr>
             <td colspan="4" style="padding-left: 5rem;">Di - Tempat</td>
@@ -39,35 +82,22 @@
         </tr>
         <!-- Pembuka -->
         <tr>
-            <td style="padding-top: 1rem; text-indent: 3rem;">Puji syTrkur kita panjatkan kehadirat Alloh SWT yang telah memberikan taufiq dan
-            hidayah-Nya kepada kita semua, sholar,vat dan salam semoga selalu tercurah kepada junjungan
-            kita Nabi Agung Muhammad SAW dan keluarga para sahabat serta pengikutnya sampai akhir
-            zaman- Amiin.
+            <td style="padding-top: 1rem; text-indent: 3rem;"><?php echo $tentangData['pembuka']; ?>
             </td>
         </tr>
         <!-- Isi Pembuka -->
         <tr>
-            <td style="padding-top: 1rem; text-indent: 3rem;">Dengan ini kami beritahukan kepada Bapak/[bu selaku ora11g tua/rvali rnurid kelas X . XI
-            dan XII bahwa dalam rangka syiar SMK Muhammadiyah Sampang kami menyelenggarakan
-            pengumpulan dan distribusi zakat fitrah. Berdasarkan hal tersebut kami berharap siswa/siswi
-            kelas X. XI, dan XIl dapatmenyalurkanzakat fitrahnyadi sekolah dengan ketentuan sebagai
-            berikut:
+            <td style="padding-top: 1rem; text-indent: 3rem;"><?php echo $tentangData['isi']; ?>
             </td>
         </tr>
         <!-- ISI SURAT -->
         <tr>
-            <td style="padding-top: 1rem;">1. Jika berupa beras, maka seberat 3 Kg
-            2. Jika berupa uang, maka sebesar Rp. 40.000 , (Empat puluh ribu rupiah )
-            3. Untuk pengumpulan Z,akat Fitrah kelas X, XI dan XiI kepada wali kelas
-            masing- masing.
-            4. Zakat Fitrah dikumpulkan rnulai tanggal 10 Maret 2025 sld22Maret2025
+            <td style="padding-top: 1rem;"><?php echo $isi; ?>
             </td>
         </tr>
         <!-- Isi Penutup -->
         <tr>
-            <td style="padding-top: 1rem; text-indent: 3rem;">Demikian pemberitahuan ini kami sampaikan atas perhatian dan kerjasaman,va yang baik
-            kami ucapkan terima kasih" semoga putra/putri Bapak/lbu menjadi anak 1,ang sholih l sholihah
-            </td>
+            <td style="padding-top: 1rem; text-indent: 3rem;"><?php echo $tentangData['penutup']; ?></td>
         </tr>
         <tr>
             <td style="padding-top: 1rem;">Jazakumullohu khoiron katsiron <br> Wassalamu'alaikum wr. wb.</td>
@@ -75,7 +105,7 @@
     </table>
 
     <!-- Tabel Tanda Tangan -->
-    <table style="font-size: 22px; width: 100%;">
+    <table style="font-size: 22px; width: 100%;" class="no-break">
         <tr>
             <td style="padding-top: 3rem; padding-left: 45rem;">Kepala Sekolah</td>
         </tr>
@@ -84,3 +114,16 @@
         </tr>
     </table>
 </div>
+
+<style>
+    @media print {
+        .no-break {
+            page-break-inside: avoid; /* Mencegah pemisahan tabel */
+            width: 100%; /* Memastikan tabel menggunakan lebar penuh */
+        }
+        .no-break tr {
+            page-break-inside: avoid; /* Mencegah pemisahan baris */
+            page-break-after: auto;
+        }
+    }
+</style>

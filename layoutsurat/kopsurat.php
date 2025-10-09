@@ -21,7 +21,7 @@ $sekolah = $result->fetch_assoc();
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
-    <title>Arsip - SMK</title>
+    <title>Sistem Surat - SMK</title>
     
     <!-- menampilkan logo pada judul aplikasi -->
     <link rel="shortcut icon" href="../aset/smk.png">
