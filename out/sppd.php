@@ -50,8 +50,8 @@ $result_kode = $config->query($sql_kode);
                         <label for="pejabat">Yang memberikan Tugas</label>
                         <select class="form-control" name="pejabat" id="pejabat" required>
                             <option selected></option>
-                            <option value="tu">Kepala Tata Usaha</option>
-                            <option value="kepala">Kepala Sekolah</option>
+                            <option value="Kepala Tata Usaha">Kepala Tata Usaha</option>
+                            <option value="Kepala Sekolah">Kepala Sekolah</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -87,6 +87,12 @@ $result_kode = $config->query($sql_kode);
                     <div class="form-group">
                         <label for="pengikut">Isi Pengikut/Pegawai Dinas</label>
                         <input type="text" class="form-control" name="pengikut" id="pengikut" required>
+                        <p><i>jika tidak ada pengikut maka isikan dengan simbol (-)</i></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="keterangan">Isi Keterangan Lainnya</label>
+                        <input type="text" class="form-control" name="keterangan" id="keterangan" required>
+                        <p><i>jika tidak ada keterangan lainnya maka isikan dengan simbol (-)</i></p>
                     </div>
                     <input type="hidden" name="kategori" value="sppd">
                     <div class="modal-footer">
