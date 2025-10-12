@@ -22,6 +22,7 @@ if (!isset($_SESSION['username'])) {
                             <option value="sppd">Perjalanan Dinas [SPPD]</option>
                             <option value="undangan">Surat Undangan</option>
                             <option value="tugas">Surat Tugas</option>
+                            <option value="tugasin">Surat Tugas Individu</option>
                             <option value="sk">Surat Keputusan</option>
                             <option value="pemberitahuan">Surat Pemberitahuan</option>
                         </select>
@@ -35,6 +36,7 @@ if (!isset($_SESSION['username'])) {
             <?php include'out/sppd.php' ?>
             <?php include'out/tahu.php' ?>
             <?php include'out/tugas.php' ?>
+            <?php include'out/tugasin.php' ?>
             </div>
             
         </div>
@@ -107,6 +109,9 @@ function navigateToPage() {
             break;
         case 'tugas':
             $('#tugasModal').modal('show');
+            break;
+        case 'tugasin':
+            $('#tugasinModal').modal('show');
             break;
         case 'pemberitahuan':
             $('#pemberitahuanModal').modal('show');

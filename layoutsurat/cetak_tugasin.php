@@ -1,12 +1,81 @@
-<?php include 'kopsurat.php' ?>
+<?php 
+include 'kopsurat.php';
+include '../include/config.php';
+
+// Fungsi untuk format tanggal Indonesia
+function formatTanggal($tanggal) {
+    $date = new DateTime($tanggal);
+    return hariIndo ($date->format('l')) . $date->format('j ') . bulanIndo($date->format('n')) . $date->format(' Y');
+}
+
+// Fungsi untuk mendapatkan nama bulan dalam bahasa Indonesia
+function bulanIndo($bulan) {
+    $bulanIndo = [
+        1 => 'Januari',
+        2 => 'Februari',
+        3 => 'Maret',
+        4 => 'April',
+        5 => 'Mei',
+        6 => 'Juni',
+        7 => 'Juli',
+        8 => 'Agustus',
+        9 => 'September',
+        10 => 'Oktober',
+        11 => 'November',
+        12 => 'Desember'
+    ];
+    return $bulanIndo[$bulan];
+}
+    
+    function hariIndo($hari){
+        $hariIndo = [
+            'Sunday' => 'Minggu',
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu'
+
+        ];
+}
+?>
 
 <div style="font-family: 'Times New Roman'; color: black;  margin-left:3rem;  margin-right:2rem;">
     <div style="text-align: right; margin-top: 1rem;">
-        <p style=" font-size: 22px;">Sampang, 17 Agustus 1945</p>
+        <p style=" font-size: 22px;">Sampang, 
+            <?php
+                // Array untuk nama bulan dalam bahasa Indonesia
+                $bulanIndo = [
+                    1 => 'Januari',
+                    2 => 'Februari',
+                    3 => 'Maret',
+                    4 => 'April',
+                    5 => 'Mei',
+                    6 => 'Juni',
+                    7 => 'Juli',
+                    8 => 'Agustus',
+                    9 => 'September',
+                    10 => 'Oktober',
+                    11 => 'November',
+                    12 => 'Desember'
+                ];
+
+                // Ambil tanggal saat ini
+                $tanggal = date('j'); // Hari
+                $bulan = $bulanIndo[date('n')]; // Bulan
+                $tahun = date('Y'); // Tahun
+
+                // Format tanggal dalam bahasa Indonesia
+                $tanggalFormat = "$tanggal $bulan $tahun";
+
+                echo $tanggalFormat;
+            ?>
+        </p>
     </div>
     <div  style="text-align: center; margin-top: 4rem;">
         <h3 style="color: black;"><u>SURAT TUGAS</u></h3>
-        <p style="font-size: 22px;">Nomor :</p>
+        <p style="font-size: 22px;">Nomor : <?php $nomor = $_POST['nomor_surat']; echo $nomor; ?></p>
     </div>
 
 
@@ -18,12 +87,12 @@
         <tr>
             <td style="padding-right: 4.5rem;">Nama</td>
             <td>:</td>
-            <td>Ariela Goasajndjadja</td>
+            <td><?php $pejabat = $_POST['petugas']; echo $pejabat; ?></td>
         </tr>
         <tr>
             <td>Jabatan</td>
             <td>:</td>
-            <td>Wakil Kepala Kurikulum</td>
+            <td><?php $jabatan = $_POST['jabatan']; echo $jabatan; ?></td>
         </tr>
         <tr>
             <td>Unit Kerja</td>
@@ -32,23 +101,23 @@
         </tr>
     </table>
     <div style="text-align: justify; margin-top: 2rem;">
-        <p style="font-size: 22px;">Untuk mengadakan Presentasi SPMB Tahun Pelajaran 2025 I 2026 kelas IX pada :</p>
+        <p style="font-size: 22px;">Untuk <?php $keperluan = $_POST['keperluan']; echo $keperluan; ?> pada :</p>
     </div>
     <table style="font-size: 22px; width: 100%; margin-left: 5rem;">
         <tr>
             <td>Hari / Tanggal</td>
             <td>:</td>
-            <td>Sabtu, 27 September 2025</td>
+            <td><?php echo formatTanggal($_POST['tanggal']); ?></td>
         </tr>
         <tr>
             <td>Waktu</td>
             <td>:</td>
-            <td>Pukul 20.00</td>
+            <td><?php $waktu = $_POST['waktu']; echo $waktu; ?></td>
         </tr>
         <tr>
             <td>Tempat</td>
             <td>:</td>
-            <td>SMK Muhammadiyah Sampang</td>
+            <td><?php $tempat = $_POST['tempat']; echo $tempat; ?></td>
         </tr>
     </table>
     <div style="text-align: justify; margin-top: 2rem; margin-bottom: 5rem;">
@@ -61,7 +130,7 @@
             <td style="font-size: 22px; text-align: left; margin-right: 3rem;">Kepala Sekolah</td>
         </tr>
         <tr>
-            <td style="font-size: 22px; text-align: left; margin-right: 3rem; padding-top: 6rem;">Ariela Goasajndjadja</td>
+            <td style="font-size: 22px; text-align: left; margin-right: 3rem; padding-top: 6rem;"><?php $pejabat = $_POST['petugas']; echo $pejabat; ?></td>
             <td></td>
             <td style="font-size: 22px; text-align: left; margin-right: 3rem; padding-top: 6rem;">Budi .....MIASUYAUDsna, S.Sos</td>
         </tr>
