@@ -71,6 +71,10 @@ $result_kode = $config->query($sql_kode);
                         <input class="form-control" name="tanggal1" type="date" required>
                     </div>
                     <div class="form-group">
+                        <label for="jam">Waktu Acara</label>
+                        <input type="text" class="form-control" name="jam" placeholder="contoh : 09.00 s/d Selesai" required>
+                    </div>
+                    <div class="form-group">
                         <label for="tempat">Tempat Acara</label>
                         <input type="text" class="form-control" name="tempat" placeholder="Masukkan Tempat Pelaksanaan Acara" required>
                     </div>
