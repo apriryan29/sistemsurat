@@ -64,7 +64,15 @@ if (!isset($_SESSION['username'])) {
                     <div class="card-body">
                       <div class="row align-items-center">
                         <div class="col">
-                          <span class="h2 text-success mb-0">0</span>
+                          <span class="h2 text-success mb-0"><?php  
+                            //Panggil id masuk yang tersedia
+                              $sql = $config->query("SELECT COUNT(id_keluar) as masuk from tb_keluar");
+                                while ($data= $sql->fetch_assoc()) {
+                                  $jml=$data['masuk'];
+
+                                  echo $jml;
+                              }
+                            ?></span>
                           <p class="small mb-4"><strong> Surat Keluar</strong></p>
                         </div>
                         <div class="col-auto">

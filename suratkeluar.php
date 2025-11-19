@@ -69,20 +69,25 @@ if (!isset($_SESSION['username'])) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Data surat keluar akan ditampilkan di sini -->
-                                    <!-- Contoh data, ganti dengan data dari database -->
-                                    <tr>
-                                        <td>1</td>
-                                        <td>001/IV.4/A/2025</td>
-                                        <td>John Doe</td>
-                                        <td>Surat Tugas</td>
-                                        <td>tugas</td>
-                                        <td>2025-10-01</td>
-                                        <td>
-                                            <a href="#" class="text-info"><i class="fe fe-edit"></i></a>
-                                            <a href="#" class="text-danger" onclick="return confirm('Hapus data?')"><i class="fe fe-trash-2"></i></a>
-                                        </td>
-                                    </tr>
+                                    <?php
+                                        $no = 1;
+                                        $query = mysqli_query($config, "SELECT * FROM tb_keluar ORDER BY id_keluar DESC");
+                                        while ($row = mysqli_fetch_assoc($query)) {
+                                            echo "<tr>
+                                                <td>{$no}</td>
+                                                <td>" . htmlspecialchars($row['nomor_surat']) . "</td>
+                                                <td>" . htmlspecialchars($row['tujuan']) . "</td>
+                                                <td>" . htmlspecialchars($row['id_perihal']) . "</td>
+                                                <td>" . htmlspecialchars($row['kategori']) . "</td>
+                                                <td>" . htmlspecialchars($row['tanggal']) . "</td>
+                                                <td>
+                                                    <a class='text-info' href='?edit_id=" . $row['id_keluar'] . "'><i class='fe fe-edit fe-16'></i></a>
+                                                    <a class='text-danger ml-2' href='?delete_id=" . $row['id_keluar'] . "' onclick='return confirm(\"Apakah kamu yakin ingin menghapus Dokumen ini?\");'><i class='fe fe-trash-2 fe-16'></i></a>
+                                                </td>
+                                            </tr>";
+                                            $no++;
+                                        }
+                                        ?>
                                 </tbody>
                             </table>
                         </div>

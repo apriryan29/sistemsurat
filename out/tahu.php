@@ -5,6 +5,30 @@ include './include/config.php';
 $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
+// Memeriksa apakah data dikirim melalui POST
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Ambil data dari form
+    $kode_surat = $_POST['kode_surat'];
+    $nomor_surat = $_POST['nomor_surat'];
+    $tentang = $_POST['tentang'];
+    $tanggal = $_POST['tanggal'];
+    $tujuan = $_POST['tujuan'];
+    $lampiran = $_POST['lampiran'];
+    $isi = $_POST['isi'];
+    $kategori = $_POST['kategori'];
+
+    // Siapkan query untuk menambahkan data ke tb_keluar
+    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, id_perihal, tanggal, tujuan, lampiran, isi, kategori) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssississ", $kode_surat, $nomor_surat, $tentang, $tanggal, $tujuan, $lampiran, $isi, $kategori);
+
+    // Eksekusi query dan periksa apakah berhasil
+    if ($stmt->execute()) {
+        echo "<script>alert('Data berhasil disimpan!');</script>";
+    } else {
+        echo "<script>alert('Gagal menyimpan data: " . $stmt->error . "');</script>";
+    }
+    $stmt->close();
+}
 ?>
 
 <!-- Modal untuk Surat Pemberitahuan -->
@@ -18,7 +42,7 @@ $result_kode = $config->query($sql_kode);
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="layoutsurat/cetak_pemberitahuan.php">
+                <form method="POST" action="">
                     <div class="form-group">
                         <label for="kode-surat">Pilih Kode Surat</label>
                         <select class="form-control" name="kode_surat" id="kode-surat" required onchange="updateNomorSurat()">
@@ -43,7 +67,7 @@ $result_kode = $config->query($sql_kode);
                         <select class="form-control" name="tentang" id="tentang" required>
                             <option value="" disabled selected>Pilih Tentang</option>
                             <?php
-                            // Ambil data dari tb_perihal untuk kategori 'sk'
+                            // Ambil data dari tb_perihal untuk kategori 'pemberitahuan'
                             $sql_perihal = "SELECT id_perihal, tentang FROM tb_perihal WHERE kategori = 'pemberitahuan'";
                             $result_perihal = $config->query($sql_perihal);
                             if ($result_perihal->num_rows > 0) {
@@ -94,9 +118,6 @@ function updateNomorSurat() {
 
     // Buat format nomor surat
     const nomorSurat = "011/IV.4/" + selectedKode + "/" + currentYear;
-
-    console.log("Kode Surat yang dipilih:", selectedKode); // Debugging
-    console.log("Nomor Surat yang dihasilkan:", nomorSurat); // Debugging
 
     // Update input nomor_surat
     nomorSuratInput.value = nomorSurat;
