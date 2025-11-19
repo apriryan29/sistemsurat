@@ -24,6 +24,7 @@ if (!isset($_SESSION['username'])) {
                             <option value="tugas">Surat Tugas</option>
                             <option value="tugasin">Surat Tugas Individu</option>
                             <option value="sk">Surat Keputusan</option>
+                            <option value="keterangan">Surat Keterangan</option>
                             <option value="pemberitahuan">Surat Pemberitahuan</option>
                         </select>
                     </div>
@@ -38,6 +39,7 @@ if (!isset($_SESSION['username'])) {
             <?php include'out/tugas.php' ?>
             <?php include'out/tugasin.php' ?>
             <?php include'out/undang.php' ?>
+            <?php include'out/keterangan.php' ?>
             </div>
             
         </div>
@@ -113,6 +115,9 @@ function navigateToPage() {
             break;
         case 'tugasin':
             $('#tugasinModal').modal('show');
+            break;
+        case 'keterangan':
+            $('#keteranganModal').modal('show');
             break;
         case 'pemberitahuan':
             $('#pemberitahuanModal').modal('show');
