@@ -37,6 +37,7 @@ if (!isset($_SESSION['username'])) {
             <?php include'out/tahu.php' ?>
             <?php include'out/tugas.php' ?>
             <?php include'out/tugasin.php' ?>
+            <?php include'out/undang.php' ?>
             </div>
             
         </div>
@@ -105,7 +106,7 @@ function navigateToPage() {
             $('#skModal').modal('show');
             break;
         case 'undangan':
-            $('#undanganModal').modal('show');
+            $('#undangModal').modal('show');
             break;
         case 'tugas':
             $('#tugasModal').modal('show');
