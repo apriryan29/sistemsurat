@@ -19,7 +19,7 @@
         <tr>
             <td>Perihal</td>
             <td>:</td>
-            <td colspan="2">Pemberitahuan Zakat Fitrah</td>
+            <td colspan="2">Undangan Zakat Fitrah</td>
         </tr>
         <tr>
             <td colspan="4" style="padding-top: 2rem; padding-left: 5rem;">Kepada Yth.</td>

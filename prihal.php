@@ -192,6 +192,31 @@ include 'include/header.php';
       </div></div>
     </div>
 
+
+    <!-- Modal Undangan -->
+    <div class="modal fade" id="undangModal" tabindex="-1">
+      <div class="modal-dialog"><div class="modal-content">
+        <form method="POST">
+          <div class="modal-header"><h5>Surat Undangan</h5>
+            <button type="button" class="close" data-dismiss="modal" onclick="redirectToPage()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="id_perihal">
+            <input type="hidden" name="kategori" value="undangan">
+            <div class="form-group"><label>Judul</label><input type="text" class="form-control" name="judul" required></div>
+            <div class="form-group"><label>Tentang</label><input type="text" class="form-control" name="tentang" required></div>
+            <div class="form-group"><label>Pembuka</label><textarea class="form-control" name="pembuka" required></textarea></div>
+            <div class="form-group"><label>Isi</label><textarea class="form-control" name="isi"></textarea></div>
+            <div class="form-group"><label>Penutup</label><textarea class="form-control" name="penutup" required></textarea></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="redirectToPage()">Tutup</button>
+            <button type="submit" class="btn btn-primary" name="perihal">Simpan</button>
+          </div>
+        </form>
+      </div></div>
+    </div>
+
     <!-- ================= TABLE ================= -->
     <h2 class="h5 page-title text-muted mt-4">Daftar Perihal</h2>
     <div class="card shadow">

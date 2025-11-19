@@ -74,7 +74,7 @@ $result_kode = $config->query($sql_kode);
                         <label for="tempat">Tempat Acara</label>
                         <input type="text" class="form-control" name="tempat" placeholder="Masukkan Tempat Pelaksanaan Acara" required>
                     </div>
-                    <input type="hidden" name="kategori" value="pemberitahuan">
+                    <input type="hidden" name="kategori" value="undangan">
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
