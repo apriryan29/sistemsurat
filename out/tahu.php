@@ -18,12 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kategori = $_POST['kategori'];
 
     // Siapkan query untuk menambahkan data ke tb_keluar
-    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, id_perihal, tanggal, tujuan, lampiran, isi, kategori) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssississ", $kode_surat, $nomor_surat, $tentang, $tanggal, $tujuan, $lampiran, $isi, $kategori);
+    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, tentang, tanggal, tujuan, lampiran, isi, kategori) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssiss", $kode_surat, $nomor_surat, $tentang, $tanggal, $tujuan, $lampiran, $isi, $kategori);
 
     // Eksekusi query dan periksa apakah berhasil
     if ($stmt->execute()) {
-        echo "<script>alert('Data berhasil disimpan!');</script>";
+        header("Location: layoutsurat/cetak_pemberitahuan.php?nomor_surat=$nomor_surat");
+        exit();
     } else {
         echo "<script>alert('Gagal menyimpan data: " . $stmt->error . "');</script>";
     }
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="">
+                <form method="POST" action="layoutsurat/cetak_pemberitahuan.php">
                     <div class="form-group">
                         <label for="kode-surat">Pilih Kode Surat</label>
                         <select class="form-control" name="kode_surat" id="kode-surat" required onchange="updateNomorSurat()">
