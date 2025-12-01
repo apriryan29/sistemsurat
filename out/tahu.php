@@ -43,15 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </script>";
         } 
         else {
-            echo "<script>
-                alert('Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.');
-                window.location.href='suratkeluar.php';
-            </script>";
+            $msg = "Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.";
         }
 
     } else {
-        error_log('Database error: ' . $stmt->error, 3, 'error_log.txt');
-        echo "<script>alert('Gagal menyimpan data.']);</script>";
+        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
     }
 
     $stmt->close();
@@ -71,6 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="modal-body">
                 <form method="POST" action="">
                     <div class="form-group">
+                        <label for="nomor-surat">Nomor Surat</label>
+                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat" readonly>
+                    </div>
+                    <div class="form-group">
                         <label for="kode-surat">Pilih Kode Surat</label>
                         <select class="form-control" name="kode_surat" id="kode-surat" required onchange="updateNomorSurat()">
                             <option value="" disabled selected>Pilih Kode Surat</option>
@@ -84,10 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <option value="">Tidak ada kode surat</option>
                             <?php endif; ?>
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="nomor-surat">Nomor Surat</label>
-                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat" readonly>
                     </div>
                     <div class="form-group">
                         <label for="tentang">Tentang Perihal SK</label>
@@ -153,7 +149,7 @@ function updateNomorSurat() {
     const currentYear = new Date().getFullYear();
 
     // Buat format nomor surat
-    const nomorSurat = "011/IV.4/" + selectedKode + "/" + currentYear;
+    const nomorSurat = "001/IV.4/" + selectedKode + "/" + currentYear;
 
     // Update input nomor_surat
     nomorSuratInput.value = nomorSurat;

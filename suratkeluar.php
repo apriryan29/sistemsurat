@@ -8,6 +8,9 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+//inisialisasi variabel
+$msg = "";
+$error_msg = "";
 
 // PROSES HAPUS SURAT
 if (isset($_GET['delete_id'])) {
@@ -18,14 +21,9 @@ if (isset($_GET['delete_id'])) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "<script>
-                alert('Data berhasil dihapus');
-                window.location.href='suratkeluar.php';
-              </script>";
+        $msg = "Data berhasil dihapus";
     } else {
-        echo "<script>
-                alert('Gagal menghapus data');
-              </script>";
+        $error_msg = "Gagal Menghapus data";
     }
 
     $stmt->close();
@@ -82,6 +80,13 @@ $query = mysqli_query($config, "
             
         </div>
     </div>
+
+        <?php if (!empty($msg)): ?>
+            <div class="alert alert-success" id="success-msg"><?= htmlspecialchars($msg) ?></div>
+        <?php endif; ?>
+        <?php if (!empty($errorMsg)): ?>
+            <div class="alert alert-danger" id="error-msg"><?= htmlspecialchars($errorMsg) ?></div>
+        <?php endif; ?>
 
     <!-- Tabel data Surat Keluar -->
     <div class="row justify-content-center">
@@ -251,4 +256,13 @@ function filterTable() {
         trs[i].style.display = match ? '' : 'none'; // Tampilkan atau sembunyikan baris
     }
 }
+
+setTimeout(function() {
+    const successMsg = document.getElementById('success-msg');
+    const errorMsg = document.getElementById('error-msg');
+    
+    if (successMsg) successMsg.style.display = 'none';
+    if (errorMsg) errorMsg.style.display = 'none';
+}, 5000); // Pesan hilang setelah 5 detik
+
 </script>
