@@ -188,6 +188,12 @@ $level = $_SESSION['level']; // Pastikan variabel ini sudah diset saat login
             <span>Menu Utama</span>
           </p>
           <ul class="navbar-nav flex-fill w-100 mb-2">
+            <li class="nav-item w-100">
+              <a class="nav-link" href="verif.php">
+                <i class="fe fe-check-square fe-16"></i>
+                <span class="ml-3 item-text">Verifikasi Surat</span>
+              </a>
+            </li>
             <li class="nav-item dropdown">
               <a href="#ui-elements" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
                 <i class="fe fe-folder fe-16"></i>

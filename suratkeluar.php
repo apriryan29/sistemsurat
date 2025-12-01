@@ -103,6 +103,8 @@ $query = mysqli_query($config, "
                                         <th>Perihal</th>
                                         <th>Kategori</th>
                                         <th>Tanggal</th>
+                                        <th>Status</th>
+                                        <th>Cetak</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -110,19 +112,78 @@ $query = mysqli_query($config, "
                                     <?php
                                         $no = 1;
                                         while ($row = mysqli_fetch_assoc($query)) {
+
+                                            // AMANKAN DATA NULL
+                                            $ttd = $row['ttd'] ?? '';
+                                            $status_verifikasi = $row['status_verifikasi'] ?? 'menunggu';
+
+                                            // AUTO SETUJUI JIKA TANPA TTD
+                                            if ($ttd === 'Tanpa Tanda Tangan' && $status_verifikasi === 'menunggu') {
+                                                mysqli_query($config, "
+                                                    UPDATE tb_keluar 
+                                                    SET status_verifikasi = 'disetujui' 
+                                                    WHERE id_keluar = '{$row['id_keluar']}'
+                                                ");
+                                                $status_verifikasi = 'disetujui';
+                                            }
+
+                                            // BADGE STATUS
+                                            if ($status_verifikasi === 'disetujui') {
+                                                $status = "<span class='badge badge-success'>DISETUJUI</span>";
+                                            } elseif ($status_verifikasi === 'ditolak') {
+                                                $status = "<span class='badge badge-danger'>DITOLAK</span>";
+                                            } else {
+                                                $status = "<span class='badge badge-warning'>MENUNGGU</span>";
+                                            }
+
+                                            // FILE CETAK SESUAI KATEGORI
+                                            switch ($row['kategori']) {
+                                                case 'pemberitahuan': $file = 'layoutsurat/cetak_pemberitahuan.php'; break;
+                                                case 'undangan':      $file = 'layoutsurat/cetak_undangan.php'; break;
+                                                case 'tugas':         $file = 'layoutsurat/cetak_tugas.php'; break;
+                                                case 'tugasin':       $file = 'layoutsurat/cetak_tugasin.php'; break;
+                                                case 'sppd':          $file = 'layoutsurat/cetak_sppd.php'; break;
+                                                case 'sk':            $file = 'layoutsurat/cetak_sk.php'; break;
+                                                case 'keterangan':    $file = 'layoutsurat/cetak_keterangan.php'; break;
+                                                default:              $file = null;
+                                            }
+
+                                            // BOLEH CETAK JIKA DISETUJUI & FILE ADA
+                                            $bolehCetak = ($status_verifikasi === 'disetujui' && $file !== null);
+
+                                            // TOMBOL CETAK
+                                            if ($bolehCetak) {
+                                                $btnCetak = "<a href='{$file}?id={$row['id_keluar']}' class='btn btn-sm btn-success'>
+                                                                <i class='fe fe-printer'></i>
+                                                            </a>";
+                                            } else {
+                                                $btnCetak = "<button class='btn btn-sm btn-secondary' disabled>
+                                                                <i class='fe fe-lock'></i>
+                                                            </button>";
+                                            }
+
+                                            // OUTPUT BARIS
                                             echo "<tr>
-                                                <td>{$no}</td>
-                                                <td>" . htmlspecialchars($row['nomor_surat']) . "</td>
-                                                <td>" . htmlspecialchars($row['tujuan']) . "</td>
-                                                <td>" . htmlspecialchars($row['tentang']) . "</td>
-                                                <td>" . htmlspecialchars($row['tanggal']) . "</td>
-                                                <td>
-                                                    <a class='text-info' href='?edit_id=" . $row['id_keluar'] . "'><i class='fe fe-edit fe-16'></i></a>
-                                                    <a class='text-danger ml-2' href='?delete_id=" . $row['id_keluar'] . "' onclick='return confirm(\"Apakah kamu yakin ingin menghapus Dokumen ini?\");'><i class='fe fe-trash-2 fe-16'></i></a>
-                                                </td>
-                                            </tr>";
+                                                    <td>{$no}</td>
+                                                    <td>".htmlspecialchars($row['nomor_surat'])."</td>
+                                                    <td>".htmlspecialchars($row['tujuan'])."</td>
+                                                    <td>".htmlspecialchars($row['tentang'])."</td>
+                                                    <td>".htmlspecialchars($row['kategori'])."</td>
+                                                    <td>".htmlspecialchars($row['tanggal'])."</td>
+                                                    <td class='text-center'>{$status}</td>
+                                                    <td class='text-center'>{$btnCetak}</td>
+                                                    <td>
+                                                        <a class='text-info' href='?edit_id={$row['id_keluar']}'><i class='fe fe-edit fe-16'></i></a>
+                                                        <a class='text-danger ml-2' href='?delete_id={$row['id_keluar']}' 
+                                                        onclick='return confirm(\"Apakah kamu yakin ingin menghapus Dokumen ini?\");'>
+                                                        <i class='fe fe-trash-2 fe-16'></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>";
+
                                             $no++;
                                         }
+
                                         ?>
                                 </tbody>
                             </table>

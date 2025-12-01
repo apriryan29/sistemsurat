@@ -16,9 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $lampiran = $_POST['lampiran'];
     $isi = $_POST['isi'];
     $kategori = $_POST['kategori'];
+    $ttd = $_POST['ttd'];
+
+    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
 
     // Siapkan query untuk menambahkan data ke tb_keluar
-    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, id_perihal, tanggal, tujuan, lampiran, isi, kategori) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, id_perihal, tanggal, tujuan, lampiran, isi, kategori, ttd, status_verifikasi) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     
     // Cek error saat persiapan query
     if ($stmt === false) {
@@ -27,15 +31,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Binding parameter
-    $stmt->bind_param("ssisssss", $kode_surat, $nomor_surat, $tentang, $tanggal, $tujuan, $lampiran, $isi, $kategori);
+    $stmt->bind_param("ssisssssss", $kode_surat, $nomor_surat, $tentang, $tanggal, $tujuan, $lampiran, $isi, $kategori, $ttd, $status_verifikasi);
 
     // Eksekusi query dan periksa apakah berhasil
     if ($stmt->execute()) {
-        echo '<script>alert("Data berhasil disimpan!"); window.location.href="layoutsurat/cetak_pemberitahuan.php";</script>';
+
+        if ($ttd === 'Tanpa Tanda Tangan') {
+            echo "<script>
+                alert('Surat disetujui dan siap dicetak!');
+                window.location.href='layoutsurat/cetak_pemberitahuan.php';
+            </script>";
+        } 
+        else {
+            echo "<script>
+                alert('Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.');
+                window.location.href='suratkeluar.php';
+            </script>";
+        }
+
     } else {
-        error_log("Database error: " . $stmt->error, 3, "error_log.txt");
-        echo "<script>alert('Gagal menyimpan data. Silakan coba lagi.');</script>";
+        error_log('Database error: ' . $stmt->error, 3, 'error_log.txt');
+        echo "<script>alert('Gagal menyimpan data.']);</script>";
     }
+
     $stmt->close();
 }
 ?>

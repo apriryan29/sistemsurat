@@ -2,7 +2,13 @@
 include 'kopsurat.php';
 include '../include/config.php';
 
-// Ambil surat terakhir berdasarkan ID terbesar (surat terakhir yang dimasukkan)
+
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    die("ID surat tidak ditemukan.");
+}
+
+$id = intval($_GET['id']); // proteksi dari SQL injection
+
 $query = "
 SELECT 
     k.nomor_surat,
@@ -10,16 +16,18 @@ SELECT
     k.lampiran,
     k.tujuan,
     k.tanggal,
+    k.ttd,
     p.tentang,
     p.pembuka,
     p.isi AS isi_perihal,
-    p.penutup
+    p.penutup,
+    k.status_verifikasi
 FROM tb_keluar k
 JOIN tb_perihal p ON k.id_perihal = p.id_perihal
-WHERE k.kategori = 'pemberitahuan'
-ORDER BY k.id_keluar DESC
+WHERE k.id_keluar = $id
 LIMIT 1
 ";
+
 
 $result = $config->query($query);
 
