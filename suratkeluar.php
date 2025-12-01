@@ -1,10 +1,48 @@
 <?php
 session_start();
 
+include 'include/config.php';
+
 if (!isset($_SESSION['username'])) {
     header("Location: index.php"); 
     exit();
 }
+
+
+// PROSES HAPUS SURAT
+if (isset($_GET['delete_id'])) {
+    $id = intval($_GET['delete_id']);
+
+    // Prepared Statement untuk keamanan
+    $stmt = $config->prepare("DELETE FROM tb_keluar WHERE id_keluar = ?");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        echo "<script>
+                alert('Data berhasil dihapus');
+                window.location.href='suratkeluar.php';
+              </script>";
+    } else {
+        echo "<script>
+                alert('Gagal menghapus data');
+              </script>";
+    }
+
+    $stmt->close();
+}
+
+$query = mysqli_query($config, "
+    SELECT 
+        k.*, 
+        p.tentang AS tentang
+    FROM tb_keluar k
+    LEFT JOIN tb_perihal p
+      ON k.id_perihal = p.id_perihal
+    ORDER BY k.id_keluar DESC
+");
+
+
+
 ?>
 
 <?php include 'include/header.php'; ?>
@@ -71,14 +109,12 @@ if (!isset($_SESSION['username'])) {
                                 <tbody>
                                     <?php
                                         $no = 1;
-                                        $query = mysqli_query($config, "SELECT * FROM tb_keluar ORDER BY id_keluar DESC");
                                         while ($row = mysqli_fetch_assoc($query)) {
                                             echo "<tr>
                                                 <td>{$no}</td>
                                                 <td>" . htmlspecialchars($row['nomor_surat']) . "</td>
                                                 <td>" . htmlspecialchars($row['tujuan']) . "</td>
-                                                <td>" . htmlspecialchars($row['id_perihal']) . "</td>
-                                                <td>" . htmlspecialchars($row['kategori']) . "</td>
+                                                <td>" . htmlspecialchars($row['tentang']) . "</td>
                                                 <td>" . htmlspecialchars($row['tanggal']) . "</td>
                                                 <td>
                                                     <a class='text-info' href='?edit_id=" . $row['id_keluar'] . "'><i class='fe fe-edit fe-16'></i></a>
