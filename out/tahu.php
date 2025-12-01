@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari form
     $kode_surat = $_POST['kode_surat'];
     $nomor_surat = $_POST['nomor_surat'];
-    $tentang = $_POST['tentang'];
+    $tentang = $_POST['tentang'];  // ID perihal
     $tanggal = $_POST['tanggal'];
     $tujuan = $_POST['tujuan'];
     $lampiran = $_POST['lampiran'];
@@ -18,15 +18,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kategori = $_POST['kategori'];
 
     // Siapkan query untuk menambahkan data ke tb_keluar
-    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, tentang, tanggal, tujuan, lampiran, isi, kategori) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssiss", $kode_surat, $nomor_surat, $tentang, $tanggal, $tujuan, $lampiran, $isi, $kategori);
+    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, id_perihal, tanggal, tujuan, lampiran, isi, kategori) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    
+    // Cek error saat persiapan query
+    if ($stmt === false) {
+        error_log('Prepare error: ' . $config->error, 3, "error_log.txt");
+        die('Query preparation failed. Please try again later.');
+    }
+
+    // Binding parameter
+    $stmt->bind_param("ssisssss", $kode_surat, $nomor_surat, $tentang, $tanggal, $tujuan, $lampiran, $isi, $kategori);
 
     // Eksekusi query dan periksa apakah berhasil
     if ($stmt->execute()) {
-        header("Location: layoutsurat/cetak_pemberitahuan.php?nomor_surat=$nomor_surat");
-        exit();
+        echo '<script>alert("Data berhasil disimpan!"); window.location.href="layoutsurat/cetak_pemberitahuan.php";</script>';
     } else {
-        echo "<script>alert('Gagal menyimpan data: " . $stmt->error . "');</script>";
+        error_log("Database error: " . $stmt->error, 3, "error_log.txt");
+        echo "<script>alert('Gagal menyimpan data. Silakan coba lagi.');</script>";
     }
     $stmt->close();
 }
@@ -43,15 +51,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="layoutsurat/cetak_pemberitahuan.php">
+                <form method="POST" action="">
                     <div class="form-group">
                         <label for="kode-surat">Pilih Kode Surat</label>
                         <select class="form-control" name="kode_surat" id="kode-surat" required onchange="updateNomorSurat()">
                             <option value="" disabled selected>Pilih Kode Surat</option>
                             <?php if ($result_kode->num_rows > 0): ?>
                                 <?php while ($row = $result_kode->fetch_assoc()): ?>
-                                    <option value="<?php echo $row['kode_surat']; ?>">
-                                        <?php echo $row['pokok_kode']; ?>
+                                    <option value="<?php echo htmlspecialchars($row['kode_surat']); ?>">
+                                        <?php echo htmlspecialchars($row['pokok_kode']); ?>
                                     </option>
                                 <?php endwhile; ?>
                             <?php else: ?>
@@ -73,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $result_perihal = $config->query($sql_perihal);
                             if ($result_perihal->num_rows > 0) {
                                 while ($row = $result_perihal->fetch_assoc()) {
-                                    echo '<option value="' . $row['id_perihal'] . '">' . $row['tentang'] . '</option>';
+                                    echo '<option value="' . htmlspecialchars($row['id_perihal']) . '">' 
+                                    . htmlspecialchars($row['tentang']) . '</option>';
                                 }
                             }
                             ?>
@@ -94,6 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="form-group">
                         <label for="isi">Isi Surat</label>
                         <textarea class="form-control" name="isi" placeholder="Masukkan Isi Surat" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="ttd">Pilih Tanda Tangan</label>
+                        <select name="ttd" id="ttd" class="form-control">
+                            <option value="Tanpa Tanda Tangan">Tanpa Tanda Tangan</option>
+                            <option value="Tanda Tangan Saja">Tanda Tangan Saja</option>
+                            <option value="Tanda Tangan dan Cap">Tanda Tangan dan Cap</option>
+                        </select>
                     </div>
                     <input type="hidden" name="kategori" value="pemberitahuan">
                     <div class="modal-footer">

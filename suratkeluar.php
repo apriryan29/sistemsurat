@@ -77,7 +77,7 @@ if (!isset($_SESSION['username'])) {
                                                 <td>{$no}</td>
                                                 <td>" . htmlspecialchars($row['nomor_surat']) . "</td>
                                                 <td>" . htmlspecialchars($row['tujuan']) . "</td>
-                                                <td>" . htmlspecialchars($row['tentang']) . "</td>
+                                                <td>" . htmlspecialchars($row['id_perihal']) . "</td>
                                                 <td>" . htmlspecialchars($row['kategori']) . "</td>
                                                 <td>" . htmlspecialchars($row['tanggal']) . "</td>
                                                 <td>

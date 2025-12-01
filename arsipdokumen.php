@@ -67,7 +67,7 @@ if (isset($_POST['submit'])) {
                     $targetFile = $targetDir . basename($upload_file_name);
                     if (move_uploaded_file($upload_file_tmp, $targetFile)) {
                         // Update termasuk file
-                        $stmt = $config->prepare("UPDATE tb_dokumen SET instansi=?, tanggal=?, kategori=?, loker=?, nama_file=? WHERE id_dokumen=?");
+                        $stmt = $config->prepare("UPDATE tb_dokumen SET instansi=?, tanggal=?, kategori=?, id_loker=?, nama_file=? WHERE id_dokumen=?");
                         $stmt->bind_param("sssssi", $instansi, $tanggal, $kategori, $loker, $targetFile, $id_edit);
                     } else {
                         $error_msg = "Unggah file gagal.";
@@ -110,7 +110,7 @@ if (isset($_POST['submit'])) {
                     $targetDir = "uploads/";
                     $targetFile = $targetDir . basename($upload_file_name);
                     if (move_uploaded_file($upload_file_tmp, $targetFile)) {
-                        $stmt = $config->prepare("INSERT INTO tb_dokumen (instansi, tanggal, kategori, loker, nama_file) VALUES (?, ?, ?, ?, ?)");
+                        $stmt = $config->prepare("INSERT INTO tb_dokumen (instansi, tanggal, kategori, id_loker, nama_file) VALUES (?, ?, ?, ?, ?)");
                         if ($stmt) {
                             $stmt->bind_param("sssss", $instansi, $tanggal, $kategori, $loker, $targetFile);
                             if ($stmt->execute()) {
