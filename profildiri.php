@@ -9,33 +9,42 @@ if (!isset($_SESSION['username'])) {
 require_once 'include/functions.php';
 require_once 'include/config.php';
 
-// Mengambil data pengguna berdasarkan id_user
-$id_user = "1"; // Ganti dengan metode yang sesuai untuk mendapatkan ID pengguna
-$sql = "SELECT * FROM tb_users WHERE id_user = '$id_user'";
+$id_kepala = "1";
+$sql = "SELECT * FROM tb_kepala WHERE id_kepala = '$id_kepala'";
 $result = $config->query($sql);
 $data = $result->fetch_assoc();
 
 // Proses form saat disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $nama_pengguna = $_POST['nama_pengguna'];
-    $nbm = $_POST['nbm'];
-    $level = $_POST['level'];
-    $password = $_POST['password'];
+    $nama_pengguna = $_POST['nama_kepala'];
+    $nbm_kepala = $_POST['nbm_kepala'];
+    $ttd = $_FILES['ttd'];
+    $ttd_cap = $_FILES['ttd_cap'];
 
-    // Update data ke database
-    $sql_update = "UPDATE tb_users SET
-        username = '$username',
-        nama_pengguna = '$nama_pengguna',
-        nbm = '$nbm',
-        level = '$level'";
+    // Menangani unggahan file
+    $uploadDir = 'uploads/'; // Folder untuk menyimpan file
+    $ttdPath = '';
+    $ttdCapPath = '';
 
-    // Update password hanya jika diisi
-    if (!empty($password)) {
-        $sql_update .= ", password = '" . password_hash($password, PASSWORD_DEFAULT) . "'"; // Hash password
+    // Mengupdate tanda tangan
+    if ($ttd['error'] == 0) {
+        $ttdPath = $uploadDir . basename($ttd["name"]);
+        move_uploaded_file($ttd["tmp_name"], $ttdPath);
     }
 
-    $sql_update .= " WHERE id_user = '$id_user'";
+    // Mengupdate tanda tangan dan cap sekolah
+    if ($ttd_cap['error'] == 0) {
+        $ttdCapPath = $uploadDir . basename($ttd_cap["name"]);
+        move_uploaded_file($ttd_cap["tmp_name"], $ttdCapPath);
+    }
+
+    // Update data ke database
+    $sql_update = "UPDATE tb_kepala SET
+        nama_kepala = '$nama_pengguna',
+        nbm_kepala = '$nbm_kepala',
+        ttd = '$ttdPath',
+        ttd_cap = '$ttdCapPath'
+        WHERE id_kepala = '$id_kepala'";
 
     if ($config->query($sql_update) === TRUE) {
         echo "<script>alert('Pembaruan data berhasil tersimpan');</script>";
@@ -53,34 +62,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12">
-                <h2 class="page-title">Profil Pengguna</h2>
+                <h2 class="page-title">Profil Kepala Sekolah</h2>
                 <div class="card shadow mb-4">
                     <div class="card-header">
-                        <strong class="card-title">Data Pengguna</strong>
+                        <strong class="card-title">Data Kepala Sekolah</strong>
                     </div>
                     <div class="card-body">
-                        <form action="profil.php" method="post" id="userForm">
+                        <form action="profildiri.php" method="post" id="userForm" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group mb-3">
-                                        <label for="username">Username</label>
-                                        <input type="text" name="username" id="username" class="form-control" value="<?php echo $data['username']; ?>" readonly>
+                                        <label for="nama_kepala">Nama Kepala Sekolah</label>
+                                        <input type="text" name="nama_kepala" id="nama_kepala" class="form-control" value="<?php echo $data['nama_kepala']; ?>" readonly>
                                     </div>
                                     <div class="form-group mb-3">
-                                        <label for="nama_pengguna">Nama Pengguna</label>
-                                        <input type="text" name="nama_pengguna" id="nama_pengguna" class="form-control" value="<?php echo $data['nama_pengguna']; ?>" readonly>
+                                        <label for="nbm_kepala">NBM</label>
+                                        <input type="text" name="nbm_kepala" id="nbm_kepala" class="form-control" value="<?php echo $data['nbm_kepala']; ?>" readonly>
                                     </div>
                                     <div class="form-group mb-3">
-                                        <label for="nbm">NBM</label>
-                                        <input type="text" name="nbm" id="nbm" class="form-control" value="<?php echo $data['nbm']; ?>" readonly>
+                                        <label for="ttd">Unggah Tanda Tangan</label>
+                                        <input type="file" name="ttd" id="ttd" class="form-control-file">
                                     </div>
                                     <div class="form-group mb-3">
-                                        <label for="level">Level</label>
-                                        <input type="text" name="level" id="level" class="form-control" value="<?php echo $data['level']; ?>" readonly>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="password">Kata Sandi Baru (kosongkan jika tidak diubah)</label>
-                                        <input type="password" name="password" id="password" class="form-control" placeholder="Kata Sandi Baru">
+                                        <label for="ttd_cap">Unggah Tanda Tangan dan Cap Sekolah</label>
+                                        <input type="file" name="ttd_cap" id="ttd_cap" class="form-control-file">
                                     </div>
                                     <div style="display: flex; justify-content: flex-end;">
                                         <button type="button" class="btn btn-primary" id="editButton">Perbarui</button>
@@ -104,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <script>
 // JavaScript untuk mengaktifkan edit mode
 document.getElementById('editButton').addEventListener('click', function() {
-    const inputs = document.querySelectorAll('#userForm input[type="text"], #userForm input[type="password"]');
+    const inputs = document.querySelectorAll('#userForm input[type="text"]');
     inputs.forEach(input => {
         input.removeAttribute('readonly');
     });
@@ -115,7 +120,7 @@ document.getElementById('editButton').addEventListener('click', function() {
 
 // JavaScript untuk membatalkan pengeditan
 document.getElementById('cancelButton').addEventListener('click', function() {
-    const inputs = document.querySelectorAll('#userForm input[type="text"], #userForm input[type="password"]');
+    const inputs = document.querySelectorAll('#userForm input[type="text"]');
     inputs.forEach(input => {
         input.setAttribute('readonly', 'readonly'); // Kembalikan menjadi readonly
     });
