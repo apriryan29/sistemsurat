@@ -41,6 +41,7 @@ $query = mysqli_query($config, "
 
 
 
+
 ?>
 
 <?php include 'include/header.php'; ?>
@@ -87,7 +88,11 @@ $query = mysqli_query($config, "
         <?php if (!empty($errorMsg)): ?>
             <div class="alert alert-danger" id="error-msg"><?= htmlspecialchars($errorMsg) ?></div>
         <?php endif; ?>
-
+        <?php
+            if (isset($_GET['success'])) {
+                echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.</div>";
+            }
+        ?>
     <!-- Tabel data Surat Keluar -->
     <div class="row justify-content-center">
         <div class="col-12">
@@ -263,6 +268,7 @@ setTimeout(function() {
     
     if (successMsg) successMsg.style.display = 'none';
     if (errorMsg) errorMsg.style.display = 'none';
-}, 5000); // Pesan hilang setelah 5 detik
+
+}, 3000);
 
 </script>

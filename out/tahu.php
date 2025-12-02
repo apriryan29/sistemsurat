@@ -43,7 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </script>";
         } 
         else {
-            $msg = "Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.";
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success=1';
+            </script>";
+            exit;
         }
 
     } else {

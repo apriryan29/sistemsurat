@@ -7,9 +7,6 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-/* ========================
-   PROSES SETUJU / TOLAK
-======================== */
 if (isset($_GET['id']) && isset($_GET['aksi'])) {
     $id   = intval($_GET['id']);
     $aksi = $_GET['aksi'];
@@ -27,9 +24,7 @@ if (isset($_GET['id']) && isset($_GET['aksi'])) {
     exit();
 }
 
-/* ========================
-   AMBIL DATA
-======================== */
+
 $query = mysqli_query($config, "
     SELECT k.*, p.tentang
     FROM tb_keluar k
@@ -71,21 +66,15 @@ $query = mysqli_query($config, "
 $no = 1;
 while ($row = mysqli_fetch_assoc($query)) {
 
-    // Biar aman kalau kolom belum ada
     $ttd    = $row['ttd'] ?? '';
     $status = $row['status_verifikasi'] ?? 'menunggu';
 
-    /* ========================
-       AUTO SETUJU JIKA TANPA TTD
-    ======================== */
+
     if ($ttd == 'Tanpa Tanda Tangan' && $status == 'menunggu') {
         mysqli_query($config, "UPDATE tb_keluar SET status_verifikasi='disetujui' WHERE id_keluar='{$row['id_keluar']}'");
         $status = 'disetujui';
     }
 
-    /* ========================
-       FILE CETAK / PREVIEW
-    ======================== */
     switch ($row['kategori']) {
         case 'pemberitahuan': $file='layoutsurat/cetak_pemberitahuan.php'; break;
         case 'undangan':      $file='layoutsurat/cetak_undangan.php'; break;
@@ -97,9 +86,6 @@ while ($row = mysqli_fetch_assoc($query)) {
         default:              $file='#';
     }
 
-    /* ========================
-       BADGE STATUS
-    ======================== */
     if ($status == 'disetujui') {
         $badge = "<span class='badge badge-success'>DISETUJUI</span>";
     } elseif ($status == 'ditolak') {
@@ -108,9 +94,6 @@ while ($row = mysqli_fetch_assoc($query)) {
         $badge = "<span class='badge badge-warning'>MENUNGGU</span>";
     }
 
-    /* ========================
-       AKSI SETUJU / TOLAK
-    ======================== */
     if ($status == 'menunggu') {
         $aksi = "
             <a href='?id={$row['id_keluar']}&aksi=setujui' class='btn btn-sm btn-success'
@@ -123,9 +106,6 @@ while ($row = mysqli_fetch_assoc($query)) {
         $aksi = "<i class='fe fe-lock'></i>";
     }
 
-    /* ========================
-       PREVIEW DOKUMEN
-    ======================== */
     if ($status == 'disetujui') {
         $preview = "<a href='{$file}?id={$row['id_keluar']}'>
                        <i class='fe fe-eye'></i>
