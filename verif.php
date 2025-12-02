@@ -107,11 +107,11 @@ while ($row = mysqli_fetch_assoc($query)) {
     }
 
     if ($status == 'disetujui') {
+        $preview = "<span <i class='fe fe-lock'></i></span>";
+    } else {
         $preview = "<a href='{$file}?id={$row['id_keluar']}'>
                        <i class='fe fe-eye'></i>
                     </a>";
-    } else {
-        $preview = "<span <i class='fe fe-lock'></i></span>";
     }
 
     echo "

@@ -10,6 +10,7 @@ if (!isset($_SESSION['username'])) {
 require_once 'include/functions.php';
 require_once 'include/config.php';
 
+
 ?>
 
 <!-- Memanggil header -->
@@ -64,16 +65,35 @@ require_once 'include/config.php';
                                     <tbody>
                                         <?php
                                         $no = 1;
-                                        $query = mysqli_query($config, "SELECT * FROM tb_keluar ORDER BY id_keluar DESC");
+                                        $query = mysqli_query($config, "
+                                            SELECT k.*, p.tentang
+                                            FROM tb_keluar k
+                                            LEFT JOIN tb_perihal p ON k.id_perihal = p.id_perihal
+                                            ORDER BY k.id_keluar DESC
+                                        ");
+
+                                        
                                         while ($row = mysqli_fetch_assoc($query)) {
+
+                                            switch ($row['kategori']) {
+                                                case 'pemberitahuan': $file='layoutsurat/cetak_pemberitahuan.php'; break;
+                                                case 'undangan':      $file='layoutsurat/cetak_undangan.php'; break;
+                                                case 'tugas':         $file='layoutsurat/cetak_tugas.php'; break;
+                                                case 'tugasin':       $file='layoutsurat/cetak_tugasin.php'; break;
+                                                case 'sppd':          $file='layoutsurat/cetak_sppd.php'; break;
+                                                case 'sk':            $file='layoutsurat/cetak_sk.php'; break;
+                                                case 'keterangan':    $file='layoutsurat/cetak_keterangan.php'; break;
+                                                default:              $file='#';
+                                            }
+
                                             echo "<tr>
                                                 <td>{$no}</td>
-                                                <td>" . htmlspecialchars($row['nomor']) . "</td>
-                                                <td>" . htmlspecialchars($row['instansi']) . "</td>
-                                                <td>" . htmlspecialchars($row['hal']) . "</td>
+                                                <td>" . htmlspecialchars($row['nomor_surat']) . "</td>
+                                                <td>" . htmlspecialchars($row['tujuan']) . "</td>
+                                                <td>" . htmlspecialchars($row['tentang']) . "</td>
                                                 <td>" . htmlspecialchars($row['kategori']) . "</td>
                                                 <td>" . htmlspecialchars($row['tanggal']) . "</td>
-                                                <td><a href='" . htmlspecialchars($row['nama_file']) . "' target='_blank'>Lihat</a></td>
+                                                <td><a href='{$file}?id={$row['id_keluar']}'>Lihat</a></td>
                                             </tr>";
                                             $no++;
                                         }

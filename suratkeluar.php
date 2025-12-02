@@ -77,7 +77,6 @@ $query = mysqli_query($config, "
             <?php include'out/tugasin.php' ?>
             <?php include'out/undang.php' ?>
             <?php include'out/keterangan.php' ?>
-            </div>
             
         </div>
     </div>
