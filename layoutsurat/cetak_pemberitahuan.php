@@ -12,6 +12,7 @@ $id = intval($_GET['id']); // proteksi dari SQL injection
 $query = "
 SELECT 
     k.nomor_surat,
+    k.kode_surat,
     k.isi,
     k.lampiran,
     k.tujuan,
@@ -65,7 +66,11 @@ $tanggalFormat = "$tgl $bulan $tahun";
 <tr>
     <td style="width:7%;">Nomor</td>
     <td>:</td>
-    <td><?= htmlspecialchars($data['nomor_surat']); ?></td>
+    <td>
+        <?= htmlspecialchars($data['nomor_surat']); ?>
+        /III.4.AU /<?= htmlspecialchars($data['kode_surat']); ?>
+        /<?= date('Y', strtotime($data['tanggal'])) ?>
+    </td>
     <td style="text-align:end;">Sampang, <?= $tanggalFormat; ?></td>
 </tr>
 <tr>

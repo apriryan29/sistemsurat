@@ -174,7 +174,11 @@ $query = mysqli_query($config, "
                                             // OUTPUT BARIS
                                             echo "<tr>
                                                     <td>{$no}</td>
-                                                    <td>".htmlspecialchars($row['nomor_surat'])."</td>
+                                                    <td>".htmlspecialchars($row['nomor_surat'])
+                                                        ."/III.4.AU/"
+                                                        .htmlspecialchars($row['kode_surat'])
+                                                        ."/".date('Y', strtotime($row['tanggal']))."
+                                                    </td>
                                                     <td>".htmlspecialchars($row['tujuan'])."</td>
                                                     <td>".htmlspecialchars($row['tentang'])."</td>
                                                     <td>".htmlspecialchars($row['kategori'])."</td>

@@ -114,10 +114,12 @@ while ($row = mysqli_fetch_assoc($query)) {
                     </a>";
     }
 
+    $tahun = date('Y', strtotime($row['tanggal']));
+
     echo "
     <tr>
         <td>{$no}</td>
-        <td>{$row['nomor_surat']}</td>
+        <td>{$row['nomor_surat']}/III.4.AU/{$row['kode_surat']}/{$tahun}</td>
         <td>{$row['tujuan']}</td>
         <td>{$row['tentang']}</td>
         <td>{$row['kategori']}</td>

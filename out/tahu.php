@@ -71,11 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <form method="POST" action="">
                     <div class="form-group">
                         <label for="nomor-surat">Nomor Surat</label>
-                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat" readonly>
+                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat">
                     </div>
                     <div class="form-group">
                         <label for="kode-surat">Pilih Kode Surat</label>
-                        <select class="form-control" name="kode_surat" id="kode-surat" required onchange="updateNomorSurat()">
+                        <select class="form-control" name="kode_surat" id="kode-surat" required>
                             <option value="" disabled selected>Pilih Kode Surat</option>
                             <?php if ($result_kode->num_rows > 0): ?>
                                 <?php while ($row = $result_kode->fetch_assoc()): ?>
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="tanggal">Tanggal</label>
+                        <label for="tanggal">Tanggal Dibuat</label>
                         <input class="form-control" name="tanggal" type="date" required>
                     </div>
                     <div class="form-group">
@@ -139,22 +139,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </div>
-
-<script>
-function updateNomorSurat() {
-    const kodeSuratSelect = document.getElementById('kode-surat');
-    const nomorSuratInput = document.getElementById('nomor-surat');
-    
-    // Ambil kode surat yang dipilih
-    const selectedKode = kodeSuratSelect.value;
-
-    // Dapatkan tahun saat ini
-    const currentYear = new Date().getFullYear();
-
-    // Buat format nomor surat
-    const nomorSurat = "001/IV.4/" + selectedKode + "/" + currentYear;
-
-    // Update input nomor_surat
-    nomorSuratInput.value = nomorSurat;
-}
-</script>
