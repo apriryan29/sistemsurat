@@ -59,6 +59,11 @@ $tgl = date('j', strtotime($data['tanggal']));
 $bulan = $bulanIndo[date('n', strtotime($data['tanggal']))];
 $tahun = date('Y', strtotime($data['tanggal']));
 $tanggalFormat = "$tgl $bulan $tahun";
+
+//ambil data kepala sekolah
+$id_kepala = 1;
+$qKepala = $config->query("SELECT * FROM tb_kepala WHERE id_kepala = '$id_kepala'");
+$kepala = $qKepala->fetch_assoc();
 ?>
 
 <div style="font-family:'Times New Roman'; color:black; margin-right:2rem; margin-left:1rem;">
@@ -128,18 +133,48 @@ $tanggalFormat = "$tgl $bulan $tahun";
 </table>
 
 <!-- TANDA TANGAN -->
+<?php
+    // Jika TTD ada (apa saja), padding = 0, jika tidak ada = 8rem
+    $paddingTTD = ($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap') 
+        ? '0' 
+        : '8rem';
+?>
+
+
 <table style="font-size:22px; width:100%;" class="no-break">
 <tr>
     <td style="padding-top:3rem; padding-left:45rem;">Kepala Sekolah</td>
 </tr>
 
 <tr>
-    <td style="padding-top:8rem; padding-left:45rem;">
-        Budi Martanto, S.S <br> NBM. 1084 462
+    <td style="padding-top:<?= $paddingTTD ?>; padding-left:45rem; position:relative;">
+
+        <!-- TANDA TANGAN -->
+        <?php if($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+            <?php if(!empty($kepala['ttd'])): ?>
+                <img src="../<?= $kepala['ttd']; ?>" width="330"><br>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <!-- CAP SEKOLAH -->
+        <?php if($data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+            <?php if(!empty($kepala['ttd_cap'])): ?>
+                <img src="../<?= $kepala['ttd_cap']; ?>" width="340"
+                     style="position:absolute; margin-top:-150px; margin-left:-100px;">
+            <?php endif; ?>
+        <?php endif; ?>
+
+        
     </td>
 </tr>
+
 <tr>
-    <td style="padding-top:8rem; padding-left:45rem;"></td>
+    <td style="padding-left:45rem;">
+        <!-- NAMA & NBM -->
+        <?= htmlspecialchars($kepala['nama_kepala']); ?><br>
+        NBM. <?= htmlspecialchars($kepala['nbm_kepala']); ?>
+
+    </td>
 </tr>
 </table>
 </div>

@@ -11,16 +11,11 @@ require_once 'include/config.php';
 
 $id_kepala = 1;
 
-// ============================
-// AMBIL DATA DARI DATABASE
-// ============================
+
 $sql = "SELECT * FROM tb_kepala WHERE id_kepala = '$id_kepala'";
 $result = $config->query($sql);
 $data = $result->fetch_assoc();
 
-// ============================
-// PROSES SIMPAN DATA
-// ============================
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $nama_kepala = $_POST['nama_kepala'];
@@ -32,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ttdPath    = $data['ttd'];
     $ttdCapPath = $data['ttd_cap'];
 
-    // ========= UPLOAD TTD =========
+
     if (!empty($_FILES['ttd']['name'])) {
         $ext = pathinfo($_FILES['ttd']['name'], PATHINFO_EXTENSION);
         $namaFile = time() . "_ttd." . $ext;
@@ -40,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         move_uploaded_file($_FILES["ttd"]["tmp_name"], $ttdPath);
     }
 
-    // ========= UPLOAD CAP =========
+
     if (!empty($_FILES['ttd_cap']['name'])) {
         $ext = pathinfo($_FILES['ttd_cap']['name'], PATHINFO_EXTENSION);
         $namaFile = time() . "_cap." . $ext;
@@ -48,9 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         move_uploaded_file($_FILES["ttd_cap"]["tmp_name"], $ttdCapPath);
     }
 
-    // ============================
-    // UPDATE DATABASE
-    // ============================
+
     $sql_update = "UPDATE tb_kepala SET
         nama_kepala = '$nama_kepala',
         nbm_kepala  = '$nbm_kepala',
@@ -69,7 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <?php include 'include/header.php'; ?>
 
-<!-- ==================== KONTEN ==================== -->
 <main role="main" class="main-content">
     <div class="container-fluid">
         <div class="row justify-content-center">
@@ -122,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <?php include 'include/footer.php'; ?>
 
-<!-- ==================== SCRIPT ==================== -->
+
 <script>
 const editBtn   = document.getElementById("editButton");
 const cancelBtn = document.getElementById("cancelButton");
