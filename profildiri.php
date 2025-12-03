@@ -9,123 +9,135 @@ if (!isset($_SESSION['username'])) {
 require_once 'include/functions.php';
 require_once 'include/config.php';
 
-$id_kepala = "1";
+$id_kepala = 1;
+
+// ============================
+// AMBIL DATA DARI DATABASE
+// ============================
 $sql = "SELECT * FROM tb_kepala WHERE id_kepala = '$id_kepala'";
 $result = $config->query($sql);
 $data = $result->fetch_assoc();
 
-// Proses form saat disubmit
+// ============================
+// PROSES SIMPAN DATA
+// ============================
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama_pengguna = $_POST['nama_kepala'];
-    $nbm_kepala = $_POST['nbm_kepala'];
-    $ttd = $_FILES['ttd'];
-    $ttd_cap = $_FILES['ttd_cap'];
 
-    // Menangani unggahan file
-    $uploadDir = 'uploads/'; // Folder untuk menyimpan file
-    $ttdPath = '';
-    $ttdCapPath = '';
+    $nama_kepala = $_POST['nama_kepala'];
+    $nbm_kepala  = $_POST['nbm_kepala'];
 
-    // Mengupdate tanda tangan
-    if ($ttd['error'] == 0) {
-        $ttdPath = $uploadDir . basename($ttd["name"]);
-        move_uploaded_file($ttd["tmp_name"], $ttdPath);
+    $uploadDir = "uploads/";
+
+    // Pakai file lama sebagai default
+    $ttdPath    = $data['ttd'];
+    $ttdCapPath = $data['ttd_cap'];
+
+    // ========= UPLOAD TTD =========
+    if (!empty($_FILES['ttd']['name'])) {
+        $ext = pathinfo($_FILES['ttd']['name'], PATHINFO_EXTENSION);
+        $namaFile = time() . "_ttd." . $ext;
+        $ttdPath = $uploadDir . $namaFile;
+        move_uploaded_file($_FILES["ttd"]["tmp_name"], $ttdPath);
     }
 
-    // Mengupdate tanda tangan dan cap sekolah
-    if ($ttd_cap['error'] == 0) {
-        $ttdCapPath = $uploadDir . basename($ttd_cap["name"]);
-        move_uploaded_file($ttd_cap["tmp_name"], $ttdCapPath);
+    // ========= UPLOAD CAP =========
+    if (!empty($_FILES['ttd_cap']['name'])) {
+        $ext = pathinfo($_FILES['ttd_cap']['name'], PATHINFO_EXTENSION);
+        $namaFile = time() . "_cap." . $ext;
+        $ttdCapPath = $uploadDir . $namaFile;
+        move_uploaded_file($_FILES["ttd_cap"]["tmp_name"], $ttdCapPath);
     }
 
-    // Update data ke database
+    // ============================
+    // UPDATE DATABASE
+    // ============================
     $sql_update = "UPDATE tb_kepala SET
-        nama_kepala = '$nama_pengguna',
-        nbm_kepala = '$nbm_kepala',
-        ttd = '$ttdPath',
-        ttd_cap = '$ttdCapPath'
+        nama_kepala = '$nama_kepala',
+        nbm_kepala  = '$nbm_kepala',
+        ttd         = '$ttdPath',
+        ttd_cap     = '$ttdCapPath'
         WHERE id_kepala = '$id_kepala'";
 
     if ($config->query($sql_update) === TRUE) {
-        echo "<script>alert('Pembaruan data berhasil tersimpan');</script>";
+        echo "<script>alert('Data berhasil diperbarui');window.location='profildiri.php';</script>";
+        exit();
     } else {
-        echo "Error: " . $sql_update . "<br>" . $config->error;
+        echo "Gagal update: " . $config->error;
     }
 }
 ?>
 
-<!-- Memanggil header -->
 <?php include 'include/header.php'; ?>
 
-<!-- Konten Utama menu Dashboard -->
+<!-- ==================== KONTEN ==================== -->
 <main role="main" class="main-content">
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12">
-                <h2 class="page-title">Profil Kepala Sekolah</h2>
+            <h2 class="page-title">Profil Kepala Sekolah</h2>
                 <div class="card shadow mb-4">
-                    <div class="card-header">
-                        <strong class="card-title">Data Kepala Sekolah</strong>
-                    </div>
-                    <div class="card-body">
-                        <form action="profildiri.php" method="post" id="userForm" enctype="multipart/form-data">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group mb-3">
-                                        <label for="nama_kepala">Nama Kepala Sekolah</label>
-                                        <input type="text" name="nama_kepala" id="nama_kepala" class="form-control" value="<?php echo $data['nama_kepala']; ?>" readonly>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="nbm_kepala">NBM</label>
-                                        <input type="text" name="nbm_kepala" id="nbm_kepala" class="form-control" value="<?php echo $data['nbm_kepala']; ?>" readonly>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="ttd">Unggah Tanda Tangan</label>
-                                        <input type="file" name="ttd" id="ttd" class="form-control-file">
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="ttd_cap">Unggah Tanda Tangan dan Cap Sekolah</label>
-                                        <input type="file" name="ttd_cap" id="ttd_cap" class="form-control-file">
-                                    </div>
-                                    <div style="display: flex; justify-content: flex-end;">
-                                        <button type="button" class="btn btn-primary" id="editButton">Perbarui</button>
-                                        <button type="button" class="btn btn-danger ml-2" id="cancelButton" style="display: none;">Batal</button>
-                                        <button class="btn btn-primary ml-2" type="submit" id="saveButton" style="display: none;">Simpan</button>
-                                    </div>
-                                </div>
+                    <div class="card-header"><strong class="card-title">Data Kepala Sekolah</strong></div>
+                        <div class="card-body">
+                            <form action="" method="post" id="userForm" enctype="multipart/form-data">
+                            <div class="form-group mb-3">
+                                <label>Nama Kepala Sekolah</label>
+                                <input type="text" name="nama_kepala" class="form-control" value="<?= $data['nama_kepala']; ?>" readonly>
                             </div>
-                        </form>
+                            <div class="form-group mb-3">
+                                <label>NBM</label>
+                                <input type="text" name="nbm_kepala" class="form-control" value="<?= $data['nbm_kepala']; ?>" readonly>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Tanda Tangan Saat Ini</label><br>
+                                <?php if(!empty($data['ttd'])) { ?>
+                                    <img src="<?= $data['ttd']; ?>" width="120">
+                                <?php } else { echo "Belum ada"; } ?>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Upload Tanda Tangan Baru</label>
+                                <input type="file" name="ttd" class="form-control-file" disabled>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Tanda Tangan + Cap Saat Ini</label><br>
+                                    <?php if(!empty($data['ttd_cap'])) { ?>
+                                        <img src="<?= $data['ttd_cap']; ?>" width="120">
+                                    <?php } else { echo "Belum ada"; } ?>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Upload TTD + Cap Baru</label>
+                                <input type="file" name="ttd_cap" class="form-control-file" disabled>
+                            </div>
+                            <div style="display:flex; justify-content:flex-end;">
+                                <button type="button" class="btn btn-primary" id="editButton">Edit</button>
+                                <button type="button" class="btn btn-secondary ml-2" id="cancelButton" style="display:none;">Batal</button>
+                                <button type="submit" class="btn btn-success ml-2" id="saveButton" style="display:none;">Simpan</button>
+                            </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
-<!-- Konten Utama menu Dashboard Selesai-->
+    </main>
 
-<!-- Memanggil footer -->
-<?php include 'include/footer.php'; ?>
+    <?php include 'include/footer.php'; ?>
 
+<!-- ==================== SCRIPT ==================== -->
 <script>
-// JavaScript untuk mengaktifkan edit mode
-document.getElementById('editButton').addEventListener('click', function() {
-    const inputs = document.querySelectorAll('#userForm input[type="text"]');
-    inputs.forEach(input => {
-        input.removeAttribute('readonly');
-    });
-    document.getElementById('saveButton').style.display = 'inline-block'; // Tampilkan tombol simpan
-    document.getElementById('cancelButton').style.display = 'inline-block'; // Tampilkan tombol cancel
-    this.style.display = 'none'; // Sembunyikan tombol edit
-});
+const editBtn   = document.getElementById("editButton");
+const cancelBtn = document.getElementById("cancelButton");
+const saveBtn   = document.getElementById("saveButton");
+const inputs    = document.querySelectorAll("#userForm input");
 
-// JavaScript untuk membatalkan pengeditan
-document.getElementById('cancelButton').addEventListener('click', function() {
-    const inputs = document.querySelectorAll('#userForm input[type="text"]');
-    inputs.forEach(input => {
-        input.setAttribute('readonly', 'readonly'); // Kembalikan menjadi readonly
-    });
-    document.getElementById('saveButton').style.display = 'none'; // Sembunyikan tombol simpan
-    this.style.display = 'none'; // Sembunyikan tombol cancel
-    document.getElementById('editButton').style.display = 'inline-block'; // Tampilkan kembali tombol edit
-});
+editBtn.onclick = function() {
+    inputs.forEach(i => i.removeAttribute("readonly"));
+    document.querySelectorAll("input[type=file]").forEach(i => i.disabled = false);
+    editBtn.style.display = "none";
+    cancelBtn.style.display = "inline-block";
+    saveBtn.style.display = "inline-block";
+};
+
+cancelBtn.onclick = function() {
+    location.reload();
+};
 </script>

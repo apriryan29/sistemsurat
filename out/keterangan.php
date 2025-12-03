@@ -5,6 +5,53 @@ include './include/config.php';
 $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
+
+if($_SERVER['REQUEST_METHOD']=='POST'){
+    $kode_surat = $_POST['kode_surat'];
+    $nomor_surat = $_POST['nomor_surat'];
+    $tanggal = $_POST['tanggal'];
+    $tujuan = $_POST['tujuan'];
+    $lahir = $_POST['lahir'];
+    $nis = $_POST['nis'];
+    $sekolah = $_POST['sekolah'];
+    $ortu = $_POST['ortu'];
+    $isi = $_POST['isi'];
+    $kategori = $_POST['kategori'];
+    $ttd = $_POST['ttd'];
+
+    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
+    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, tanggal, tujuan, keterangan, nis, tujuan, ortu, isi, kategori, ttd, status_verifikasi) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    if ($stmt === false) {
+        error_log('Prepare error: ' . $config->error, 3, "error_log.txt");
+        die('Query preparation failed. Please try again later.');
+    }
+
+    // Binding parameter
+    $stmt->bind_param("ssssssssssss",$kode_surat,$nomor_surat, $tanggal, $tujuan, $lahir, $nis, $sekolah, $ortu, $isi, $kategori, $ttd, $status_verifikasi);
+    // Eksekusi query dan periksa apakah berhasil
+    if ($stmt->execute()) {
+
+        if ($ttd === 'Tanpa Tanda Tangan') {
+            echo "<script>
+                alert('Surat disetujui dan siap dicetak!');
+                window.location.href='layoutsurat/cetak_keterangan.php';
+            </script>";
+        } 
+        else {
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success=1';
+            </script>";
+            exit;
+        }
+
+    } else {
+        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+    }
+
+    $stmt->close();
+}
 ?>
 
 <!-- Modal untuk Surat Pemberitahuan -->
@@ -18,7 +65,11 @@ $result_kode = $config->query($sql_kode);
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="layoutsurat/cetak_keterangan.php">
+                <form method="POST" action="">
+                    <div class="form-group">
+                        <label for="nomor-surat">Nomor Surat</label>
+                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat">
+                    </div>
                     <div class="form-group">
                         <label for="kode-surat">Pilih Kode Surat</label>
                         <select class="form-control" name="kode_surat" id="kode-surat" required onchange="updateNomorSurat()">
@@ -35,16 +86,12 @@ $result_kode = $config->query($sql_kode);
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="nomor-surat">Nomor Surat</label>
-                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat" readonly>
-                    </div>
-                    <div class="form-group">
                         <label for="tanggal">Tanggal</label>
                         <input class="form-control" name="tanggal" type="date" required>
                     </div>
                     <div class="form-group">
-                        <label for="nama">Nama Siswa</label>
-                        <input type="text" class="form-control" name="nama" placeholder="Masukkan Nama Lengkap Siswa" required>
+                        <label for="tujuan">Nama Siswa</label>
+                        <input type="text" class="form-control" name="tujuan" placeholder="Masukkan Nama Lengkap Siswa" required>
                     </div>
                     <div class="form-group">
                         <label for="lahir">Tempat, tanggal lahir</label>
@@ -65,6 +112,14 @@ $result_kode = $config->query($sql_kode);
                     <div class="form-group">
                         <label for="isi">Isi Surat Keterangan</label>
                         <textarea type="text" class="form-control" name="isi" placeholder="Masukkan Isi Surat Keterangan" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="ttd">Pilih Tanda Tangan</label>
+                        <select name="ttd" id="ttd" class="form-control">
+                            <option value="Tanpa Tanda Tangan">Tanpa Tanda Tangan</option>
+                            <option value="Tanda Tangan Saja">Tanda Tangan Saja</option>
+                            <option value="Tanda Tangan dan Cap">Tanda Tangan dan Cap</option>
+                        </select>
                     </div>
                     <input type="hidden" name="kategori" value="keterangan">
                     <div class="modal-footer">
