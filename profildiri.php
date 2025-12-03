@@ -90,13 +90,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <input type="file" name="ttd" class="form-control-file" disabled>
                             </div>
                             <div class="form-group mb-3">
-                                <label>Tanda Tangan + Cap Saat Ini</label><br>
+                                <label>Cap Saat Ini</label><br>
                                     <?php if(!empty($data['ttd_cap'])) { ?>
                                         <img src="<?= $data['ttd_cap']; ?>" width="120">
                                     <?php } else { echo "Belum ada"; } ?>
                             </div>
                             <div class="form-group mb-3">
-                                <label>Upload TTD + Cap Baru</label>
+                                <label>Upload Cap Baru</label>
                                 <input type="file" name="ttd_cap" class="form-control-file" disabled>
                             </div>
                             <div style="display:flex; justify-content:flex-end;">
