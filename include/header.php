@@ -231,7 +231,7 @@ $level = $_SESSION['level']; // Pastikan variabel ini sudah diset saat login
             <li class="nav-item w-100">
               <a class="nav-link" href="tambahuser.php">
                 <i class="fe fe-user-plus fe-16"></i>
-                <span class="ml-3 item-text">Tambah Pengguna</span>
+                <span class="ml-3 item-text">Data Pengguna</span>
               </a>
             </li>
           </ul>
