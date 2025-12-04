@@ -137,9 +137,13 @@ if (isset($_GET['delete_id'])) {
     $stmt = $config->prepare("DELETE FROM tb_dokumen WHERE id_dokumen = ?");
     $stmt->bind_param("i", $delete_id);
     
+    if ($stmt->execute()) {
+        $success_msg = "Data berhasil dihapus";
+    } else {
+        $error_msg = "Gagal Menghapus data";
+    }
+
     $stmt->close();
-    header("Location: arsipdokumen.php");
-    exit();
 }
 ?>
 
@@ -216,11 +220,11 @@ if (isset($_GET['delete_id'])) {
                 </div>
 
         <!-- Tampilkan pesan error/sukses -->
-        <?php if (!empty($msg)): ?>
-            <div class='alert alert-success' id="success-msg"><?php echo $msg; ?></div>
+        <?php if (!empty($success_msg)): ?>
+            <div class='alert alert-success' id="success-msg"><?php echo $success_msg; ?></div>
         <?php endif; ?>
-        <?php if (!empty($errorMsg)): ?>
-            <div class='alert alert-danger' id="error-msg"><?php echo $errorMsg; ?></div>
+        <?php if (!empty($error_msg)): ?>
+            <div class='alert alert-danger' id="error-msg"><?php echo $error_msg; ?></div>
         <?php endif; ?>
 
         <!-- Tabel data Dokumen -->
