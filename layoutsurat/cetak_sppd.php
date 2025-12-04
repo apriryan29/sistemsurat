@@ -2,16 +2,56 @@
 include 'kopsurat.php';
 include '../include/config.php';
 
-$nomor_surat = $_POST['nomor_surat'];
-$berangkat = $_POST['berangkat'];
-$pulang = $_POST['pulang'];
-// Fungsi untuk format tanggal Indonesia
-function formatTanggal($tanggal) {
-    $date = new DateTime($tanggal);
-    return $date->format('j ') . bulanIndo($date->format('n')) . $date->format(' Y');
+if(!isset($_GET['id']) || empty($_GET['id'])) {
+    die("ID surat tidak ditemukan.");
 }
 
-// Fungsi untuk mendapatkan nama bulan dalam bahasa Indonesia
+$id = intval($_GET['id']);
+
+$query = "
+SELECT 
+    k.id_keluar,
+    k.nomor_surat,
+    k.kode_surat,
+    k.tanggal,
+    k.tempat,
+    k.tgl_acara,
+    k.pulang,
+    k.pejabat,
+    k.pegawai,
+    k.jabatan,
+    k.pengikut,
+    k.kendaraan,
+    k.lampiran,
+    k.keperluan,
+    k.keterangan,
+    k.isi,
+    k.ttd,
+    k.status_verifikasi
+FROM tb_keluar k
+WHERE k.kategori = 'sppd'
+AND k.id_keluar = $id
+LIMIT 1
+";
+
+$result = $config->query($query);
+if ($result->num_rows == 0) {
+    die("Surat SPPD belum tersedia.");
+}  
+$data = $result->fetch_assoc();
+
+
+// Fungsi ubah tanggal ke format Indonesia
+function formatTanggal($tanggal) {
+    if (empty($tanggal)) return '-';
+
+    $date = DateTime::createFromFormat('Y-m-d', $tanggal);
+    if (!$date) return $tanggal;
+
+    return $date->format('j ') . bulanIndo((int)$date->format('n')) . $date->format(' Y');
+}
+
+// Nama bulan Indonesia
 function bulanIndo($bulan) {
     $bulanIndo = [
         1 => 'Januari',
@@ -27,8 +67,10 @@ function bulanIndo($bulan) {
         11 => 'November',
         12 => 'Desember'
     ];
-    return $bulanIndo[$bulan];
+
+    return $bulanIndo[$bulan] ?? '';
 }
+
 
 function hitungLamaPerjalanan($berangkat, $pulang) {
     $date1 = new DateTime($berangkat);
@@ -36,12 +78,23 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
     $diff = $date1->diff($date2);
     return $diff->days; // Mengembalikan selisih dalam hari
 }
+
+// Ambil data Kepala Sekolah
+$qKepala = $config->query("SELECT * FROM tb_kepala LIMIT 1");
+$kepala = $qKepala->fetch_assoc();
+$namaKepala = $kepala['nama_kepala'] ?? '-';
+$nbmKepala = $kepala['nbm_kepala'] ?? '-';
+
 ?>
 
 
 <div style="font-family: 'Times New Roman'; color: black;  margin-right: 2rem; margin-left: 1rem;">
     <div style="text-align: center; margin-top: 3rem;">
-        <p style="font-weight: bold; font-size: 24px;"><u>SURAT PERINTAH PERJALANAN DINAS</u> <br>Nomor : <?php echo $nomor_surat; ?></p>
+        <p style="font-weight: bold; font-size: 24px;"><u>SURAT PERINTAH PERJALANAN DINAS</u> <br>Nomor : 
+        <?= htmlspecialchars($data['nomor_surat']) ; ?>
+        / III.4.AU/ <?= htmlspecialchars($data['kode_surat']) ; ?>
+        /<?= date('Y', strtotime($data['tanggal'])) ?>
+        </p>
     </div>
 
     
@@ -49,45 +102,45 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">01</td>
             <td style="border: 1px solid black; padding: 1rem;">Pejabat yang berwenang memberi perintah</td>
-            <td style="border: 1px solid black; padding: 1rem;"><?php $pejabat = $_POST['pejabat']; echo $pejabat; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;">        <?= htmlspecialchars($data['pejabat']) ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">02</td>
             <td style="border: 1px solid black; padding: 1rem;">Nama Pegawai yang diperintah</td>
-            <td style="border: 1px solid black; padding: 1rem;"><?php $pegawai = $_POST['pegawai']; echo $pegawai; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;"><?= htmlspecialchars($data['pegawai']) ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">03</td>
             <td style="border: 1px solid black; padding: 1rem;">a. Pangkat Golongan <br>b. Jabatan <br>c. Gaji Pokok <br>d. Tingkat menurut peraturan perjalanan dinas</td>
-            <td style="border: 1px solid black; padding: 1rem;">a. - <br>b. <?php $jabatan = $_POST['jabatan']; echo $jabatan; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;">a. - <br>b. <?= htmlspecialchars($data['jabatan']) ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">04</td>
             <td style="border: 1px solid black; padding: 1rem;">Maksud mengadakan perjalanan Dinas</td>
-            <td style="border: 1px solid black; padding: 1rem;"><?php $tentang = $_POST['tentang']; echo $tentang; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;"><?= htmlspecialchars($data['isi']) ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">05</td>
             <td style="border: 1px solid black; padding: 1rem;">Alat angkut yang digunakan</td>
-            <td style="border: 1px solid black; padding: 1rem;"><?php $kendaraan = $_POST['kendaraan']; echo $kendaraan; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;"><?= htmlspecialchars($data['kendaraan']) ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">06</td>
             <td style="border: 1px solid black; padding: 1rem;">a. Tempat Berangkat <br>b. Tempat Tujuan</td>
-            <td style="border: 1px solid black; padding: 1rem;">a. SMK Muhammadiyah Sampang <br>b. <?php $tempat = $_POST['tempat']; echo $tempat; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;">a. SMK Muhammadiyah Sampang <br>b. <?= htmlspecialchars($data['tempat']) ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">07</td>
             <td style="border: 1px solid black; padding: 1rem;">a. Lama perjalanan dinas <br>b. Tanggal berangkat <br>c. Tanggal harus kembali</td>
             <td style="border: 1px solid black; padding: 1rem;">
-                a. <?php $lamaPerjalanan = hitungLamaPerjalanan($berangkat, $pulang); echo $lamaPerjalanan+1; ?> hari <br>
-                b. <?php echo formatTanggal($_POST['berangkat']); ?><br>
-                c. <?php echo formatTanggal($_POST['pulang']); ?></td>
+                a. <?php $lamaPerjalanan = hitungLamaPerjalanan($data['tgl_acara'], $data['pulang']); echo $lamaPerjalanan+1; ?> hari <br>
+                b. <?= htmlspecialchars($data['tgl_acara']) ; ?><br>
+                c. <?= htmlspecialchars($data['pulang']) ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">08</td>
             <td style="border: 1px solid black; padding: 1rem;">Dengan Membawa Pengikut</td>
-            <td style="border: 1px solid black; padding: 1rem;"><?php $pengikut = $_POST['pengikut']; echo $pengikut; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;"><?= $data['pengikut'] ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">09</td>
@@ -97,7 +150,7 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">10</td>
             <td style="border: 1px solid black; padding: 1rem;">Keterangan Lain</td>
-            <td style="border: 1px solid black; padding: 1rem;"><?php $ket = $_POST['keterangan']; echo $ket; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;"><?= htmlspecialchars($data['keterangan']) ; ?></td>
         </tr>
     </table>
 
@@ -112,14 +165,22 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
             <td></td>
             <td style="padding-right: 0;">Pada Tanggal</td>
             <td>:</td>
-            <td><?php echo formatTanggal($_POST['tanggal']); ?></td>
+            <td><?= formatTanggal($data['tanggal']); ?></td>
         </tr>
         <tr>
             <td style="padding-right: 21rem;">Pemegang SPPD</td>
-            <td colspan="2"><?php $pejabat = $_POST['pejabat']; echo $pejabat; ?></td>
+            <td colspan="2"><?= htmlspecialchars($data['pejabat']) ; ?></td>
         </tr>
-            <td style="padding-top: 8rem;"><?php $pegawai = $_POST['pegawai']; echo $pegawai; ?></td>
-            <td colspan="2" style="padding-top: 8rem;">(..............................)</td> <!-- perlu penyesuaian nama pejabat -->
+            <td style="padding-top: 8rem;"><?= htmlspecialchars($data['pegawai']) ; ?></td>
+            <td colspan="2" style="padding-top: 8rem;">
+                <?php
+                if ($data['pejabat'] === 'Kepala Sekolah') {
+                    echo htmlspecialchars($namaKepala);
+                } else {
+                    echo "Samingan";
+                }
+                ?>
+            </td> <!-- perlu penyesuaian nama pejabat -->
         </tr>
     </table>
 
@@ -132,12 +193,12 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
                         <tr>
                             <td>Tiba di</td>
                             <td>:</td>
-                            <td><?php $tempat = $_POST['tempat']; echo $tempat; ?></td>
+                            <td><?= htmlspecialchars($data['tempat']) ; ?></td>
                         </tr>
                         <tr>
                             <td>Pada Tanggal</td>
                             <td>:</td>
-                            <td><?php echo formatTanggal($_POST['berangkat']); ?></td>
+                            <td><?= formatTanggal($data['tgl_acara']) ; ?></td>
                         </tr>
                     </table>
                 </td>
@@ -151,12 +212,12 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
                         <tr>
                             <td>Ke</td>
                             <td>:</td>
-                            <td><?php $tempat = $_POST['tempat']; echo $tempat; ?></td>
+                            <td><?= htmlspecialchars($data['tempat']) ; ?></td>
                         </tr>
                         <tr>
                             <td>Pada Tanggal</td>
                             <td>:</td>
-                            <td><?php echo formatTanggal($_POST['berangkat']); ?></td>
+                            <td><?= formatTanggal($data['tgl_acara']) ; ?></td>
                         </tr>
                     </table>
                 </td>
@@ -182,22 +243,38 @@ function hitungLamaPerjalanan($berangkat, $pulang) {
                         <tr>
                             <td>Pada Tanggal</td>
                             <td>:</td>
-                            <td><?php echo formatTanggal($_POST['pulang']); ?></td>
+                            <td><?= formatTanggal($data['pulang']) ; ?></td>
                         </tr>
                         <tr>
                             <td colspan="3" style="padding-top: 3rem;">Pejabat yang berwenang/ <br>Pejabat lainnya yang ditunjuk</td>
                         </tr>
                         <tr>
-                            <td colspan="3" style="text-align: center; padding-top: 3rem;"><?php $pejabat = $_POST['pejabat']; echo $pejabat; ?></td>
+                            <td colspan="3" style="text-align: center; padding-top: 3rem;"><?= htmlspecialchars($data['pejabat']) ; ?></td>
                         </tr>
                         <tr>
                             <td colspan="3" style="text-align: center;">SMK Muhammadiyah Sampang</td>
                         </tr>
                         <tr>
-                            <td colspan="3" style="text-align: center; padding-top: 10rem; color:black;"><strong>SAMINGAN</strong></td>
+                            <td colspan="3" style="text-align: center; padding-top: 10rem; color:black;">
+                                <?php
+                                    if ($data['pejabat'] === 'Kepala Sekolah') {
+                                        echo htmlspecialchars($namaKepala);
+                                    } else {
+                                        echo "Samingan";
+                                    }
+                                ?>
+                            </td>
                         </tr>
                         <tr>
-                            <td colspan="3" style="text-align: center;">NBM. 669 491</td>
+                            <td colspan="3" style="text-align: center;">NBM. 
+                                <?php
+                                    if ($data['pejabat'] === 'Kepala Sekolah') {
+                                        echo htmlspecialchars($nbmKepala);
+                                    } else {
+                                        echo "669 491";
+                                    }
+                                ?> 
+                            </td>
                         </tr>
                     </table>
                 </td>

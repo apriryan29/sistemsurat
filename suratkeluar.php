@@ -199,7 +199,7 @@ $query = mysqli_query($config, "
                                                         ."/".date('Y', strtotime($row['tanggal']))."
                                                     </td>
                                                     <td>".htmlspecialchars($row['tujuan'])."</td>
-                                                    <td>".htmlspecialchars($row['tentang'])."</td>
+                                                    <td>".($row['tentang'])."</td>
                                                     <td>".htmlspecialchars($row['kategori'])."</td>
                                                     <td>".htmlspecialchars($row['tanggal'])."</td>
                                                     <td class='text-center'>{$status}</td>

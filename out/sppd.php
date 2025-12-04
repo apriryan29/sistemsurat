@@ -5,6 +5,75 @@ include './include/config.php';
 $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    // Ambil data dari form
+    $nomor_surat = $_POST['nomor_surat'];
+    $kode_surat = $_POST['kode_surat'];
+    $tanggal = $_POST['tanggal'];
+    $tentang = $_POST['tentang'];
+    $pejabat = $_POST['pejabat'];
+    $pegawai = $_POST['pegawai'];
+    $jabatan = $_POST['jabatan'];
+    $tempat = $_POST['tempat'];
+    $kendaraan = $_POST['kendaraan'];
+    $berangkat = $_POST['berangkat'];
+    $pulang = $_POST['pulang'];
+    $pengikut = $_POST['pengikut'];
+    $keterangan = $_POST['keterangan'];
+    $ttd = $_POST['ttd'];
+    $kategori = $_POST['kategori'];
+
+    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
+
+    // Simpan data ke database (sesuaikan dengan struktur tabel Anda)
+    $stmt = $config->prepare("INSERT INTO tb_keluar 
+    (nomor_surat, kode_surat, tanggal, tujuan, kategori, lampiran, isi, tempat, tgl_acara, pegawai, jabatan, keterangan, ttd, id_perihal, status_verifikasi) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    
+    $id_perihal = null;
+
+    $stmt->bind_param("sssssssssssssis",
+        $nomor_surat,
+        $kode_surat,
+        $tanggal,
+        $pegawai,
+        $kategori,        // <-- WAJIB
+        $pengikut,
+        $tentang,
+        $tempat,
+        $berangkat,
+        $pegawai,
+        $jabatan,
+        $keterangan,
+        $ttd,
+        $id_perihal,
+        $status_verifikasi
+    );
+    
+    if ($stmt->execute()) {
+
+        if ($ttd === 'Tanpa Tanda Tangan') {
+            echo "<script>
+                alert('Surat disetujui dan siap dicetak!');
+                window.location.href='layoutsurat/cetak_sppd.php';
+            </script>";
+        } 
+        else {
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success=1';
+            </script>";
+            exit;
+        }
+
+    } else {
+        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+    }
+
+    $stmt->close();
+}
+
 ?>
 
 <!-- Modal untuk Surat Perintah Perjalanan Dinas -->
@@ -18,14 +87,14 @@ $result_kode = $config->query($sql_kode);
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="layoutsurat/cetak_sppd.php">
+                <form method="POST" action="">
                     <div class="form-group">
                         <label for="nomor-surat">Nomor Surat</label>
-                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat" readonly>
+                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat">
                     </div>
                     <div class="form-group">
                         <label for="kode-surat">Pilih Kode Surat</label>
-                        <select class="form-control" name="kode_surat" id="kode-surat" required onchange="updateNomorSurat()">
+                        <select class="form-control" name="kode_surat" id="kode-surat" required>
                             <option value="" disabled selected></option>
                             <?php if ($result_kode->num_rows > 0): ?>
                                 <?php while ($row = $result_kode->fetch_assoc()): ?>
@@ -93,6 +162,14 @@ $result_kode = $config->query($sql_kode);
                         <label for="keterangan">Isi Keterangan Lainnya</label>
                         <input type="text" class="form-control" name="keterangan" id="keterangan" required>
                         <p><i>jika tidak ada keterangan lainnya maka isikan dengan simbol (-)</i></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="ttd">Pilih Tanda Tangan</label>
+                        <select name="ttd" id="ttd" class="form-control">
+                            <option value="Tanpa Tanda Tangan">Tanpa Tanda Tangan</option>
+                            <option value="Tanda Tangan Saja">Tanda Tangan Saja</option>
+                            <option value="Tanda Tangan dan Cap">Tanda Tangan dan Cap</option>
+                        </select>
                     </div>
                     <input type="hidden" name="kategori" value="sppd">
                     <div class="modal-footer">
