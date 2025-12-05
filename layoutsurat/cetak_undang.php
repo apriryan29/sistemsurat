@@ -12,22 +12,22 @@ $stmt = $config->prepare("
     SELECT 
         k.nomor_surat,
         k.kode_surat,
-        k.isi,
-        k.lampiran,
         k.tujuan,
         k.tanggal,
-        k.tgl_acara,
-        k.waktu,
-        k.tempat,
         k.ttd,
         k.status_verifikasi,
         p.tentang,
         p.judul,
         p.pembuka,
         p.isi,
-        p.penutup
+        p.penutup,
+        s.lampiran,
+        s.tgl_acara,
+        s.waktu,
+        s.tempat
     FROM tb_keluar k
     JOIN tb_perihal p ON k.id_perihal = p.id_perihal
+    LEFT JOIN tb_undangan s ON k.id_keluar = s.id_keluar
     WHERE k.id_keluar = ?
     LIMIT 1
 ");
@@ -116,7 +116,7 @@ $kepala = $qKepala->fetch_assoc();
         </tr>
         <!-- Isi Pembuka -->
         <tr>
-            <td colspan="3" style="padding-top: 1rem; text-indent: 3rem; text-align: justify;"><?= nl2br(htmlspecialchars($data['isi'])); ?>
+            <td colspan="3" style="padding-top: 1rem; text-indent: 3rem; text-align: justify;"><?= nl2br(htmlspecialchars($data['isi_perihal'])); ?>
             </td>
         </tr>
         <tr>

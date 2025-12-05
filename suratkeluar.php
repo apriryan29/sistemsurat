@@ -17,6 +17,11 @@ $error_msg = "";
 if ($lavel == 'admin' && isset($_GET['delete_id'])) {
     $id = intval($_GET['delete_id']);
 
+    $stmt1 = $config->prepare("DELETE FROM tb_pemberitahuan WHERE id_keluar = ?");
+    $stmt1->bind_param("i", $id);
+    $stmt1->execute();
+    $stmt1->close();
+
     // Prepared Statement untuk keamanan
     $stmt = $config->prepare("DELETE FROM tb_keluar WHERE id_keluar = ?");
     $stmt->bind_param("i", $id);
