@@ -7,34 +7,56 @@ $result_kode = $config->query($sql_kode);
 
 // Memeriksa apakah data dikirim melalui POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Ambil data dari form
-    $kode_surat = $_POST['kode_surat'];
-    $nomor_surat = $_POST['nomor_surat'];
-    $tentang = $_POST['tentang'];  // ID perihal
-    $tanggal = $_POST['tanggal'];
-    $tujuan = $_POST['tujuan'];
-    $lampiran = $_POST['lampiran'];
-    $isi = $_POST['isi'];
-    $kategori = $_POST['kategori'];
-    $ttd = $_POST['ttd'];
+    
+    // Data induk
+    $kode_surat     = $_POST['kode_surat'];
+    $nomor_surat    = $_POST['nomor_surat'];
+    $tentang        = $_POST['tentang'];
+    $tanggal        = $_POST['tanggal'];
+    $tujuan         = $_POST['tujuan'];
+    $kategori       = $_POST['kategori'];
+    $ttd            = $_POST['ttd'];
+
+    // Data tambahan
+    $lampiran       = $_POST['lampiran'];
+    $isi            = $_POST['isi'];
 
     $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
 
 
     // Siapkan query untuk menambahkan data ke tb_keluar
-    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, id_perihal, tanggal, tujuan, lampiran, isi, kategori, ttd, status_verifikasi) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    
-    // Cek error saat persiapan query
-    if ($stmt === false) {
-        error_log('Prepare error: ' . $config->error, 3, "error_log.txt");
-        die('Query preparation failed. Please try again later.');
-    }
+    $stmt = $config->prepare("
+            INSERT INTO tb_keluar 
+                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ");    
 
-    // Binding parameter
-    $stmt->bind_param("ssisssssss", $kode_surat, $nomor_surat, $tentang, $tanggal, $tujuan, $lampiran, $isi, $kategori, $ttd, $status_verifikasi);
+    $stmt->bind_param(
+        "sssissss",
+        $kode_surat, 
+        $nomor_surat, 
+        $tanggal, 
+        $tentang, 
+        $kategori, 
+        $tujuan, 
+        $ttd, 
+        $status_verifikasi
+    );
 
     // Eksekusi query dan periksa apakah berhasil
     if ($stmt->execute()) {
+
+        // Ambil ID surat induk
+        $id_keluar = $stmt->insert_id;
+
+        // Insert detail ke tb_pemberitahuan
+        $stmt2 = $config->prepare("
+            INSERT INTO tb_pemberitahuan (id_keluar, lampiran, isi)
+            VALUES (?, ?, ?)
+        ");
+        $stmt2->bind_param("iss", $id_keluar, $lampiran, $isi);
+        $stmt2->execute();
+        
 
         if ($ttd === 'Tanpa Tanda Tangan') {
             echo "<script>

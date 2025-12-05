@@ -13,8 +13,6 @@ $query = "
 SELECT 
     k.nomor_surat,
     k.kode_surat,
-    k.isi,
-    k.lampiran,
     k.tujuan,
     k.tanggal,
     k.ttd,
@@ -22,9 +20,12 @@ SELECT
     p.pembuka,
     p.isi AS isi_perihal,
     p.penutup,
-    k.status_verifikasi
+    k.status_verifikasi,
+    s.lampiran,
+    s.isi
 FROM tb_keluar k
 JOIN tb_perihal p ON k.id_perihal = p.id_perihal
+LEFT JOIN tb_pemberitahuan s ON k.id_keluar = s.id_keluar
 WHERE k.id_keluar = $id
 LIMIT 1
 ";
