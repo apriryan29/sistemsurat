@@ -116,7 +116,11 @@ $kepala = $qKepala->fetch_assoc();
     </div>
     <div  style="text-align: center; margin-top: 4rem;">
         <h3 style="color: black;"><u>SURAT TUGAS</u></h3>
-        <p style="font-size: 22px;">Nomor : <?php $nomor = $_POST['nomor_surat']; echo $nomor; ?></p>
+        <p style="font-size: 22px;">Nomor : 
+            <?= htmlspecialchars($data['nomor_surat']); ?>
+            /III.4.AU /<?= htmlspecialchars($data['kode_surat']); ?>
+            /<?= date('Y', strtotime($data['tanggal'])) ?>
+        </p>
     </div>
 
 
@@ -128,12 +132,12 @@ $kepala = $qKepala->fetch_assoc();
         <tr>
             <td style="padding-right: 4.5rem;">Nama</td>
             <td>:</td>
-            <td><?php $pejabat = $_POST['petugas']; echo $pejabat; ?></td>
+            <td><?= htmlspecialchars($data['petugas']); ?></td>
         </tr>
         <tr>
             <td>Jabatan</td>
             <td>:</td>
-            <td><?php $jabatan = $_POST['jabatan']; echo $jabatan; ?></td>
+            <td><?= htmlspecialchars($data['jabatan']); ?></td>
         </tr>
         <tr>
             <td>Unit Kerja</td>
@@ -142,23 +146,23 @@ $kepala = $qKepala->fetch_assoc();
         </tr>
     </table>
     <div style="text-align: justify; margin-top: 2rem;">
-        <p style="font-size: 22px;">Untuk <?php $keperluan = $_POST['keperluan']; echo $keperluan; ?> pada :</p>
+        <p style="font-size: 22px;">Untuk <?= htmlspecialchars($data['keperluan']); ?> pada :</p>
     </div>
     <table style="font-size: 22px; width: 100%; margin-left: 5rem;">
         <tr>
             <td>Hari / Tanggal</td>
             <td>:</td>
-            <td><?php echo formatTanggal($_POST['tanggal']); ?></td>
+            <td><?php echo formatTanggal($data['tanggal']); ?></td>
         </tr>
         <tr>
             <td>Waktu</td>
             <td>:</td>
-            <td><?php $waktu = $_POST['waktu']; echo $waktu; ?></td>
+            <td><?= htmlspecialchars($data['waktu']); ?></td>
         </tr>
         <tr>
             <td>Tempat</td>
             <td>:</td>
-            <td><?php $tempat = $_POST['tempat']; echo $tempat; ?></td>
+            <td><?= htmlspecialchars($data['tujuan']); ?></td>
         </tr>
     </table>
     <div style="text-align: justify; margin-top: 2rem; margin-bottom: 5rem;">
@@ -176,10 +180,10 @@ $kepala = $qKepala->fetch_assoc();
         <tr>
             <td style="font-size: 22px; text-align: left; padding-right: 5rem;">Yang Diberi Tugas</td>
             <td></td>
-            <td style="font-size: 22px; text-align: left; margin-right: 3rem;">Kepala Sekolah</td>
+            <td style="font-size: 22px; text-align: left; margin-right: rem;">Kepala Sekolah</td>
         </tr>
         <tr>
-            <td style="font-size: 22px; text-align: left; margin-right: 3rem; padding-top: 6rem;"><?php $pejabat = $_POST['petugas']; echo $pejabat; ?></td>
+            <td></td>
             <td></td>
             <td style="padding-top:<?= $paddingTTD ?>; position:relative;">
                 <!-- TANDA TANGAN -->
@@ -196,6 +200,16 @@ $kepala = $qKepala->fetch_assoc();
                             style="position:absolute; margin-top:-150px; margin-left:-100px;">
                     <?php endif; ?>
                 <?php endif; ?>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 22px; text-align: left; margin-right: 3rem;"><?= htmlspecialchars($data['petugas']); ?></td>
+            <td></td>
+            <td style="font-size: 22px; text-align: left; margin-right: 3rem;">
+                <!-- NAMA & NBM -->
+                <?= htmlspecialchars($kepala['nama_kepala']); ?><br>
+                NBM. <?= htmlspecialchars($kepala['nbm_kepala']); ?>
+
             </td>
         </tr>
         <tr>
