@@ -17,23 +17,56 @@ $error_msg = "";
 if ($lavel == 'admin' && isset($_GET['delete_id'])) {
     $id = intval($_GET['delete_id']);
 
-    $stmt1 = $config->prepare("DELETE FROM tb_pemberitahuan WHERE id_keluar = ?");
-    $stmt1->bind_param("i", $id);
-    $stmt1->execute();
-    $stmt1->close();
+    // 1. Cari kategori surat
+    $sql = $config->prepare("SELECT kategori FROM tb_keluar WHERE id_keluar = ?");
+    $sql->bind_param("i", $id);
+    $sql->execute();
+    $result = $sql->get_result();
+    $data = $result->fetch_assoc();
+    $sql->close();
 
-    // Prepared Statement untuk keamanan
+    if (!$data) {
+        $error_msg = "Data tidak ditemukan.";
+        return;
+    }
+
+    $kategori = $data['kategori'];
+
+    // 2. Hapus data detail berdasarkan kategori
+    if ($kategori == "pemberitahuan") {
+        $stmt1 = $config->prepare("DELETE FROM tb_pemberitahuan WHERE id_keluar = ?");
+    }
+    elseif ($kategori == "undangan") {
+        $stmt1 = $config->prepare("DELETE FROM tb_undangan WHERE id_keluar = ?");
+    }
+    elseif ($kategori == "tugas individu") {
+        $stmt1 = $config->prepare("DELETE FROM tb_tugas WHERE id_keluar = ?");
+    }
+
+    // Eksekusi delete detail
+    if (isset($stmt1)) {
+        $stmt1->bind_param("i", $id);
+        $stmt1->execute();
+        $stmt1->close();
+    }
+
+    // 3. Hapus data induk tb_keluar
     $stmt = $config->prepare("DELETE FROM tb_keluar WHERE id_keluar = ?");
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        $msg = "Data berhasil dihapus";
+        echo "<script>
+            window.location.href = 'suratkeluar.php?deleted=1';
+        </script>";
+        exit;
+
     } else {
         $error_msg = "Gagal Menghapus data";
     }
 
     $stmt->close();
 }
+
 
 if ($lavel == 'kepala' && isset($_GET['id']) && isset($_GET['aksi'])) {
     $id   = intval($_GET['id']);
@@ -122,6 +155,10 @@ $query = mysqli_query($config, "
                 echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.</div>";
             }
         ?>
+        <?php if (isset($_GET['deleted'])): ?>
+            <div class='alert alert-success' id='success-msg'>Data berhasil dihapus.</div>
+        <?php endif; ?>
+
     <!-- Tabel data Surat Keluar -->
     <div class="row justify-content-center">
         <div class="col-12">

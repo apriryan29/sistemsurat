@@ -50,7 +50,7 @@ $level = $_SESSION['level']; // Pastikan variabel ini sudah diset saat login
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
               <a class="dropdown-item" href="profil.php">Profil</a>
-              <a class="dropdown-item" href="logout.php" onclick="return confirm('Apakah anda yakin akan keluar ?')">Logout</a>
+              <a class="dropdown-item" href="logout.php" onclick="return confirm('Apakah anda yakin akan keluar ?')">Keluar</a>
             </div>
           </li>
         </ul>
