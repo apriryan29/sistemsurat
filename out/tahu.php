@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="tentang">Tentang Perihal SK</label>
+                        <label for="tentang">Tentang Perihal Pemberitahuan</label>
                         <select class="form-control" name="tentang" id="tentang" required>
                             <option value="" disabled selected>Pilih Tentang</option>
                             <?php

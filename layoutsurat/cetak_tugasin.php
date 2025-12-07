@@ -2,6 +2,42 @@
 include 'kopsurat.php';
 include '../include/config.php';
 
+
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    die("ID surat tidak ditemukan");
+}
+
+$id = intval($_GET['id']);
+
+$query = "
+SELECT
+    k.nomor_surat,
+    k.kode_surat,
+    k.tujuan,
+    k.tanggal,
+    k.ttd,
+    p.tentang,
+    p.pembuka,
+    p.isi AS isi_perihal,
+    p.penutup,
+    k.status_verifikasi,
+    s.keperluan,
+    s.waktu,
+    s.petugas,
+    s.jabatan,
+    s.keterangan
+FROM tb_keluar k
+JOIN tb_perihal p ON k.id_perihal = p.id_perihal
+LEFT JOIN tb_tugas s ON k.id_keluar = s.id_keluar
+WHERE k.id_keluar = $id LIMIT 1
+";
+
+$result = $config->query($query);
+if ($result->num_rows == 0){
+    die("Surat Tugas Individu belum tersedia");
+}
+$data = $result->fetch_assoc();
+
 // Fungsi untuk format tanggal Indonesia
 function formatTanggal($tanggal) {
     $date = new DateTime($tanggal);
@@ -39,6 +75,11 @@ function bulanIndo($bulan) {
 
         ];
 }
+
+//ambil data kepala sekolah
+$id_kepala = 1;
+$qKepala = $config->query("SELECT * FROM tb_kepala WHERE id_kepala = '$id_kepala'");
+$kepala = $qKepala->fetch_assoc();
 ?>
 
 <div style="font-family: 'Times New Roman'; color: black;  margin-left:3rem;  margin-right:2rem;">
@@ -123,6 +164,14 @@ function bulanIndo($bulan) {
     <div style="text-align: justify; margin-top: 2rem; margin-bottom: 5rem;">
         <p style="font-size: 22px;">Demikian surat tugas ini kami buat, agar dilaksanakan dan dipergunakan sebagaimana mestinya.</p>
     </div>
+
+    <!-- TANDA TANGAN -->
+    <?php
+        // Jika TTD ada (apa saja), padding = 0, jika tidak ada = 8rem
+        $paddingTTD = ($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap') 
+            ? '0' 
+            : '8rem';
+    ?>
     <table>
         <tr>
             <td style="font-size: 22px; text-align: left; padding-right: 5rem;">Yang Diberi Tugas</td>
@@ -132,7 +181,22 @@ function bulanIndo($bulan) {
         <tr>
             <td style="font-size: 22px; text-align: left; margin-right: 3rem; padding-top: 6rem;"><?php $pejabat = $_POST['petugas']; echo $pejabat; ?></td>
             <td></td>
-            <td style="font-size: 22px; text-align: left; margin-right: 3rem; padding-top: 6rem;">Budi .....MIASUYAUDsna, S.Sos</td>
+            <td style="padding-top:<?= $paddingTTD ?>; position:relative;">
+                <!-- TANDA TANGAN -->
+                <?php if($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+                    <?php if(!empty($kepala['ttd'])): ?>
+                        <img src="../<?= $kepala['ttd']; ?>" width="330"><br>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <!-- CAP SEKOLAH -->
+                <?php if($data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+                    <?php if(!empty($kepala['ttd_cap'])): ?>
+                        <img src="../<?= $kepala['ttd_cap']; ?>" width="340"
+                            style="position:absolute; margin-top:-150px; margin-left:-100px;">
+                    <?php endif; ?>
+                <?php endif; ?>
+            </td>
         </tr>
         <tr>
             <td></td>

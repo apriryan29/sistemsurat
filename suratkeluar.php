@@ -174,6 +174,7 @@ $query = mysqli_query($config, "
                                                 case 'pemberitahuan': $file = 'layoutsurat/cetak_pemberitahuan.php'; break;
                                                 case 'undangan':      $file = 'layoutsurat/cetak_undang.php'; break;
                                                 case 'tugas':         $file = 'layoutsurat/cetak_tugas.php'; break;
+                                                case 'tugas individu':$file = 'layoutsurat/cetak_tugasin.php'; break;
                                                 case 'tugasin':       $file = 'layoutsurat/cetak_tugasin.php'; break;
                                                 case 'sppd':          $file = 'layoutsurat/cetak_sppd.php'; break;
                                                 case 'sk':            $file = 'layoutsurat/cetak_sk.php'; break;
