@@ -5,7 +5,7 @@ include './include/config.php';
 $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST'  && $_POST['kategori'] === 'undangan') {
     
     // Data induk
     $kode_surat     = $_POST['kode_surat'];
@@ -57,18 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt2->bind_param("issss", $id_keluar, $lampiran, $tgl_acara, $waktu, $tempat);
         $stmt2->execute();
 
-        if ($ttd === 'Tanpa Tanda Tangan') {
-            echo "<script>
-                alert('Surat disetujui dan siap dicetak!');
-                window.location.href='layoutsurat/cetak_undang.php';
-            </script>";
-        } 
-        else {
-            echo "<script>
-                window.location.href = 'suratkeluar.php?success=1';
-            </script>";
-            exit;
-        }
+        // Redirect setelah berhasil menyimpan
+        echo "<script>
+            window.location.href = 'suratkeluar.php?success_undangan=1';
+        </script>";
+        exit;
 
     } else {
         $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";

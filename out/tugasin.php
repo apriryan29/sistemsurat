@@ -6,7 +6,7 @@ $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'tugas individu') {
 
     //data induk
     $kode_surat     = $_POST['kode_surat'];
@@ -62,18 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
         //eksekusi
-        if ($ttd === 'Tanpa Tanda Tangan') {
-            echo "<script>
-                alert('Surat disetujui dan siap dicetak!');
-                window.location.href='layoutsurat/cetak_tugasin.php';
-            </script>";
-        }
-        else {
-            echo "<script>
-                window.location.href = 'suratkeluar.php?success=2';
-            </script>";
-            exit;
-        }
+        echo "<script>
+            window.location.href = 'suratkeluar.php?success_tugasin=1';
+        </script>";
+        exit;
     }
     else {
         $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";

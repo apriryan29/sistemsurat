@@ -112,7 +112,13 @@ $query = mysqli_query($config, "
             <div class="alert alert-danger" id="error-msg"><?= htmlspecialchars($errorMsg) ?></div>
         <?php endif; ?>
         <?php
-            if (isset($_GET['success'])) {
+            if (isset($_GET['success_pemberitahuan'])) {
+                echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.</div>";
+            }
+            if (isset($_GET['success_tugasin'])) {
+                echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.</div>";
+            }
+            if (isset($_GET['success_undangan'])) {
                 echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.</div>";
             }
         ?>

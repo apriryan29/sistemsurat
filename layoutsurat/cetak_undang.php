@@ -19,7 +19,7 @@ $stmt = $config->prepare("
         p.tentang,
         p.judul,
         p.pembuka,
-        p.isi,
+        p.isi AS isi_perihal,
         p.penutup,
         s.lampiran,
         s.tgl_acara,
