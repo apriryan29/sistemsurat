@@ -10,27 +10,24 @@ $id = intval($_GET['id']);
 
 $query = "
 SELECT 
-    k.id_keluar,
     k.nomor_surat,
     k.kode_surat,
     k.tanggal,
-    k.tempat,
-    k.tgl_acara,
-    k.pulang,
-    k.pejabat,
-    k.pegawai,
-    k.jabatan,
-    k.pengikut,
-    k.kendaraan,
-    k.lampiran,
-    k.keperluan,
-    k.keterangan,
-    k.isi,
+    k.tujuan,
+    s.berangkat,
+    s.pulang,
+    s.pejabat,
+    s.petugas,
+    s.jabatan,
+    s.pengikut,
+    s.kendaraan,
+    s.keterangan,
+    s.isi,
     k.ttd,
     k.status_verifikasi
 FROM tb_keluar k
-WHERE k.kategori = 'sppd'
-AND k.id_keluar = $id
+JOIN tb_sppd s ON k.id_keluar = s.id_keluar
+WHERE k.id_keluar = $id
 LIMIT 1
 ";
 
@@ -107,7 +104,7 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">02</td>
             <td style="border: 1px solid black; padding: 1rem;">Nama Pegawai yang diperintah</td>
-            <td style="border: 1px solid black; padding: 1rem;"><?= htmlspecialchars($data['pegawai']) ; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;"><?= htmlspecialchars($data['petugas']) ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">03</td>
@@ -127,14 +124,14 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">06</td>
             <td style="border: 1px solid black; padding: 1rem;">a. Tempat Berangkat <br>b. Tempat Tujuan</td>
-            <td style="border: 1px solid black; padding: 1rem;">a. SMK Muhammadiyah Sampang <br>b. <?= htmlspecialchars($data['tempat']) ; ?></td>
+            <td style="border: 1px solid black; padding: 1rem;">a. SMK Muhammadiyah Sampang <br>b. <?= htmlspecialchars($data['tujuan']) ; ?></td>
         </tr>
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">07</td>
             <td style="border: 1px solid black; padding: 1rem;">a. Lama perjalanan dinas <br>b. Tanggal berangkat <br>c. Tanggal harus kembali</td>
             <td style="border: 1px solid black; padding: 1rem;">
-                a. <?php $lamaPerjalanan = hitungLamaPerjalanan($data['tgl_acara'], $data['pulang']); echo $lamaPerjalanan+1; ?> hari <br>
-                b. <?= htmlspecialchars($data['tgl_acara']) ; ?><br>
+                a. <?php $lamaPerjalanan = hitungLamaPerjalanan($data['berangkat'], $data['pulang']); echo $lamaPerjalanan+1; ?> hari <br>
+                b. <?= htmlspecialchars($data['berangkat']) ; ?><br>
                 c. <?= htmlspecialchars($data['pulang']) ; ?></td>
         </tr>
         <tr>
@@ -171,7 +168,7 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
             <td style="padding-right: 21rem;">Pemegang SPPD</td>
             <td colspan="2"><?= htmlspecialchars($data['pejabat']) ; ?></td>
         </tr>
-            <td style="padding-top: 8rem;"><?= htmlspecialchars($data['pegawai']) ; ?></td>
+            <td style="padding-top: 8rem;"><?= htmlspecialchars($data['petugas']) ; ?></td>
             <td colspan="2" style="padding-top: 8rem;">
                 <?php
                 if ($data['pejabat'] === 'Kepala Sekolah') {
@@ -193,12 +190,12 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
                         <tr>
                             <td>Tiba di</td>
                             <td>:</td>
-                            <td><?= htmlspecialchars($data['tempat']) ; ?></td>
+                            <td><?= htmlspecialchars($data['tujuan']) ; ?></td>
                         </tr>
                         <tr>
                             <td>Pada Tanggal</td>
                             <td>:</td>
-                            <td><?= formatTanggal($data['tgl_acara']) ; ?></td>
+                            <td><?= formatTanggal($data['berangkat']) ; ?></td>
                         </tr>
                     </table>
                 </td>
@@ -212,12 +209,12 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
                         <tr>
                             <td>Ke</td>
                             <td>:</td>
-                            <td><?= htmlspecialchars($data['tempat']) ; ?></td>
+                            <td><?= htmlspecialchars($data['tujuan']) ; ?></td>
                         </tr>
                         <tr>
                             <td>Pada Tanggal</td>
                             <td>:</td>
-                            <td><?= formatTanggal($data['tgl_acara']) ; ?></td>
+                            <td><?= formatTanggal($data['berangkat']) ; ?></td>
                         </tr>
                     </table>
                 </td>

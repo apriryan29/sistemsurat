@@ -5,6 +5,87 @@ include './include/config.php';
 $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sppd') {
+
+    //data induk
+    $kode_surat     = $_POST['kode_surat'];
+    $nomor_surat    = $_POST['nomor_surat'];
+    $tentang        = $_POST['tentang'];
+    $tanggal        = $_POST['tanggal'];
+    $tujuan         = $_POST['tempat'];
+    $kategori       = $_POST['kategori'];
+    $ttd            = $_POST['ttd'];
+
+    //data tambahan
+    $pejabat    = $_POST['pejabat'];
+    $petugas    = $_POST['pegawai'];
+    $jabatan    = $_POST['jabatan'];
+    $tempat     = $_POST['tempat'];
+    $kendaraan  = $_POST['kendaraan'];
+    $berangkat  = $_POST['berangkat'];
+    $pulang     = $_POST['pulang'];
+    $pengikut   = $_POST['pengikut'];
+    $keterangan = $_POST['keterangan'];
+    $isi        = $_POST['isi'];
+
+    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
+    //memasukan data ke tb_keluar
+    $stmt = $config->prepare("
+            INSERT INTO tb_keluar 
+                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    $stmt->bind_param(
+        "sssissss",
+        $kode_surat, 
+        $nomor_surat, 
+        $tanggal, 
+        $tentang, 
+        $kategori, 
+        $tujuan, 
+        $ttd, 
+        $status_verifikasi
+    );
+    //eksekusi data
+    if ($stmt->execute()){
+        //ambil id keluar
+        $id_keluar = $stmt->insert_id;
+
+        //masukan detail ke tb_sppd
+        $stmt2 = $config->prepare(
+            "INSERT INTO tb_sppd (id_keluar, pejabat, petugas, jabatan, tempat, kendaraan, berangkat, pulang, pengikut, keterangan, isi)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        );
+
+        $stmt2->bind_param(
+            "issssssssss", 
+            $id_keluar, 
+            $pejabat, 
+            $petugas, 
+            $jabatan, 
+            $tempat, 
+            $kendaraan, 
+            $berangkat, 
+            $pulang, 
+            $pengikut, 
+            $keterangan,
+            $isi
+        );
+        $stmt2->execute();
+
+        //eksekusi
+        echo "<script>
+            window.location.href = 'suratkeluar.php?success_tugasin=1';
+        </script>";
+        exit;
+
+    } else {
+        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+    }
+
+}
 ?>
 
 <!-- Modal untuk Surat Perintah Perjalanan Dinas -->
@@ -44,7 +125,14 @@ $result_kode = $config->query($sql_kode);
                     </div>
                     <div class="form-group">
                         <label for="tentang">Tentang Perihal SPPD</label>
-                        <input class="form-control" name="tentang" id="tentang" type="text" required>
+                        <select class="form-control" disabled>
+                            <option>Perjalanan Dinas</option>
+                        </select>
+                        <input type="hidden" name="tentang" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="isi">Isi Perjalanan Dinas</label>
+                        <input type="text" class="form-control" name="isi" id="isi" required>
                     </div>
                     <div class="form-group">
                         <label for="pejabat">Yang memberikan Tugas</label>

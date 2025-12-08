@@ -42,6 +42,9 @@ if ($lavel == 'admin' && isset($_GET['delete_id'])) {
     elseif ($kategori == "tugas individu") {
         $stmt1 = $config->prepare("DELETE FROM tb_tugas WHERE id_keluar = ?");
     }
+    elseif ($kategori == "sppd") {
+        $stmt1 = $config->prepare("DELETE FROM tb_sppd WHERE id_keluar = ?");
+    }
 
     // Eksekusi delete detail
     if (isset($stmt1)) {
