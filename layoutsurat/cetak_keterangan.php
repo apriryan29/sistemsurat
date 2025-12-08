@@ -9,12 +9,29 @@
 
     $id = intval($_GET['id']);
 
-    $stmt = $config->prepare("SELECT * FROM tb_keluar WHERE id_keluar = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $query = "
+    SELECT
+        k.nomor_surat,
+        k.kode_surat,
+        k.tujuan,
+        k.tanggal,
+        k.ttd,
+        k.status_verifikasi,
+        kt.ttl,
+        kt.nis,
+        kt.sekolah,
+        kt.ortu,
+        kt.isi
+    FROM tb_keluar k
+    JOIN tb_keterangan kt ON k.id_keluar = kt.id_keluar
+    WHERE k.id_keluar = $id LIMIT 1
+    ";
 
-
+    $result = $config->query($query);
+    if ($result->num_rows == 0){
+        die("Surat Keterangan tidak ditemukan.");
+    }
+    $data = $result->fetch_assoc();
 
     $bulanIndo = [
         1 => 'Januari',
@@ -72,7 +89,7 @@
             <tr>
                 <td>Tempat, Tanggal lahir</td>
                 <td>:</td>
-                <td><?= htmlspecialchars($data['keterangan']); ?></td>
+                <td><?= htmlspecialchars($data['ttl']); ?></td>
             </tr>
             <tr>
                 <td>NIS</td>
@@ -99,6 +116,12 @@
         </table>
     </div>
     <!-- Tabel Tanda Tangan -->
+     <?php
+        // Jika TTD ada (apa saja), padding = 0, jika tidak ada = 8rem
+        $paddingTTD = ($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap') 
+            ? '0' 
+            : '8rem';
+    ?>
     <table style="font-size: 22px; width: 95%;">
         <tr>
             <td style="padding-top: 3rem; padding-left: 40rem;">Sampang, 
@@ -110,7 +133,7 @@
         </tr>
                 
         <tr>
-            <td style="padding-top:<?= $paddingTTD ?>; padding-left:45rem; position:relative;">
+            <td style="padding-top:<?= $paddingTTD ?>; padding-left:40rem; position:relative;">
 
                 <!-- TANDA TANGAN -->
                 <?php if($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap'): ?>
@@ -126,13 +149,10 @@
                             style="position:absolute; margin-top:-150px; margin-left:-100px;">
                     <?php endif; ?>
                 <?php endif; ?>
-
-                
             </td>
         </tr>
-
         <tr>
-            <td style="padding-left:45rem;">
+            <td style="padding-left:40rem;">
                 <!-- NAMA & NBM -->
                 <?= htmlspecialchars($kepala['nama_kepala']); ?><br>
                 NBM. <?= htmlspecialchars($kepala['nbm_kepala']); ?>

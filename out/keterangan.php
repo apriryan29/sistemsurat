@@ -6,51 +6,69 @@ $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
 
-if($_SERVER['REQUEST_METHOD']=='POST'){
-    $kode_surat = $_POST['kode_surat'];
-    $nomor_surat = $_POST['nomor_surat'];
-    $tanggal = $_POST['tanggal'];
-    $tujuan = $_POST['tujuan'];
-    $lahir = $_POST['lahir'];
-    $nis = $_POST['nis'];
-    $sekolah = $_POST['sekolah'];
-    $ortu = $_POST['ortu'];
-    $isi = $_POST['isi'];
-    $kategori = $_POST['kategori'];
-    $ttd = $_POST['ttd'];
+if($_SERVER['REQUEST_METHOD']=='POST' && $_POST['kategori'] === 'keterangan') {
+    
+    //data induk
+    $kode_surat     = $_POST['kode_surat'];
+    $nomor_surat    = $_POST['nomor_surat'];
+    $tentang        = $_POST['tentang'];
+    $tanggal        = $_POST['tanggal'];
+    $tujuan         = $_POST['tujuan'];
+    $kategori       = $_POST['kategori'];
+    $ttd            = $_POST['ttd'];
+
+    //data tambahan
+    $lahir          = $_POST['lahir'];
+    $nis            = $_POST['nis'];
+    $sekolah        = $_POST['sekolah'];
+    $ortu           = $_POST['ortu'];
+    $isi            = $_POST['isi'];
 
     $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
 
-    $stmt = $config->prepare("INSERT INTO tb_keluar (kode_surat, nomor_surat, tanggal, tujuan, keterangan, nis, tujuan, ortu, isi, kategori, ttd, status_verifikasi) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    //memasukan data ke tb_keluar
+    $stmt = $config->prepare("
+            INSERT INTO tb_keluar 
+                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
 
-    if ($stmt === false) {
-        error_log('Prepare error: ' . $config->error, 3, "error_log.txt");
-        die('Query preparation failed. Please try again later.');
+    $stmt->bind_param(
+        "sssissss",
+        $kode_surat, 
+        $nomor_surat, 
+        $tanggal, 
+        $tentang, 
+        $kategori, 
+        $tujuan, 
+        $ttd, 
+        $status_verifikasi
+    );
+
+    //eksekusi data
+    if ($stmt->execute()){
+
+        //ambil id keluar
+        $id_keluar = $stmt->insert_id;
+
+        //masukan detail ke tb_keterangan
+        $stmt2 = $config->prepare(
+            "INSERT INTO tb_keterangan (id_keluar, ttl, nis, sekolah, ortu, isi)
+            VALUES (?, ?, ?, ?, ?, ?)"
+        );
+        $stmt2->bind_param(
+            "isssss", $id_keluar, $lahir, $nis, $sekolah, $ortu, $isi);
+
+        $stmt2->execute();
+        //eksekusi
+        echo "<script>
+            window.location.href = 'suratkeluar.php?success_tugasin=1';
+        </script>";
+        exit;
     }
-
-    // Binding parameter
-    $stmt->bind_param("ssssssssssss",$kode_surat,$nomor_surat, $tanggal, $tujuan, $lahir, $nis, $sekolah, $ortu, $isi, $kategori, $ttd, $status_verifikasi);
-    // Eksekusi query dan periksa apakah berhasil
-    if ($stmt->execute()) {
-
-        if ($ttd === 'Tanpa Tanda Tangan') {
-            echo "<script>
-                alert('Surat disetujui dan siap dicetak!');
-                window.location.href='layoutsurat/cetak_keterangan.php';
-            </script>";
-        } 
-        else {
-            echo "<script>
-                window.location.href = 'suratkeluar.php?success=1';
-            </script>";
-            exit;
-        }
-
-    } else {
+    else {
         $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
     }
-
-    $stmt->close();
 }
 ?>
 
@@ -66,6 +84,13 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
             </div>
             <div class="modal-body">
                 <form method="POST" action="">
+                    <div class="form-group">
+                        <label for="tentang"></label>
+                        <select class="form-control" disabled>
+                            <option>Surat Keterangan</option>
+                        </select>
+                        <input type="hidden" name="tentang" value="1">
+                    </div>
                     <div class="form-group">
                         <label for="nomor-surat">Nomor Surat</label>
                         <input type="text" class="form-control" name="nomor_surat" id="nomor-surat">
