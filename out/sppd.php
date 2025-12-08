@@ -9,7 +9,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sppd') {
 
     //data induk
     $kode_surat     = $_POST['kode_surat'];
-    $nomor_surat    = $_POST['nomor_surat'];
+    $tahun = date("Y");
+
+    // cari nomor terakhir berdasarkan kode_surat dan tahun
+    $q = mysqli_query($config, "
+        SELECT MAX(nomor_surat) AS last 
+        FROM tb_keluar 
+        WHERE kode_surat = '$kode_surat'
+        AND YEAR(tanggal) = '$tahun'
+    ");
+
+    $d = mysqli_fetch_assoc($q);
+    $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
+
     $tentang        = $_POST['tentang'];
     $tanggal        = $_POST['tanggal'];
     $tujuan         = $_POST['tempat'];
@@ -38,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sppd') {
     ");
 
     $stmt->bind_param(
-        "sssissss",
+        "sisissss",
         $kode_surat, 
         $nomor_surat, 
         $tanggal, 
@@ -102,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sppd') {
                 <form method="POST" action="">
                     <div class="form-group">
                         <label for="nomor-surat">Nomor Surat</label>
-                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat">
+                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat" readonly>
                     </div>
                     <div class="form-group">
                         <label for="kode-surat">Pilih Kode Surat</label>
