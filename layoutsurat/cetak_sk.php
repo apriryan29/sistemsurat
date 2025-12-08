@@ -2,42 +2,72 @@
 include 'kopsurat.php';
 include '../include/config.php';
 
-$nomor_surat = $_POST['nomor_surat'];
-$isi = $_POST['isi'];
-
-if (isset($_POST['tentang'])) {
-    $tentangId = $_POST['tentang'];
-
-    // Ambil data tentang berdasarkan ID
-    $sql_tentang = "SELECT * FROM tb_perihal WHERE id_perihal = $tentangId";
-    $result_tentang = $config->query($sql_tentang);
-    $tentangData = $result_tentang->fetch_assoc();
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    die("ID surat tidak ditemukan");
 }
+$id = intval($_GET['id']);
+$query = "
+SELECT
+    k.nomor_surat,
+    k.kode_surat,
+    k.tujuan,
+    k.tanggal,
+    k.ttd,
+    p.tentang,
+    p.pembuka,
+    p.memperhatikan,
+    p.menimbang,
+    p.mengingat,
+    p.penutup,
+    p.menetapkan_2,
+    p.menetapkan_3,
+    p.menetapkan_4,
+    k.status_verifikasi,
+    s.isi,
+    s.tembusan
+FROM tb_keluar k
+JOIN tb_perihal p ON k.id_perihal = p.id_perihal
+LEFT JOIN tb_sk s ON k.id_keluar = s.id_keluar
+WHERE k.id_keluar = $id LIMIT 1
+";
+$result = $config->query($query);
+if ($result->num_rows == 0){
+    die("Surat Keputusan belum tersedia");
+}
+$data = $result->fetch_assoc();
+
+$id_kepala = 1;
+$qKepala = $config->query("SELECT * FROM tb_kepala WHERE id_kepala = '$id_kepala'");
+$kepala = $qKepala->fetch_assoc();
+
 ?>
 
 <div style="font-family: 'Times New Roman'; color: black;">
     <div style="text-align: center; margin-top: 2rem;">
-        <p style="font-weight: bold; font-size: 24px;"><u>SURAT KEPUTUSAN KEPALA SEKOLAH</u> <br>Nomor : <?php echo $nomor_surat; ?></p>
-        <p style="font-weight: bold; font-size: 24px;">Tentang <br><?php echo $tentangData['tentang']; ?></p>
+        <p style="font-weight: bold; font-size: 24px;"><u>SURAT KEPUTUSAN KEPALA SEKOLAH</u> <br>Nomor : 
+            <?= htmlspecialchars($data['nomor_surat']); ?>
+            /III.4.AU /<?= htmlspecialchars($data['kode_surat']); ?>
+            /<?= date('Y', strtotime($data['tanggal'])) ?></p>
+        <p style="font-weight: bold; font-size: 24px;">Tentang <br><?= htmlspecialchars($data['tentang']); ?></p>
     </div>
 
     <div style="text-align: justify;  padding-left:2rem; padding-right: 3rem; font-size: 22px;">
-        <div style="padding-top: 1rem;"><?php echo $tentangData['pembuka']; ?></div>
+        <div style="padding-top: 1rem;"><?= htmlspecialchars($data['pembuka']); ?></div>
         <table>
             <tr style="vertical-align: top;">
                 <td style="padding-right: 5rem;">MEMPERHATIKAN</td>
                 <td style="padding-right: 2rem;">:</td>
-                <td><?php echo $tentangData['memperhatikan']; ?></td>
+                <td><?= htmlspecialchars($data['memperhatikan']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>MENIMBANG</td>
                 <td>:</td>
-                <td><?php echo $tentangData['menimbang']; ?></td>
+                <td><?= htmlspecialchars($data['menimbang']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>MENGINGAT</td>
                 <td>:</td>
-                <td><?php echo $tentangData['mengingat']; ?></td>
+                <td><?= htmlspecialchars($data['mengingat']); ?></td>
             </tr>
             <tr>
                 <td colspan="3" style="text-align: center; padding-top: 2rem;">MEMUTUSKAN</td>
@@ -50,26 +80,34 @@ if (isset($_POST['tentang'])) {
             <tr style="vertical-align: top;">
                 <td>Pertama</td>
                 <td style="padding-right: 2rem;">:</td>
-                <td><?php echo $isi; ?></td>
+                <td><?= htmlspecialchars($data['isi']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>Kedua</td>
                 <td>:</td>
-                <td><?php echo $tentangData['menetapkan_2']; ?></td>
+                <td><?= htmlspecialchars($data['menetapkan_2']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>Ketiga</td>
                 <td>:</td>
-                <td><?php echo $tentangData['menetapkan_3']; ?></td>
+                <td><?= htmlspecialchars($data['menetapkan_3']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>Keempat</td>
                 <td>:</td>
-                <td><?php echo $tentangData['menetapkan_4']; ?></td>
+                <td><?= htmlspecialchars($data['menetapkan_4']); ?></td>
             </tr>
         </table>
-        <div style="padding-top: 1rem;"><?php echo $tentangData['penutup']; ?></div>
+        <div style="padding-top: 1rem;"><?= htmlspecialchars($data['penutup']); ?></div>
 
+
+        <!-- TANDA TANGAN -->
+        <?php
+            // Jika TTD ada (apa saja), padding = 0, jika tidak ada = 8rem
+            $paddingTTD = ($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap') 
+                ? '0' 
+                : '8rem';
+        ?>
         <table class="no-break" style="margin-top: 2rem;">
             <tr>
                 <td></td>
@@ -121,13 +159,36 @@ if (isset($_POST['tentang'])) {
             <tr>
                 <td></td>
                 <td></td>
-                <td colspan="3" style="padding-left: 35rem; padding-top: 7rem;">Budi M...hjadayugdahda...., S.Sos</td>
+                <td style="padding-top:<?= $paddingTTD ?>; position:relative;">
+                    <!-- TANDA TANGAN -->
+                    <?php if($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+                        <?php if(!empty($kepala['ttd'])): ?>
+                            <img src="../<?= $kepala['ttd']; ?>" width="330"><br>
+                        <?php endif; ?>
+                    <?php endif; ?>
+
+                    <!-- CAP SEKOLAH -->
+                    <?php if($data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+                        <?php if(!empty($kepala['ttd_cap'])): ?>
+                            <img src="../<?= $kepala['ttd_cap']; ?>" width="340"
+                                style="position:absolute; margin-top:-150px; margin-left:-100px;">
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td colspan="3" style="padding-left: 35rem;"><!-- NAMA & NBM -->
+                    <?= htmlspecialchars($kepala['nama_kepala']); ?><br>
+                    NBM. <?= htmlspecialchars($kepala['nbm_kepala']); ?>
+                </td>
             </tr>
             <tr>
                 <td colspan="5" style="padding-top: 1rem;">Tembusan kepada Yth :</td>
             </tr>
             <tr>
-                <td colspan="5">1. .......................</td>
+                <td colspan="5">1. <?= htmlspecialchars($data['tembusan']); ?></td>
             </tr>
         </table>
     </div>

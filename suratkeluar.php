@@ -90,13 +90,21 @@ if ($lavel == 'kepala' && isset($_GET['id']) && isset($_GET['aksi'])) {
 
 $query = mysqli_query($config, "
     SELECT 
-        k.*, 
-        p.tentang AS tentang
+        k.*,
+        COALESCE(
+            p.tentang,
+            tg.keperluan,
+            sp.isi,
+            kt.isi
+        ) AS tentang
     FROM tb_keluar k
-    LEFT JOIN tb_perihal p
-      ON k.id_perihal = p.id_perihal
+    LEFT JOIN tb_perihal p ON k.id_perihal = p.id_perihal
+    LEFT JOIN tb_tugas tg ON k.id_keluar = tg.id_keluar
+    LEFT JOIN tb_sppd sp ON k.id_keluar = sp.id_keluar
+    LEFT JOIN tb_keterangan kt ON k.id_keluar = kt.id_keluar
     ORDER BY k.id_keluar DESC
 ");
+
 
 
 

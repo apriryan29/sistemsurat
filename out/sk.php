@@ -5,6 +5,66 @@ include './include/config.php';
 $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sk') {
+
+    //data induk
+    $kode_surat     = $_POST['kode_surat'];
+    $nomor_surat    = $_POST['nomor_surat'];
+    $tentang        = $_POST['tentang'];
+    $tanggal        = $_POST['tanggal'];
+    $tujuan         = $_POST['tujuan'];
+    $kategori       = $_POST['kategori'];
+    $ttd            = $_POST['ttd'];
+
+    //data tambahan
+    $isi = $_POST['isi'];
+    $tembusan = $_POST['tembusan'];
+
+    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
+    //memasukan data ke tb_keluar
+    $stmt = $config->prepare("
+            INSERT INTO tb_keluar 
+                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param(
+        "sssissss",
+        $kode_surat, 
+        $nomor_surat, 
+        $tanggal, 
+        $tentang, 
+        $kategori, 
+        $tujuan, 
+        $ttd, 
+        $status_verifikasi
+    );
+    //eksekusi data
+    if ($stmt->execute()){
+        //ambil id keluar
+        $id_keluar = $stmt->insert_id;
+
+        //masukan detail ke tb_sk
+        $stmt2 = $config->prepare(
+            "INSERT INTO tb_sk (id_keluar, isi, tembusan)
+            VALUES (?, ?, ?)"
+        );
+        $stmt2->bind_param(
+            "is", $id_keluar, $isi, $tembusan);
+        
+        $stmt2->execute();
+
+
+        //eksekusi
+        echo "<script>
+            window.location.href = 'suratkeluar.php?success_sk=1';
+        </script>";
+        exit;
+    }
+    else {
+        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+    }
+}
 ?>
 
 <!-- Modal untuk Surat Keputusan -->
@@ -18,10 +78,10 @@ $result_kode = $config->query($sql_kode);
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="layoutsurat/cetak_sk.php">
+                <form method="POST" action="">
                     <div class="form-group">
                         <label for="nomor-surat">Nomor Surat</label>
-                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat" readonly>
+                        <input type="text" class="form-control" name="nomor_surat" id="nomor-surat">
                     </div>
                     <div class="form-group">
                         <label for="kode-surat">Pilih Kode Surat</label>
@@ -39,10 +99,6 @@ $result_kode = $config->query($sql_kode);
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="tanggal">Tanggal</label>
-                        <input class="form-control" name="tanggal" type="date" required>
-                    </div>
-                    <div class="form-group">
                         <label for="tentang">Tentang Perihal SK</label>
                         <select class="form-control" name="tentang" id="tentang" required>
                             <option value="" disabled selected>Pilih Tentang</option>
@@ -58,10 +114,29 @@ $result_kode = $config->query($sql_kode);
                             ?>
                         </select>
                     </div>
-
+                    <div class="form-group">
+                        <label for="tanggal">Tanggal</label>
+                        <input class="form-control" name="tanggal" type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tujuan">Tujuan Surat Keputusan</label>
+                        <input class="form-control" name="tujuan" type="text" required>
+                    </div>
                     <div class="form-group">
                         <label for="isi">Ketetapan Poin Pertama</label>
                         <textarea type="text" class="form-control" name="isi" placeholder="Masukkan Ketetapan Surat Keputusan" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="tembusan">Tembusan Surat Keputusan</label>
+                        <input class="form-control" name="tembusan" type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ttd">Pilih Tanda Tangan</label>
+                        <select name="ttd" id="ttd" class="form-control">
+                            <option value="Tanpa Tanda Tangan">Tanpa Tanda Tangan</option>
+                            <option value="Tanda Tangan Saja">Tanda Tangan Saja</option>
+                            <option value="Tanda Tangan dan Cap">Tanda Tangan dan Cap</option>
+                        </select>
                     </div>
                     <input type="hidden" name="kategori" value="sk">
                     <div class="modal-footer">
@@ -73,22 +148,3 @@ $result_kode = $config->query($sql_kode);
         </div>
     </div>
 </div>
-
-<script>
-function updateNomorSurat() {
-    const kodeSuratSelect = document.getElementById('kode-surat');
-    const nomorSuratInput = document.getElementById('nomor-surat');
-    
-    // Ambil kode surat yang dipilih
-    const selectedKode = kodeSuratSelect.value;
-
-    // Dapatkan tahun saat ini
-    const currentYear = new Date().getFullYear();
-
-    // Buat format nomor surat
-    const nomorSurat = "001/IV.4/" + selectedKode + "/" + currentYear;
-
-    // Update input nomor_surat
-    nomorSuratInput.value = nomorSurat;
-}
-</script>

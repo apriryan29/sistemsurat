@@ -172,16 +172,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'tugas indivi
         </div>
     </div>
 </div>
-
-<script>
-function updateNomorSurat() {
-    const kodeSuratSelect = document.getElementById('kode-surat');
-    const nomorSuratInput = document.getElementById('nomor-surat');
-    
-    const selectedKode = kodeSuratSelect.value;
-    const currentYear = new Date().getFullYear();
-    const nomorSurat = "011/IV.4/" + selectedKode + "/" + currentYear;
-
-    nomorSuratInput.value = nomorSurat;
-}
-</script>
