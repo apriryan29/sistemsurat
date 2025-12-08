@@ -357,13 +357,12 @@ $query = mysqli_query($config, "
                                     $aksi = "<i class='fe fe-lock'></i>";
                                 }
 
-                                if ($status == 'disetujui') {
-                                    $preview = "<span <i class='fe fe-lock'></i></span>";
-                                } else {
-                                    $preview = "<a href='{$file}?id={$row['id_keluar']}'>
-                                                <i class='fe fe-eye'></i>
-                                                </a>";
-                                }
+                                // Kepala sekolah SELALU bisa melihat surat apapun statusnya
+                                $preview = "
+                                    <a href='{$file}?id={$row['id_keluar']}'>
+                                        <i class='fe fe-eye'></i>
+                                    </a>";
+
 
                                 $tahun = date('Y', strtotime($row['tanggal']));
 
