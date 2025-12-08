@@ -106,9 +106,75 @@ $query = mysqli_query($config, "
 ");
 
 
+// PROSES EDIT SURAT
+if (isset($_GET['edit_id'])) {
+    $id = intval($_GET['edit_id']);
 
+    // Ambil kategori / jenis surat
+    $sql = $config->prepare("SELECT kategori FROM tb_keluar WHERE id_keluar = ?");
+    $sql->bind_param("i", $id);
+    $sql->execute();
+    $result = $sql->get_result();
+    $data = $result->fetch_assoc();
 
+    $jenis = $data['kategori'];
+    // Ambil data lengkap sesuai kategori
+    switch ($jenis) {
+        case 'pemberitahuan':
+            $sql = "
+                SELECT k.*, p.* 
+                FROM tb_keluar k
+                LEFT JOIN tb_pemberitahuan p ON k.id_keluar = p.id_keluar
+                WHERE k.id_keluar = ?";
+            break;
 
+        case 'undangan':
+            $sql = "
+                SELECT k.*, u.* 
+                FROM tb_keluar k
+                LEFT JOIN tb_undangan u ON k.id_keluar = u.id_keluar
+                WHERE k.id_keluar = ?";
+            break;
+
+        case 'tugas individu':
+            $sql = "
+                SELECT k.*, t.* 
+                FROM tb_keluar k
+                LEFT JOIN tb_tugas t ON k.id_keluar = t.id_keluar
+                WHERE k.id_keluar = ?";
+            break;
+
+        case 'sppd':
+            $sql = "
+                SELECT k.*, s.* 
+                FROM tb_keluar k
+                LEFT JOIN tb_sppd s ON k.id_keluar = s.id_keluar
+                WHERE k.id_keluar = ?";
+            break;
+
+        case 'keterangan':
+            $sql = "
+                SELECT k.*, kt.* 
+                FROM tb_keluar k
+                LEFT JOIN tb_keterangan kt ON k.id_keluar = kt.id_keluar
+                WHERE k.id_keluar = ?";
+            break;
+
+        case 'sk':
+            $sql = "
+                SELECT k.*, sk.* 
+                FROM tb_keluar k
+                LEFT JOIN tb_sk sk ON k.id_keluar = sk.id_keluar
+                WHERE k.id_keluar = ?";
+            break;
+    }
+
+    $stmt = $config->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $data = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+}
 ?>
 
 <?php include 'include/header.php'; ?>
@@ -148,6 +214,40 @@ $query = mysqli_query($config, "
             
         </div>
     </div>
+
+        <?php if (isset($_GET['edit_id'])): ?>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        let jenis = "<?php echo $jenis; ?>";
+        let modalID = "";
+
+        switch(jenis) {
+            case "pemberitahuan": modalID = "#pemberitahuanModal"; break;
+            case "undangan":      modalID = "#undangModal"; break;
+            case "tugas":         modalID = "#tugasModal"; break;
+            case "tugas individu":modalID = "#tugasinModal"; break;
+            case "sppd":          modalID = "#sppdModal"; break;
+            case "sk":            modalID = "#skModal"; break;
+            case "keterangan":    modalID = "#keteranganModal"; break;
+        }
+
+        if (modalID !== "") {
+            $(modalID).modal("show");
+
+            // Kirim data PHP ke JS
+            let data = <?php echo json_encode($data); ?>;
+
+            // Isi semua input dengan nilai lama
+            for (let key in data) {
+                let input = document.querySelector(modalID + " [name='"+ key +"']");
+                if (input) input.value = data[key];
+            }
+        }
+    });
+    </script>
+    <?php endif; ?>
+
 
         <?php if (!empty($msg)): ?>
             <div class="alert alert-success" id="success-msg"><?= htmlspecialchars($msg) ?></div>
