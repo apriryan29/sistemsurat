@@ -240,7 +240,7 @@ $query = mysqli_query($config, "
 
                                             // TOMBOL CETAK
                                             if ($bolehCetak) {
-                                                $btnCetak = "<a href='{$file}?id={$row['id_keluar']}' class='btn btn-sm btn-success'>
+                                                $btnCetak = "<a href='{$file}?id={$row['id_keluar']}' target='_blank' class='btn btn-sm btn-success'>
                                                                 <i class='fe fe-printer'></i>
                                                             </a>";
                                             } else {
@@ -359,7 +359,7 @@ $query = mysqli_query($config, "
 
                                 // Kepala sekolah SELALU bisa melihat surat apapun statusnya
                                 $preview = "
-                                    <a href='{$file}?id={$row['id_keluar']}'>
+                                    <a href='{$file}?id={$row['id_keluar']}' target='_blank'>
                                         <i class='fe fe-eye'></i>
                                     </a>";
 

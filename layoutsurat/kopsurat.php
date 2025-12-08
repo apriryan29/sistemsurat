@@ -121,8 +121,9 @@ $sekolah = $result->fetch_assoc();
     };
 
     window.onafterprint = function() {
-        window.location.href = '../suratkeluar.php'; // Kembali setelah pencetakan selesai
+        window.close();
     };
+
     window.onbeforeprint = function() {
     };
 </script>
