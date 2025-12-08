@@ -104,7 +104,7 @@
             <tr>
                 <td>Asal Sekolah</td>
                 <td>:</td>
-                <td><?= htmlspecialchars($data['tujuan']); ?></td>
+                <td><?= htmlspecialchars($data['sekolah']); ?></td>
             </tr>
             <tr>
                 <td colspan="3" style="padding-top: 1rem;"><?= htmlspecialchars($data['isi']); ?></td>
