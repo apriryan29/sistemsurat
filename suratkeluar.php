@@ -176,109 +176,6 @@ if (isset($_GET['edit_id'])) {
     $stmt->close();
 }
 
-// =========================
-// PROSES UPDATE DATA SURAT
-// =========================
-if (isset($_POST['update_surat'])) {
-
-    $id_keluar = intval($_POST['id_keluar']);
-    $kategori  = $_POST['kategori'];
-
-    // UPDATE tb_keluar (kecuali nomor_surat tetap)
-    $stmt = $config->prepare("
-        UPDATE tb_keluar 
-        SET tujuan=?, kode_surat=?, tanggal=?, id_perihal=?, ttd=?
-        WHERE id_keluar=?
-    ");
-
-    $stmt->bind_param(
-        "sssssi",
-        $_POST['tujuan'],
-        $_POST['kode_surat'],
-        $_POST['tanggal'],
-        $_POST['id_perihal'],
-        $_POST['ttd'],
-        $id_keluar
-    );
-    $stmt->execute();
-    $stmt->close();
-
-    // ============================
-    // UPDATE TABEL DETAIL SESUAI KATEGORI
-    // ============================
-    switch ($kategori) {
-
-        case 'undangan':
-            $q = $config->prepare("
-                UPDATE tb_undangan SET
-                    isi_undangan=?, tempat=?, tanggal_acara=?, waktu_acara=?
-                WHERE id_keluar=?
-            ");
-            $q->bind_param(
-                "ssssi",
-                $_POST['isi_undangan'],
-                $_POST['tempat'],
-                $_POST['tanggal_acara'],
-                $_POST['waktu_acara'],
-                $id_keluar
-            );
-            $q->execute();
-            $q->close();
-            break;
-
-        case 'pemberitahuan':
-            $q = $config->prepare("
-                UPDATE tb_pemberitahuan SET isi=? WHERE id_keluar=?
-            ");
-            $q->bind_param("si", $_POST['isi'], $id_keluar);
-            $q->execute();
-            $q->close();
-            break;
-
-        case 'tugas individu':
-            $q = $config->prepare("
-                UPDATE tb_tugas SET keperluan=?, tanggal_tugas=? WHERE id_keluar=?
-            ");
-            $q->bind_param("ssi", $_POST['keperluan'], $_POST['tanggal_tugas'], $id_keluar);
-            $q->execute();
-            $q->close();
-            break;
-
-        case 'sppd':
-            $q = $config->prepare("
-                UPDATE tb_sppd SET isi=?, lama=?, tujuan_sppd=? WHERE id_keluar=?
-            ");
-            $q->bind_param("sssi", $_POST['isi'], $_POST['lama'], $_POST['tujuan_sppd'], $id_keluar);
-            $q->execute();
-            $q->close();
-            break;
-
-        case 'keterangan':
-            $q = $config->prepare("
-                UPDATE tb_keterangan SET isi=? WHERE id_keluar=?
-            ");
-            $q->bind_param("si", $_POST['isi'], $id_keluar);
-            $q->execute();
-            $q->close();
-            break;
-
-        case 'sk':
-            $q = $config->prepare("
-                UPDATE tb_sk SET isi=?, dasar=?, penutup=? WHERE id_keluar=?
-            ");
-            $q->bind_param("sssi", $_POST['isi'], $_POST['dasar'], $_POST['penutup'], $id_keluar);
-            $q->execute();
-            $q->close();
-            break;
-    }
-
-    echo "<script>
-            alert('Data berhasil diperbarui.');
-            window.location.href='suratkeluar.php';
-          </script>";
-    exit();
-}
-
 ?>
 
 <?php include 'include/header.php'; ?>
@@ -296,8 +193,7 @@ if (isset($_POST['update_surat'])) {
                             <option selected>Pilih Kategori</option>
                             <option value="sppd">Perjalanan Dinas [SPPD]</option>
                             <option value="undangan">Surat Undangan</option>
-                            <option value="tugas">Surat Tugas</option>
-                            <option value="tugasin">Surat Tugas Individu</option>
+                            <option value="tugasin">Surat Tugas</option>
                             <option value="sk">Surat Keputusan</option>
                             <option value="keterangan">Surat Keterangan</option>
                             <option value="pemberitahuan">Surat Pemberitahuan</option>
@@ -361,17 +257,17 @@ if (isset($_POST['update_surat'])) {
         <?php endif; ?>
         <?php
             if (isset($_GET['success_pemberitahuan'])) {
-                echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.</div>";
+                echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan.</div>";
             }
             if (isset($_GET['success_tugasin'])) {
-                echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.</div>";
+                echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan.</div>";
             }
             if (isset($_GET['success_undangan'])) {
-                echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan, menunggu verifikasi sebelum dicetak.</div>";
+                echo "<div class='alert alert-success' id='success-msg'>Surat berhasil disimpan.</div>";
             }
         ?>
         <?php if (isset($_GET['deleted'])): ?>
-            <div class='alert alert-success' id='success-msg'>Data berhasil dihapus.</div>
+            <div class='alert alert-success' id='success-msg'>Data anda berhasil dihapus.</div>
         <?php endif; ?>
 
     <!-- Tabel data Surat Keluar -->

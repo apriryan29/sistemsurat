@@ -8,82 +8,141 @@ $result_kode = $config->query($sql_kode);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'tugas individu') {
 
-    //data induk
-    $kode_surat     = $_POST['kode_surat'];
-    $tahun = date("Y");
+    $id_keluar = $_POST['id_keluar'];
 
-    // cari nomor terakhir berdasarkan kode_surat dan tahun
-    $q = mysqli_query($config, "
-        SELECT MAX(nomor_surat) AS last 
-        FROM tb_keluar 
-        WHERE kode_surat = '$kode_surat'
-        AND YEAR(tanggal) = '$tahun'
-    ");
+    if (empty($id_keluar)) {
+            
+        //data induk
+        $kode_surat     = $_POST['kode_surat'];
+        $tahun = date("Y");
 
-    $d = mysqli_fetch_assoc($q);
-    $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
+        // cari nomor terakhir berdasarkan kode_surat dan tahun
+        $q = mysqli_query($config, "
+            SELECT MAX(nomor_surat) AS last 
+            FROM tb_keluar 
+            WHERE kode_surat = '$kode_surat'
+            AND YEAR(tanggal) = '$tahun'
+        ");
 
-    $tentang        = $_POST['tentang'];
-    $tanggal        = $_POST['tanggal'];
-    $tujuan         = $_POST['tujuan'];
-    $kategori       = $_POST['kategori'];
-    $ttd            = $_POST['ttd'];
+        $d = mysqli_fetch_assoc($q);
+        $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
 
-    //data tambahan
-    $keperluan = $_POST['keperluan'];
-    $waktu = $_POST['waktu'];
-    $petugas = $_POST['petugas'];
-    $jabatan = $_POST['jabatan'];
-    $keterangan = $_POST['keterangan'];
+        $tentang        = $_POST['tentang'];
+        $tanggal        = $_POST['tanggal'];
+        $tujuan         = $_POST['tujuan'];
+        $kategori       = $_POST['kategori'];
+        $ttd            = $_POST['ttd'];
 
-    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+        //data tambahan
+        $keperluan = $_POST['keperluan'];
+        $waktu = $_POST['waktu'];
+        $petugas = $_POST['petugas'];
+        $jabatan = $_POST['jabatan'];
+        $keterangan = $_POST['keterangan'];
+
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
 
 
-    //memasukan data ke tb_keluar
-    $stmt = $config->prepare("
-            INSERT INTO tb_keluar 
-                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ");
+        //memasukan data ke tb_keluar
+        $stmt = $config->prepare("
+                INSERT INTO tb_keluar 
+                    (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ");
 
-    $stmt->bind_param(
-        "sisissss",
-        $kode_surat, 
-        $nomor_surat, 
-        $tanggal, 
-        $tentang, 
-        $kategori, 
-        $tujuan, 
-        $ttd, 
-        $status_verifikasi
-    );
-
-    //eksekusi data
-    if ($stmt->execute()){
-        //ambil id keluar
-        $id_keluar = $stmt->insert_id;
-
-        //masukan detail ke tb_tugas
-        $stmt2 = $config->prepare(
-            "INSERT INTO tb_tugas (id_keluar, keperluan, waktu, petugas, jabatan, keterangan)
-            VALUES (?, ?, ?, ?, ?, ?)"
+        $stmt->bind_param(
+            "sisissss",
+            $kode_surat, 
+            $nomor_surat, 
+            $tanggal, 
+            $tentang, 
+            $kategori, 
+            $tujuan, 
+            $ttd, 
+            $status_verifikasi
         );
-        $stmt2->bind_param(
-            "isssss", $id_keluar, $keperluan, $waktu, $petugas, $jabatan, $keterangan);
-        $stmt2->execute();
+
+        //eksekusi data
+        if ($stmt->execute()){
+            //ambil id keluar
+            $id_keluar = $stmt->insert_id;
+
+            //masukan detail ke tb_tugas
+            $stmt2 = $config->prepare(
+                "INSERT INTO tb_tugas (id_keluar, keperluan, waktu, petugas, jabatan, keterangan)
+                VALUES (?, ?, ?, ?, ?, ?)"
+            );
+            $stmt2->bind_param(
+                "isssss", $id_keluar, $keperluan, $waktu, $petugas, $jabatan, $keterangan);
+            $stmt2->execute();
 
 
-        //eksekusi
-        echo "<script>
-            window.location.href = 'suratkeluar.php?success_tugasin=1';
-        </script>";
-        exit;
+            //eksekusi
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success_tugasin=1';
+            </script>";
+            exit;
+        }
+        else {
+            $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+        }
+
+        $stmt->close();
     }
+
     else {
-        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
-    }
+        $kode_surat     = $_POST['kode_surat'];
+        $nomor_surat    = $_POST['nomor_surat'];   
+        $tentang        = $_POST['tentang'];
+        $tanggal        = $_POST['tanggal'];
+        $tujuan         = $_POST['tujuan'];
+        $kategori       = $_POST['kategori'];
+        $ttd            = $_POST['ttd'];
 
-    $stmt->close();
+        //data tambahan
+        $keperluan = $_POST['keperluan'];
+        $waktu = $_POST['waktu'];
+        $petugas = $_POST['petugas'];
+        $jabatan = $_POST['jabatan'];
+        $keterangan = $_POST['keterangan'];
+        
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
+        //memperbarui data di tb_keluar
+        $stmt = $config->prepare("
+            UPDATE tb_keluar 
+            SET kode_surat = ?, nomor_surat = ?, tanggal = ?, id_perihal = ?, kategori = ?, tujuan = ?, ttd = ?, status_verifikasi = ?
+            WHERE id_keluar = ?
+        ");
+        $stmt->bind_param(
+            "sisissssi",
+            $kode_surat, 
+            $nomor_surat, 
+            $tanggal, 
+            $tentang, 
+            $kategori, 
+            $tujuan, 
+            $ttd, 
+            $status_verifikasi,
+            $id_keluar
+        );
+        //eksekusi data
+        if ($stmt->execute()){
+            //perbarui detail di tb_tugas
+            $stmt2 = $config->prepare(
+                "UPDATE tb_tugas 
+                SET keperluan = ?, waktu = ?, petugas = ?, jabatan = ?, keterangan = ?
+                WHERE id_keluar = ?"
+            );
+            $stmt2->bind_param(
+                "sssssi", $keperluan, $waktu, $petugas, $jabatan, $keterangan, $id_keluar);
+            $stmt2->execute();
+
+            //eksekusi
+            echo "<script>window.location.href='suratkeluar.php?update_undangan=1';</script>";
+            exit;
+        }
+    }
 }
 ?>
 

@@ -5,83 +5,162 @@ include './include/config.php';
 $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST'  && $_POST['kategori'] === 'undangan') {
-    
-    // Data induk
-    $kode_surat     = $_POST['kode_surat'];
-    $tahun = date("Y");
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'undangan') {
 
-    // cari nomor terakhir berdasarkan kode_surat dan tahun
-    $q = mysqli_query($config, "
-        SELECT MAX(nomor_surat) AS last 
-        FROM tb_keluar 
-        WHERE kode_surat = '$kode_surat'
-        AND YEAR(tanggal) = '$tahun'
-    ");
+    $id_keluar = $_POST['id_keluar']; // <--- PENENTU MODE !!!
 
-    $d = mysqli_fetch_assoc($q);
-    $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
+    // =================== MODE TAMBAH ===================
+    if (empty($id_keluar)) {
 
-    $tentang        = $_POST['tentang'];
-    $tanggal        = $_POST['tanggal'];
-    $tujuan         = $_POST['tujuan'];
-    $kategori       = $_POST['kategori'];
-    $ttd            = $_POST['ttd'];
-
-    // Data tambahan
-    $lampiran       = $_POST['lampiran'];
-    $tgl_acara      = $_POST['tanggal1'];
-    $waktu          = $_POST['waktu'];
-    $tempat         = $_POST['tempat'];
-
-    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+        // --- kode INSERT tetap sama seperti punya Anda ---
 
     
-    // Siapkan query untuk menambahkan data ke tb_keluar
-    $stmt = $config->prepare("
-            INSERT INTO tb_keluar 
-                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ");    
+        // Data induk
+        $kode_surat     = $_POST['kode_surat'];
+        $tahun = date("Y");
 
-    $stmt->bind_param(
-        "sisissss",
-        $kode_surat, 
-        $nomor_surat, 
-        $tanggal, 
-        $tentang, 
-        $kategori, 
-        $tujuan, 
-        $ttd, 
-        $status_verifikasi
-    );
-
-    // Eksekusi query dan periksa apakah berhasil
-    if ($stmt->execute()) {
-        
-        // Ambil ID surat induk
-        $id_keluar = $stmt->insert_id;
-
-        $stmt2 = $config->prepare("
-            INSERT INTO tb_undangan (id_keluar, lampiran, tgl_acara, waktu, tempat)
-            VALUES (?, ?, ?, ?, ?)
+        // cari nomor terakhir berdasarkan kode_surat dan tahun
+        $q = mysqli_query($config, "
+            SELECT MAX(nomor_surat) AS last 
+            FROM tb_keluar 
+            WHERE kode_surat = '$kode_surat'
+            AND YEAR(tanggal) = '$tahun'
         ");
-        $stmt2->bind_param("issss", $id_keluar, $lampiran, $tgl_acara, $waktu, $tempat);
+
+        $d = mysqli_fetch_assoc($q);
+        $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
+
+        $tentang        = $_POST['tentang'];
+        $tanggal        = $_POST['tanggal'];
+        $tujuan         = $_POST['tujuan'];
+        $kategori       = $_POST['kategori'];
+        $ttd            = $_POST['ttd'];
+
+        // Data tambahan
+        $lampiran       = $_POST['lampiran'];
+        $tgl_acara      = $_POST['tanggal1'];
+        $waktu          = $_POST['waktu'];
+        $tempat         = $_POST['tempat'];
+
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
+        
+        // Siapkan query untuk menambahkan data ke tb_keluar
+        $stmt = $config->prepare("
+                INSERT INTO tb_keluar 
+                    (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ");    
+
+        $stmt->bind_param(
+            "sisissss",
+            $kode_surat, 
+            $nomor_surat, 
+            $tanggal, 
+            $tentang, 
+            $kategori, 
+            $tujuan, 
+            $ttd, 
+            $status_verifikasi
+        );
+
+        // Eksekusi query dan periksa apakah berhasil
+        if ($stmt->execute()) {
+            
+            // Ambil ID surat induk
+            $id_keluar = $stmt->insert_id;
+
+            $stmt2 = $config->prepare("
+                INSERT INTO tb_undangan (id_keluar, lampiran, tgl_acara, waktu, tempat)
+                VALUES (?, ?, ?, ?, ?)
+            ");
+            $stmt2->bind_param("issss", $id_keluar, $lampiran, $tgl_acara, $waktu, $tempat);
+            $stmt2->execute();
+
+            // Redirect setelah berhasil menyimpan
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success_undangan=1';
+            </script>";
+            exit;
+
+        } else {
+            $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+        }
+
+        $stmt->close();
+
+    }
+    
+    // =================== MODE UPDATE ===================
+    else {
+
+        $kode_surat  = $_POST['kode_surat'];
+        $tentang     = $_POST['tentang'];
+        $tanggal     = $_POST['tanggal'];
+        $tujuan      = $_POST['tujuan'];
+        $kategori    = $_POST['kategori'];
+        $ttd         = $_POST['ttd'];
+
+        // data tambahan
+        $lampiran  = $_POST['lampiran'];
+        $tgl_acara = $_POST['tanggal1'];
+        $waktu     = $_POST['waktu'];
+        $tempat    = $_POST['tempat'];
+
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
+        // ================= UPDATE tb_keluar =================
+        $stmt = $config->prepare("
+            UPDATE tb_keluar SET
+                kode_surat = ?, 
+                tanggal = ?, 
+                id_perihal = ?, 
+                kategori = ?, 
+                tujuan = ?, 
+                ttd = ?, 
+                status_verifikasi = ?
+            WHERE id_keluar = ?
+        ");
+
+        $stmt->bind_param(
+            "ssissssi",
+            $kode_surat,
+            $tanggal,
+            $tentang,
+            $kategori,
+            $tujuan,
+            $ttd,
+            $status_verifikasi,
+            $id_keluar
+        );
+
+        $stmt->execute();
+
+        // ================= UPDATE tb_undangan =================
+        $stmt2 = $config->prepare("
+            UPDATE tb_undangan SET
+                lampiran = ?, 
+                tgl_acara = ?, 
+                waktu = ?, 
+                tempat = ?
+            WHERE id_keluar = ?
+        ");
+        $stmt2->bind_param(
+            "ssssi",
+            $lampiran,
+            $tgl_acara,
+            $waktu,
+            $tempat,
+            $id_keluar
+        );
+
         $stmt2->execute();
 
-        // Redirect setelah berhasil menyimpan
-        echo "<script>
-            window.location.href = 'suratkeluar.php?success_undangan=1';
-        </script>";
+        echo "<script>window.location.href='suratkeluar.php?update_undangan=1';</script>";
         exit;
-
-    } else {
-        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
     }
-
-    $stmt->close();
-
 }
+
 ?>
 
 <!-- Modal untuk Surat Pemberitahuan -->
@@ -165,6 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'  && $_POST['kategori'] === 'undangan') 
                     </div>
                     <input type="hidden" name="kategori" value="undangan">
                     <div class="modal-footer">
+                        <input type="hidden" name="id_keluar" id="id_keluar">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
