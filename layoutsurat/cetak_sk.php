@@ -57,17 +57,17 @@ $kepala = $qKepala->fetch_assoc();
             <tr style="vertical-align: top;">
                 <td style="padding-right: 5rem;">MEMPERHATIKAN</td>
                 <td style="padding-right: 2rem;">:</td>
-                <td><?= htmlspecialchars($data['memperhatikan']); ?></td>
+                <td><?= nl2br($data['memperhatikan']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>MENIMBANG</td>
                 <td>:</td>
-                <td><?= htmlspecialchars($data['menimbang']); ?></td>
+                <td><?= nl2br($data['menimbang']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>MENGINGAT</td>
                 <td>:</td>
-                <td><?= htmlspecialchars($data['mengingat']); ?></td>
+                <td><?= nl2br($data['mengingat']); ?></td>
             </tr>
             <tr>
                 <td colspan="3" style="text-align: center; padding-top: 2rem;">MEMUTUSKAN</td>
@@ -80,25 +80,25 @@ $kepala = $qKepala->fetch_assoc();
             <tr style="vertical-align: top;">
                 <td>Pertama</td>
                 <td style="padding-right: 2rem;">:</td>
-                <td><?= htmlspecialchars($data['isi']); ?></td>
+                <td><?= nl2br($data['isi']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>Kedua</td>
                 <td>:</td>
-                <td><?= htmlspecialchars($data['menetapkan_2']); ?></td>
+                <td><?= nl2br($data['menetapkan_2']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>Ketiga</td>
                 <td>:</td>
-                <td><?= htmlspecialchars($data['menetapkan_3']); ?></td>
+                <td><?= nl2br($data['menetapkan_3']); ?></td>
             </tr>
             <tr style="vertical-align: top;">
                 <td>Keempat</td>
                 <td>:</td>
-                <td><?= htmlspecialchars($data['menetapkan_4']); ?></td>
+                <td><?= nl2br($data['menetapkan_4']); ?></td>
             </tr>
         </table>
-        <div style="padding-top: 1rem;"><?= htmlspecialchars($data['penutup']); ?></div>
+        <div style="padding-top: 1rem;"><?= nl2br($data['penutup']); ?></div>
 
 
         <!-- TANDA TANGAN -->
