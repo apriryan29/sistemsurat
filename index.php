@@ -191,7 +191,6 @@
       />
       <div id="passwordError" class="error-message" role="alert"></div>
       <div class="links">
-        <a href="#" tabindex="0">Lupa Kata Sandi?</a>
       </div>
 
       <button type="submit" aria-label="Login ke akun">Masuk</button>

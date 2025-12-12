@@ -8,79 +8,132 @@ $result_kode = $config->query($sql_kode);
 // Memeriksa apakah data dikirim melalui POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'pemberitahuan') {
     
-    // Data induk
-    $kode_surat     = $_POST['kode_surat'];
-    $tahun = date("Y");
+    $id_keluar = $_POST['id_keluar'];
 
-    // cari nomor terakhir berdasarkan kode_surat dan tahun
-    $q = mysqli_query($config, "
-        SELECT MAX(nomor_surat) AS last 
-        FROM tb_keluar 
-        WHERE kode_surat = '$kode_surat'
-        AND YEAR(tanggal) = '$tahun'
-    ");
+    if (empty($id_keluar)) {
+        // Data induk
+        $kode_surat     = $_POST['kode_surat'];
+        $tahun = date("Y");
 
-    $d = mysqli_fetch_assoc($q);
-    $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
-
-    $tentang        = $_POST['tentang'];
-    $tanggal        = $_POST['tanggal'];
-    $tujuan         = $_POST['tujuan'];
-    $kategori       = $_POST['kategori'];
-    $ttd            = $_POST['ttd'];
-
-    // Data tambahan
-    $lampiran       = $_POST['lampiran'];
-    $isi            = $_POST['isi'];
-
-    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
-
-
-    // Siapkan query untuk menambahkan data ke tb_keluar
-    $stmt = $config->prepare("
-            INSERT INTO tb_keluar 
-                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ");    
-
-    $stmt->bind_param(
-        "sisissss",
-        $kode_surat, 
-        $nomor_surat, 
-        $tanggal, 
-        $tentang, 
-        $kategori, 
-        $tujuan, 
-        $ttd, 
-        $status_verifikasi
-    );
-
-    // Eksekusi query dan periksa apakah berhasil
-    if ($stmt->execute()) {
-
-        // Ambil ID surat induk
-        $id_keluar = $stmt->insert_id;
-
-        // Insert detail ke tb_pemberitahuan
-        $stmt2 = $config->prepare("
-            INSERT INTO tb_pemberitahuan (id_keluar, lampiran, isi)
-            VALUES (?, ?, ?)
+        // cari nomor terakhir berdasarkan kode_surat dan tahun
+        $q = mysqli_query($config, "
+            SELECT MAX(nomor_surat) AS last 
+            FROM tb_keluar 
+            WHERE kode_surat = '$kode_surat'
+            AND YEAR(tanggal) = '$tahun'
         ");
-        $stmt2->bind_param("iss", $id_keluar, $lampiran, $isi);
-        $stmt2->execute();
-        
 
-        // Redirect setelah berhasil menyimpan
-        echo "<script>
-            window.location.href = 'suratkeluar.php?success_pemberitahuan=1';
-        </script>";
-        exit;
-        
-    } else {
-        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+        $d = mysqli_fetch_assoc($q);
+        $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
+
+        $tentang        = $_POST['tentang'];
+        $tanggal        = $_POST['tanggal'];
+        $tujuan         = $_POST['tujuan'];
+        $kategori       = $_POST['kategori'];
+        $ttd            = $_POST['ttd'];
+
+        // Data tambahan
+        $lampiran       = $_POST['lampiran'];
+        $isi            = $_POST['isi'];
+
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
+
+        // Siapkan query untuk menambahkan data ke tb_keluar
+        $stmt = $config->prepare("
+                INSERT INTO tb_keluar 
+                    (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ");    
+
+        $stmt->bind_param(
+            "sisissss",
+            $kode_surat, 
+            $nomor_surat, 
+            $tanggal, 
+            $tentang, 
+            $kategori, 
+            $tujuan, 
+            $ttd, 
+            $status_verifikasi
+        );
+
+        // Eksekusi query dan periksa apakah berhasil
+        if ($stmt->execute()) {
+
+            // Ambil ID surat induk
+            $id_keluar = $stmt->insert_id;
+
+            // Insert detail ke tb_pemberitahuan
+            $stmt2 = $config->prepare("
+                INSERT INTO tb_pemberitahuan (id_keluar, lampiran, isi)
+                VALUES (?, ?, ?)
+            ");
+            $stmt2->bind_param("iss", $id_keluar, $lampiran, $isi);
+            $stmt2->execute();
+            
+
+            // Redirect setelah berhasil menyimpan
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success_pemberitahuan=1';
+            </script>";
+            exit;
+            
+        } else {
+            $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+        }
+
+        $stmt->close();
     }
 
-    $stmt->close();
+    else {
+        $kode_surat     = $_POST['kode_surat'];
+        $tentang        = $_POST['tentang'];
+        $tanggal        = $_POST['tanggal'];
+        $tujuan         = $_POST['tujuan'];
+        $kategori       = $_POST['kategori'];
+        $ttd            = $_POST['ttd'];
+
+        $lampiran       = $_POST['lampiran'];
+        $isi            = $_POST['isi'];
+
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+
+        // Update data di tb_keluar
+        $stmt = $config->prepare("
+            UPDATE tb_keluar 
+            SET kode_surat = ?, tanggal = ?, id_perihal = ?, kategori = ?, tujuan = ?, ttd = ?
+            WHERE id_keluar = ?
+        ");
+        $stmt->bind_param(
+            "sisissi",
+            $kode_surat, 
+            $tanggal, 
+            $tentang, 
+            $kategori, 
+            $tujuan, 
+            $ttd, 
+            $id_keluar
+        );
+        if ($stmt->execute()) {
+            // Update data di tb_pemberitahuan
+            $lampiran       = $_POST['lampiran'];
+            $isi            = $_POST['isi'];
+
+            $stmt2 = $config->prepare("
+                UPDATE tb_pemberitahuan 
+                SET lampiran = ?, isi = ?
+                WHERE id_keluar = ?
+            ");
+            $stmt2->bind_param("ssi", $lampiran, $isi, $id_keluar);
+            $stmt2->execute();
+
+            echo "<script>
+                window.location.href = 'suratkeluar.php?update_pemberitahuan=1';
+            </script>";
+            exit;
+        }
+    }
 }
 ?>
 
@@ -158,6 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'pemberitahua
                     </div>
                     <input type="hidden" name="kategori" value="pemberitahuan">
                     <div class="modal-footer">
+                        <input type="hidden" name="id_keluar" id="id_keluar">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>

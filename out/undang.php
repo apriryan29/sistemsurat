@@ -11,9 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'undangan') {
 
     // =================== MODE TAMBAH ===================
     if (empty($id_keluar)) {
-
-        // --- kode INSERT tetap sama seperti punya Anda ---
-
     
         // Data induk
         $kode_surat     = $_POST['kode_surat'];

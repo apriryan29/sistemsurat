@@ -79,7 +79,7 @@ require_once 'include/config.php';
                                                 case 'pemberitahuan': $file='layoutsurat/cetak_pemberitahuan.php'; break;
                                                 case 'undangan':      $file='layoutsurat/cetak_undang.php'; break;
                                                 case 'tugas':         $file='layoutsurat/cetak_tugas.php'; break;
-                                                case 'tugasin':       $file='layoutsurat/cetak_tugasin.php'; break;
+                                                case 'tugas individu':       $file='layoutsurat/cetak_tugasin.php'; break;
                                                 case 'sppd':          $file='layoutsurat/cetak_sppd.php'; break;
                                                 case 'sk':            $file='layoutsurat/cetak_sk.php'; break;
                                                 case 'keterangan':    $file='layoutsurat/cetak_keterangan.php'; break;
@@ -97,7 +97,7 @@ require_once 'include/config.php';
                                                 <td>" . htmlspecialchars($row['tentang']) . "</td>
                                                 <td>" . htmlspecialchars($row['kategori']) . "</td>
                                                 <td>" . htmlspecialchars($row['tanggal']) . "</td>
-                                                <td><a href='{$file}?id={$row['id_keluar']}'>Lihat</a></td>
+                                                <td><a href='{$file}?id={$row['id_keluar']}' target='_blank'>Lihat</a></td>
                                             </tr>";
                                             $no++;
                                         }
