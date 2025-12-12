@@ -102,17 +102,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'pemberitahua
         // Update data di tb_keluar
         $stmt = $config->prepare("
             UPDATE tb_keluar 
-            SET kode_surat = ?, tanggal = ?, id_perihal = ?, kategori = ?, tujuan = ?, ttd = ?
+            SET kode_surat = ?, tanggal = ?, id_perihal = ?, kategori = ?, tujuan = ?, ttd = ?, status_verifikasi = ?
             WHERE id_keluar = ?
         ");
         $stmt->bind_param(
-            "sisissi",
+            "ssissssi",
             $kode_surat, 
             $tanggal, 
             $tentang, 
             $kategori, 
             $tujuan, 
-            $ttd, 
+            $ttd,
+            $status_verifikasi, 
             $id_keluar
         );
         if ($stmt->execute()) {
