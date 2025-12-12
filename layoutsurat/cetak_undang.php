@@ -189,15 +189,15 @@ $kepala = $qKepala->fetch_assoc();
                 <!-- TANDA TANGAN -->
                 <?php if($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap'): ?>
                     <?php if(!empty($kepala['ttd'])): ?>
-                        <img src="../<?= $kepala['ttd']; ?>" width="330"><br>
+                        <img src="../<?= $kepala['ttd']; ?>" width="330" style="transform: translateX(-50px);"><br>
                     <?php endif; ?>
                 <?php endif; ?>
 
                 <!-- CAP SEKOLAH -->
                 <?php if($data['ttd'] == 'Tanda Tangan dan Cap'): ?>
                     <?php if(!empty($kepala['ttd_cap'])): ?>
-                        <img src="../<?= $kepala['ttd_cap']; ?>" width="340"
-                            style="position:absolute; margin-top:-150px; margin-left:-100px;">
+                        <img src="../<?= $kepala['ttd_cap']; ?>" width="240"
+                            style="position:absolute; margin-top:-160px; margin-left:-180px;">
                     <?php endif; ?>
                 <?php endif; ?>
 

@@ -175,6 +175,110 @@ if (isset($_GET['edit_id'])) {
     $data = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 }
+
+// =========================
+// PROSES UPDATE DATA SURAT
+// =========================
+if (isset($_POST['update_surat'])) {
+
+    $id_keluar = intval($_POST['id_keluar']);
+    $kategori  = $_POST['kategori'];
+
+    // UPDATE tb_keluar (kecuali nomor_surat tetap)
+    $stmt = $config->prepare("
+        UPDATE tb_keluar 
+        SET tujuan=?, kode_surat=?, tanggal=?, id_perihal=?, ttd=?
+        WHERE id_keluar=?
+    ");
+
+    $stmt->bind_param(
+        "sssssi",
+        $_POST['tujuan'],
+        $_POST['kode_surat'],
+        $_POST['tanggal'],
+        $_POST['id_perihal'],
+        $_POST['ttd'],
+        $id_keluar
+    );
+    $stmt->execute();
+    $stmt->close();
+
+    // ============================
+    // UPDATE TABEL DETAIL SESUAI KATEGORI
+    // ============================
+    switch ($kategori) {
+
+        case 'undangan':
+            $q = $config->prepare("
+                UPDATE tb_undangan SET
+                    isi_undangan=?, tempat=?, tanggal_acara=?, waktu_acara=?
+                WHERE id_keluar=?
+            ");
+            $q->bind_param(
+                "ssssi",
+                $_POST['isi_undangan'],
+                $_POST['tempat'],
+                $_POST['tanggal_acara'],
+                $_POST['waktu_acara'],
+                $id_keluar
+            );
+            $q->execute();
+            $q->close();
+            break;
+
+        case 'pemberitahuan':
+            $q = $config->prepare("
+                UPDATE tb_pemberitahuan SET isi=? WHERE id_keluar=?
+            ");
+            $q->bind_param("si", $_POST['isi'], $id_keluar);
+            $q->execute();
+            $q->close();
+            break;
+
+        case 'tugas individu':
+            $q = $config->prepare("
+                UPDATE tb_tugas SET keperluan=?, tanggal_tugas=? WHERE id_keluar=?
+            ");
+            $q->bind_param("ssi", $_POST['keperluan'], $_POST['tanggal_tugas'], $id_keluar);
+            $q->execute();
+            $q->close();
+            break;
+
+        case 'sppd':
+            $q = $config->prepare("
+                UPDATE tb_sppd SET isi=?, lama=?, tujuan_sppd=? WHERE id_keluar=?
+            ");
+            $q->bind_param("sssi", $_POST['isi'], $_POST['lama'], $_POST['tujuan_sppd'], $id_keluar);
+            $q->execute();
+            $q->close();
+            break;
+
+        case 'keterangan':
+            $q = $config->prepare("
+                UPDATE tb_keterangan SET isi=? WHERE id_keluar=?
+            ");
+            $q->bind_param("si", $_POST['isi'], $id_keluar);
+            $q->execute();
+            $q->close();
+            break;
+
+        case 'sk':
+            $q = $config->prepare("
+                UPDATE tb_sk SET isi=?, dasar=?, penutup=? WHERE id_keluar=?
+            ");
+            $q->bind_param("sssi", $_POST['isi'], $_POST['dasar'], $_POST['penutup'], $id_keluar);
+            $q->execute();
+            $q->close();
+            break;
+    }
+
+    echo "<script>
+            alert('Data berhasil diperbarui.');
+            window.location.href='suratkeluar.php';
+          </script>";
+    exit();
+}
+
 ?>
 
 <?php include 'include/header.php'; ?>

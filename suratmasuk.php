@@ -16,8 +16,8 @@ $msg = ""; // Variabel untuk menyimpan pesan sukses
 $errorMsg = ""; // Variabel untuk menyimpan pesan kesalahan
 
 // Handle delete request
-if (isset($_GET['delete_id'])) {
-    $delete_id = intval($_GET['delete_id']);
+if (isset($_GET['delete_masuk'])) {
+    $delete_id = intval($_GET['delete_masuk']);
     // Get filename to delete
     $stmt = $config->prepare("SELECT nama_file FROM tb_masuk WHERE id_masuk = ?");
     $stmt->bind_param("i", $delete_id);
@@ -136,6 +136,10 @@ if (isset($_POST['suratmasuk'])) {
         }
     }
 }
+
+$sql_instansi = "SELECT nama_instansi FROM tb_instansi ORDER BY nama_instansi ASC";
+$result_instansi = $config->query($sql_instansi);
+
 ?>
 
 <!-- Memanggil header -->
@@ -160,7 +164,13 @@ if (isset($_POST['suratmasuk'])) {
                                     </div>
                                     <div class="form-group mb-3">
                                         <label for="instansi">Instansi/Yayasan</label>
-                                        <input type="text" id="instansi" name="instansi" class="form-control" placeholder="Instansi/Yayasan" value="<?php echo $editMode ? htmlspecialchars($editData['instansi']) : ''; ?>" required>
+                                        <input list="list-instansi" type="text" id="instansi" name="instansi" class="form-control" placeholder="Instansi/Yayasan" value="<?php echo $editMode ? htmlspecialchars($editData['instansi']) : ''; ?>" required>
+                                    
+                                        <datalist id="list-instansi">
+                                            <?php while ($row = $result_instansi->fetch_assoc()): ?>
+                                                <option value="<?php echo htmlspecialchars($row['nama_instansi']); ?>"></option>
+                                            <?php endwhile; ?>
+                                        </datalist>
                                     </div>
                                     <div class="form-group mb-3">
                                         <label for="tanggal">Tanggal</label>
@@ -173,6 +183,7 @@ if (isset($_POST['suratmasuk'])) {
                                             <option value="Yayasan" <?php if($editMode && $editData['kategori'] == 'Yayasan') echo 'selected'; ?>>Yayasan</option>
                                             <option value="Dinas Pendidikan" <?php if($editMode && $editData['kategori'] == 'Dinas Pendidikan') echo 'selected'; ?>>Dinas Pendidikan</option>
                                             <option value="Instansi" <?php if($editMode && $editData['kategori'] == 'Instansi') echo 'selected'; ?>>Instansi Pemerintah</option>
+                                            <option value="Lainnya" <?php if($editMode && $editData['kategori'] == 'Lainnya') echo 'selected'; ?>>Lainnya</option>
                                         </select>
                                     </div>
                                 </div>
@@ -189,7 +200,7 @@ if (isset($_POST['suratmasuk'])) {
                                             $query = mysqli_query($config, "SELECT * FROM tb_loker WHERE kategori_loker = 'Loker Surat Masuk'");
                                             while ($data = mysqli_fetch_array($query)) {
                                                 // Cek apakah mode edit dan apakah id_loker saat ini sama dengan loker yang dipilih
-                                                $selected = ($editMode && $editData['loker'] == $data['loker']) ? 'selected' : '';
+                                                $selected = ($editMode && $editData['id_loker'] == $data['loker']) ? 'selected' : '';
                                                 echo "<option value='{$data['loker']}' $selected>{$data['loker']}</option>";
                                             }
                                             ?>
@@ -273,7 +284,7 @@ if (isset($_POST['suratmasuk'])) {
                                                 <td><a href='" . htmlspecialchars($row['nama_file']) . "' target='_blank'>Lihat</a></td>
                                                 <td>
                                                     <a class='text-info' href='?edit_id=" . $row['id_masuk'] . "'><i class='fe fe-edit fe-16'></i></a>
-                                                    <a class='text-danger ml-2' href='?delete_id=" . $row['id_masuk'] . "' onclick='return confirm(\"Apakah kamu yakin ingin menghapus Dokumen ini?\");'><i class='fe fe-trash-2 fe-16'></i></a>
+                                                    <a class='text-danger ml-2' href='?delete_masuk=" . $row['id_masuk'] . "' onclick='return confirm(\"Apakah kamu yakin ingin menghapus Dokumen ini?\");'><i class='fe fe-trash-2 fe-16'></i></a>
                                                 </td>
                                             </tr>";
                                             $no++;
