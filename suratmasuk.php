@@ -331,7 +331,7 @@ function filterTable() {
 </script>
 
 <script>
-    // Menyembunyikan pesan setelah 5 detik
+    // Menyembunyikan pesan setelah 2 detik
     setTimeout(function() {
         const successMsg = document.getElementById('success-msg');
         const errorMsg = document.getElementById('error-msg');

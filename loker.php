@@ -1,46 +1,70 @@
 <?php
 session_start();
-include 'include/config.php'; // Koneksi ke database
+include 'include/config.php';
 
 if (!isset($_SESSION['username'])) {
     header("Location: index.php");
     exit();
 }
 
-// Function to handle adding new instansi
+$success_msg = '';
+$error_msg   = '';
+
+
 if (isset($_POST['add_loker'])) {
     $loker = $_POST['loker'];
     $kategori = $_POST['kategori_loker'];
 
     $stmt = $config->prepare("INSERT INTO tb_loker (loker, kategori_loker) VALUES (?, ?)");
-    $stmt->bind_param("ss", $loker, $kategori);
-    $stmt->execute();
-    $stmt->close();
+    if ($stmt) {
+        $stmt->bind_param("ss", $loker, $kategori);
+        if ($stmt->execute()) {
+            $success_msg = "Loker berhasil ditambahkan.";
+        } else {
+            $error_msg = "Gagal menambahkan loker.";
+        }
+        $stmt->close();
+    } else {
+        $error_msg = "Query tidak valid.";
+    }
 }
 
-// Function to handle editing an existing loker
 if (isset($_POST['edit_loker'])) {
     $id = $_POST['id_loker'];
     $loker = $_POST['loker'];
     $kategori = $_POST['kategori_loker'];
 
     $stmt = $config->prepare("UPDATE tb_loker SET loker = ?, kategori_loker = ? WHERE id_loker = ?");
-    $stmt->bind_param("sssi", $loker, $kategori, $id);
-    $stmt->execute();
-    $stmt->close();
+    if ($stmt) {
+        $stmt->bind_param("sssi", $loker, $kategori, $id);
+        if ($stmt->execute()) {
+            $success_msg = "Loker berhasil diperbarui.";
+        } else {
+            $error_msg = "Gagal memperbarui loker.";
+        }
+        $stmt->close();
+    } else {
+        $error_msg = "Query tidak valid.";
+    }
 }
 
-// Function to handle deleting an instansi
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
 
     $stmt = $config->prepare("DELETE FROM tb_loker WHERE id_loker = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $stmt->close();
+    if ($stmt) {
+        $stmt->bind_param("i", $id);
+        if ($stmt->execute()) {
+            $success_msg = "Loker berhasil dihapus.";
+        } else {
+            $error_msg = "Gagal menghapus loker.";
+        }
+        $stmt->close();
+    } else {
+        $error_msg = "Query tidak valid.";
+    }
 }
 
-// Fetch existing instansi to display in the table
 $result = $config->query("SELECT * FROM tb_loker");
 ?>
 
@@ -63,6 +87,14 @@ $result = $config->query("SELECT * FROM tb_loker");
                         </div> <!-- /.col -->
                     </div>
                 </div>
+
+                <!-- Tampilkan pesan di bawah form -->
+                <?php if (!empty($success_msg)): ?>
+                    <div class='alert alert-success' id="success-msg"><?php echo $success_msg; ?></div>
+                <?php endif; ?>
+                <?php if (!empty($error_msg)): ?>
+                    <div class='alert alert-danger' id="error-msg"><?php echo $error_msg; ?></div>
+                <?php endif; ?>
 
                 <h2 class="h5 page-title text-muted">Data Loker</h2>
                 <div class="row my-4">
@@ -96,18 +128,12 @@ $result = $config->query("SELECT * FROM tb_loker");
                                                     <td>{$row['loker']}</td>
                                                     <td>{$row['kategori_loker']}</td>
                                                     <td>
-                                                        <ul class='nav'>
-                                                            <li class='nav-item'>
-                                                                <a class='nav-link text-info my-0' onclick='editInstansi({$row['id_loker']}, \"{$row['loker']}\")'>
-                                                                    <i class='fe fe-edit fe-16'></i>
-                                                                </a>
-                                                            </li>
-                                                            <li class='nav-item'>
-                                                                <a class='nav-link text-danger my-0' href='?delete={$row['id_loker']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
-                                                                    <i class='fe fe-trash-2 fe-16'></i>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
+                                                        <a class='text-info' onclick='editInstansi({$row['id_loker']}, \"{$row['loker']}\")'>
+                                                            <i class='fe fe-edit fe-16'></i>
+                                                        </a>
+                                                        <a class='text-danger ml-2'' href='?delete={$row['id_loker']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
+                                                            <i class='fe fe-trash-2 fe-16'></i>
+                                                        </a>
                                                     </td>
                                                 </tr>";
                                                 $row_number++; // Increment row counter
@@ -216,4 +242,17 @@ function filterTable() {
         trs[i].style.display = match ? '' : 'none'; // Show or hide row
     }
 }
+
+//Menyembunyikan pesan setelah 2 detik
+setTimeout(function() {
+        const successMsg = document.getElementById('success-msg');
+        const errorMsg = document.getElementById('error-msg');
+        
+        if (successMsg) {
+            successMsg.style.display = 'none';
+        }
+        if (errorMsg) {
+            errorMsg.style.display = 'none';
+        }
+    }, 2000);
 </script>
