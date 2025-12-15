@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'tugas indivi
         $stmt = $config->prepare("
                 INSERT INTO tb_keluar 
                     (kode_surat, nomor_surat, tanggal, id_perihal, kategori, loker, tujuan, ttd, status_verifikasi)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         $stmt->bind_param(
