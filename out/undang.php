@@ -158,6 +158,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'undangan') {
     }
 }
 
+$sql_instansi = "SELECT nama_instansi FROM tb_instansi ORDER BY nama_instansi ASC";
+$result_instansi = $config->query($sql_instansi);
+
+
 ?>
 
 <!-- Modal untuk Surat Pemberitahuan -->
@@ -213,7 +217,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'undangan') {
                     </div>
                     <div class="form-group">
                         <label for="tujuan">Dikirim Kepada</label>
-                        <input type="text" class="form-control" name="tujuan" id="tujuan" placeholder="Masukkan Tujuan" required>
+                        <input list="list-instansi" type="text" class="form-control" name="tujuan" id="tujuan" placeholder="Masukkan Tujuan" required>
+                    
+                        <datalist id="list-instansi">
+                            <?php while ($row = $result_instansi->fetch_assoc()): ?>
+                                <option value="<?php echo htmlspecialchars($row['nama_instansi']); ?>"></option>
+                            <?php endwhile; ?>
+                        </datalist>
                     </div>
                     <div class="form-group">
                         <label for="lampiran">Lampiran Surat</label>

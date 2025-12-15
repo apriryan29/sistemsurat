@@ -98,6 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sppd') {
     }
 
 }
+
+$sql_instansi = "SELECT nama_instansi FROM tb_instansi ORDER BY nama_instansi ASC";
+$result_instansi = $config->query($sql_instansi);
 ?>
 
 <!-- Modal untuk Surat Perintah Perjalanan Dinas -->
@@ -164,7 +167,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sppd') {
                     </div>
                     <div class="form-group">
                         <label for="tempat">Tempat Tujuan Perjalanan Dinas</label>
-                        <input type="text" class="form-control" name="tempat" id="tempat" required>
+                        <input list="list-instansi" type="text" class="form-control" name="tempat" id="tempat" required>
+                        
+                        <datalist id="list-instansi">
+                            <?php while ($row = $result_instansi->fetch_assoc()): ?>
+                                <option value="<?php echo htmlspecialchars($row['nama_instansi']); ?>"></option>
+                            <?php endwhile; ?>
+                        </datalist>
                     </div>
                     <div class="form-group">
                         <label for="kendaraan">Kendaraan yang digunakan</label>

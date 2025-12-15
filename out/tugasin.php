@@ -144,6 +144,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'tugas indivi
         }
     }
 }
+
+$sql_instansi = "SELECT nama_instansi FROM tb_instansi ORDER BY nama_instansi ASC";
+$result_instansi = $config->query($sql_instansi);
 ?>
 
 <!-- Modal untuk Surat Pemberitahuan -->
@@ -205,7 +208,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'tugas indivi
                     </div>
                     <div class="form-group">
                         <label for="tujuan">Tempat Tujuan Tugas</label>
-                        <input class="form-control" name="tujuan" id="tujuan" required>
+                        <input list="list-instansi" class="form-control" name="tujuan" id="tujuan" required>
+                        <datalist id="list-instansi">
+                            <?php while ($row = $result_instansi->fetch_assoc()): ?>
+                                <option value="<?php echo htmlspecialchars($row['nama_instansi']); ?>"></option>
+                            <?php endwhile; ?>
+                        </datalist>
                     </div>
                     <div class="form-group">
                         <label for="waktu">Waktu Pelaksanaan Tugas</label>

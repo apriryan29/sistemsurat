@@ -5,6 +5,9 @@ include './include/config.php';
 $sql_kode = "SELECT id_kode, kode_surat, pokok_kode FROM tb_kode";
 $result_kode = $config->query($sql_kode);
 
+$sql_instansi = "SELECT nama_instansi FROM tb_instansi ORDER BY nama_instansi ASC";
+$result_instansi = $config->query($sql_instansi);
+
 ?>
 
 <!-- Modal untuk Surat Pemberitahuan -->
@@ -53,7 +56,13 @@ $result_kode = $config->query($sql_kode);
                     </div>
                     <div class="form-group">
                         <label for="tempat">Tempat Tujuan Tugas</label>
-                        <input class="form-control" name="tempat" required>
+                        <input list="list-instansi" class="form-control" name="tempat" required>
+                    
+                        <datalist id="list-instansi">
+                            <?php while ($row = $result_instansi->fetch_assoc()): ?>
+                                <option value="<?php echo htmlspecialchars($row['nama_instansi']); ?>"></option>
+                            <?php endwhile; ?>
+                        </datalist>
                     </div>
                     <div class="form-group">
                         <label for="waktu">Waktu Pelaksanaan Tugas</label>
