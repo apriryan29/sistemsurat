@@ -288,7 +288,6 @@ if (isset($_GET['edit_id'])) {
                                         <th>Nomor Surat</th>
                                         <th>Tujuan Surat</th>
                                         <th>Perihal</th>
-                                        <th>Kategori</th>
                                         <th>Tanggal</th>
                                         <th>Status</th>
                                         <th>Cetak</th>
@@ -359,7 +358,6 @@ if (isset($_GET['edit_id'])) {
                                                     </td>
                                                     <td>".htmlspecialchars($row['tujuan'])."</td>
                                                     <td>".($row['tentang'])."</td>
-                                                    <td>".htmlspecialchars($row['kategori'])."</td>
                                                     <td>".htmlspecialchars($row['tanggal'])."</td>
                                                     <td class='text-center'>{$status}</td>
                                                     <td class='text-center'>{$btnCetak}</td>
@@ -404,7 +402,6 @@ if (isset($_GET['edit_id'])) {
                                 <th>No Surat</th>
                                 <th>Tujuan</th>
                                 <th>Perihal</th>
-                                <th>Kategori</th>
                                 <th>Tanggal</th>
                                 <th>File</th>
                                 <th>Status</th>
@@ -472,7 +469,6 @@ if (isset($_GET['edit_id'])) {
                                     <td>{$row['nomor_surat']}/III.4.AU/{$row['kode_surat']}/{$tahun}</td>
                                     <td>{$row['tujuan']}</td>
                                     <td>{$row['tentang']}</td>
-                                    <td>{$row['kategori']}</td>
                                     <td>{$row['tanggal']}</td>
                                     <td class='text-center'>{$preview}</td>
                                     <td>{$badge}</td>

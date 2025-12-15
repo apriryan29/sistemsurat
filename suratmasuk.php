@@ -72,16 +72,16 @@ if (isset($_POST['suratmasuk'])) {
         // Menangani dalam mengunggah file
         $uploadOk = true;
         $targetDir = "uploads/";
-        $newFilePath = "";
         
-        if (isset($_FILES['nama_file']) && $_FILES['nama_file']['error'] != 4) { // Memilih file
-            $fileName = basename($_FILES["nama_file"]["name"]);
+        $newFilePath = null;
+
+        if (isset($_FILES['nama_file']) && $_FILES['nama_file']['error'] != 4) {
+            $fileName = time() . '_' . basename($_FILES["nama_file"]["name"]);
             $targetFile = $targetDir . $fileName;
 
-            // Tipe file/dokumen yang dapat diunggah
             $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
             if (!in_array($fileType, ['jpg', 'png', 'pdf', 'doc', 'docx'])) {
-                $errorMsg = "File tidak valid. Hanya file JPG, PNG, PDF, DOC, dan DOCX yang diizinkan.";
+                $errorMsg = "File tidak valid.";
                 $uploadOk = false;
             } elseif (move_uploaded_file($_FILES["nama_file"]["tmp_name"], $targetFile)) {
                 $newFilePath = $targetFile;
@@ -91,15 +91,16 @@ if (isset($_POST['suratmasuk'])) {
             }
         }
 
+
         if ($uploadOk) {
             if ($id_edit > 0) {
-                // Editing existing record
-                $fileToUse = $newFilePath !== "" ? $newFilePath : $editData['nama_file'];
+                
+                $fileToUse = $newFilePath ?? $editData['nama_file'];
 
-                // If new file uploaded, delete old file
-                if ($newFilePath !== "" && file_exists($editData['nama_file'])) {
+                if ($newFilePath && !empty($editData['nama_file']) && file_exists($editData['nama_file'])) {
                     unlink($editData['nama_file']);
                 }
+
 
                 $stmt = $config->prepare("UPDATE tb_masuk SET nomor=?, instansi=?, tanggal=?, kategori=?, id_loker=?, hal=?, nama_file=? WHERE id_masuk=?");
                 if ($stmt) {
@@ -114,11 +115,6 @@ if (isset($_POST['suratmasuk'])) {
                 }
                 $stmt->close();
             } else {
-                // Insert new record
-                if ($newFilePath === "") {
-                    $errorMsg = "File harus diunggah untuk data baru.";
-                    $uploadOk = false;
-                } else {
                     $stmt = $config->prepare("INSERT INTO tb_masuk (nomor, instansi, tanggal, kategori, id_loker, hal, nama_file) VALUES (?, ?, ?, ?, ?, ?, ?)");
                     if ($stmt) {
                         $stmt->bind_param("sssssss", $nomor, $instansi, $tanggal, $kategori, $loker, $hal, $newFilePath);
@@ -135,7 +131,6 @@ if (isset($_POST['suratmasuk'])) {
             }
         }
     }
-}
 
 $sql_instansi = "SELECT nama_instansi FROM tb_instansi ORDER BY nama_instansi ASC";
 $result_instansi = $config->query($sql_instansi);
@@ -273,20 +268,34 @@ $result_instansi = $config->query($sql_instansi);
                                         $no = 1;
                                         $query = mysqli_query($config, "SELECT * FROM tb_masuk ORDER BY id_masuk DESC");
                                         while ($row = mysqli_fetch_assoc($query)) {
-                                            echo "<tr>
-                                                <td>{$no}</td>
-                                                <td>" . htmlspecialchars($row['nomor']) . "</td>
-                                                <td>" . htmlspecialchars($row['instansi']) . "</td>
-                                                <td>" . htmlspecialchars($row['hal']) . "</td>
-                                                <td>" . htmlspecialchars($row['kategori']) . "</td>
-                                                <td>" . htmlspecialchars($row['id_loker']) . "</td>
-                                                <td>" . htmlspecialchars($row['tanggal']) . "</td>
-                                                <td><a href='" . htmlspecialchars($row['nama_file']) . "' target='_blank'>Lihat</a></td>
-                                                <td>
-                                                    <a class='text-info' href='?edit_id=" . $row['id_masuk'] . "'><i class='fe fe-edit fe-16'></i></a>
-                                                    <a class='text-danger ml-2' href='?delete_masuk=" . $row['id_masuk'] . "' onclick='return confirm(\"Apakah kamu yakin ingin menghapus Dokumen ini?\");'><i class='fe fe-trash-2 fe-16'></i></a>
-                                                </td>
-                                            </tr>";
+                                        ?>
+                                        <tr>
+                                            <td><?= $no ?></td>
+                                            <td><?= htmlspecialchars($row['nomor']) ?></td>
+                                            <td><?= htmlspecialchars($row['instansi']) ?></td>
+                                            <td><?= htmlspecialchars($row['hal']) ?></td>
+                                            <td><?= htmlspecialchars($row['kategori']) ?></td>
+                                            <td><?= htmlspecialchars($row['id_loker']) ?></td>
+                                            <td><?= htmlspecialchars($row['tanggal']) ?></td>
+                                            <td>
+                                                <?php if (!empty($row['nama_file'])): ?>
+                                                    <a href="<?= htmlspecialchars($row['nama_file']) ?>" target="_blank">Lihat</a>
+                                                <?php else: ?>
+                                                    <span class="text-muted">Tidak ada file</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <a class="text-info" href="?edit_id=<?= $row['id_masuk'] ?>">
+                                                    <i class="fe fe-edit fe-16"></i>
+                                                </a>
+                                                <a class="text-danger ml-2"
+                                                href="?delete_masuk=<?= $row['id_masuk'] ?>"
+                                                onclick="return confirm('Apakah kamu yakin ingin menghapus Dokumen ini?');">
+                                                    <i class="fe fe-trash-2 fe-16"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <?php
                                             $no++;
                                         }
                                         ?>

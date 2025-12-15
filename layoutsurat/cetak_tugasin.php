@@ -41,7 +41,7 @@ $data = $result->fetch_assoc();
 // Fungsi untuk format tanggal Indonesia
 function formatTanggal($tanggal) {
     $date = new DateTime($tanggal);
-    return hariIndo ($date->format('l')) . $date->format('j ') . bulanIndo($date->format('n')) . $date->format(' Y');
+    return hariIndo ($date->format('l')) . ',' . $date->format('j ') . bulanIndo($date->format('n')) . $date->format(' Y');
 }
 
 // Fungsi untuk mendapatkan nama bulan dalam bahasa Indonesia
@@ -74,6 +74,7 @@ function bulanIndo($bulan) {
             'Saturday' => 'Sabtu'
 
         ];
+        return $hariIndo[$hari] ?? $hari;
 }
 
 //ambil data kepala sekolah
