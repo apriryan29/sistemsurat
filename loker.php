@@ -164,7 +164,7 @@ $result = $config->query("SELECT * FROM tb_loker");
 <?php include 'include/footer.php'; ?>
 
 <script>
-function editInstansi(id, lokeri, kategori) {
+function editInstansi(id, loker, kategori) {
     // Populate the modal with the current values
     document.getElementById('edit_id').value = id;
     document.getElementById('loker').value = loker;
@@ -172,8 +172,8 @@ function editInstansi(id, lokeri, kategori) {
 
     // Change button name for editing
     const updateButton = document.querySelector("button[name='add_loker']");
-    updateButton.innerText = 'Update';
-    updateButton.name = 'edit_loker'; // Change name for editing
+    updateButton.innerText = 'Perbarui';
+    updateButton.name = 'edit_loker';
 
     // Show the modal
     $('#kode').modal('show');

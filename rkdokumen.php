@@ -57,7 +57,6 @@ require_once 'include/config.php';
                                             <th>Tanggal</th>
                                             <th>Kategori</th>
                                             <th>Loker</th>
-                                            <th>File</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -71,7 +70,6 @@ require_once 'include/config.php';
                                                     <td>" . htmlspecialchars($row['tanggal']) . "</td>
                                                     <td>" . htmlspecialchars($row['kategori']) . "</td>
                                                     <td>" . htmlspecialchars($row['id_loker']) . "</td>
-                                                    <td><a href='" . htmlspecialchars($row['nama_file']) . "' target='_blank'>Lihat</a></td>
                                                 </tr>";
                                             $no++;
                                         }
