@@ -18,7 +18,7 @@ $errorMsg = ""; // Variabel untuk menyimpan pesan kesalahan
 // Handle delete request
 if (isset($_GET['delete_masuk'])) {
     $delete_id = intval($_GET['delete_masuk']);
-    // Get filename to delete
+    // memanggil nama file sebelum dihapus dari database
     $stmt = $config->prepare("SELECT nama_file FROM tb_masuk WHERE id_masuk = ?");
     $stmt->bind_param("i", $delete_id);
     $stmt->execute();
@@ -26,7 +26,7 @@ if (isset($_GET['delete_masuk'])) {
     
     if ($row = $result->fetch_assoc()) {
         $filenameToDelete = $row['nama_file'];
-        // Delete file from server
+        // hapus file dari server
         if (file_exists($filenameToDelete)) {
             unlink($filenameToDelete);
         }
@@ -53,10 +53,11 @@ if (isset($_GET['edit_id'])) {
     $stmt->execute();
     $result = $stmt->get_result();
     $editData = $result->fetch_assoc();
-    $stmt->close(); // Menutup statement setelah digunakan
+    $stmt->close();
+     // Menutup statement setelah digunakan
 }
 
-// Handle form submission for add or edit
+// tambah dan edit surat masuk
 if (isset($_POST['suratmasuk'])) {
     $nomor = trim($_POST['nomor']);
     $instansi = trim($_POST['instansi']);
