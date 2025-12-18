@@ -7,98 +7,171 @@ $result_kode = $config->query($sql_kode);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sppd') {
 
-    //data induk
-    $kode_surat     = $_POST['kode_surat'];
-    $tahun = date("Y");
+    $id_keluar = $_POST['id_keluar'];
+    
+    if (empty($id_keluar)) {
+        //data induk
+        $kode_surat     = $_POST['kode_surat'];
+        $tahun = date("Y");
 
-    // cari nomor terakhir berdasarkan kode_surat dan tahun
-    $q = mysqli_query($config, "
-        SELECT MAX(nomor_surat) AS last 
-        FROM tb_keluar 
-        WHERE kode_surat = '$kode_surat'
-        AND YEAR(tanggal) = '$tahun'
-    ");
+        // cari nomor terakhir berdasarkan kode_surat dan tahun
+        $q = mysqli_query($config, "
+            SELECT MAX(nomor_surat) AS last 
+            FROM tb_keluar 
+            WHERE kode_surat = '$kode_surat'
+            AND YEAR(tanggal) = '$tahun'
+        ");
 
-    $d = mysqli_fetch_assoc($q);
-    $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
+        $d = mysqli_fetch_assoc($q);
+        $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
 
-    $tentang        = $_POST['tentang'];
-    $tanggal        = $_POST['tanggal'];
-    $tujuan         = $_POST['tempat'];
-    $kategori       = $_POST['kategori'];
-    $loker          = $_POST['loker'];
-    $ttd            = $_POST['ttd'];
+        $tentang        = $_POST['tentang'];
+        $tanggal        = $_POST['tanggal'];
+        $tujuan         = $_POST['tempat'];
+        $kategori       = $_POST['kategori'];
+        $ttd            = $_POST['ttd'];
 
-    //data tambahan
-    $pejabat    = $_POST['pejabat'];
-    $petugas    = $_POST['pegawai'];
-    $jabatan    = $_POST['jabatan'];
-    $tempat     = $_POST['tempat'];
-    $kendaraan  = $_POST['kendaraan'];
-    $berangkat  = $_POST['berangkat'];
-    $pulang     = $_POST['pulang'];
-    $pengikut   = $_POST['pengikut'];
-    $keterangan = $_POST['keterangan'];
-    $isi        = $_POST['isi'];
+        //data tambahan
+        $pejabat    = $_POST['pejabat'];
+        $petugas    = $_POST['pegawai'];
+        $jabatan    = $_POST['jabatan'];
+        $tempat     = $_POST['tempat'];
+        $kendaraan  = $_POST['kendaraan'];
+        $berangkat  = $_POST['berangkat'];
+        $pulang     = $_POST['pulang'];
+        $pengikut   = $_POST['pengikut'];
+        $keterangan = $_POST['keterangan'];
+        $isi        = $_POST['isi'];
 
-    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
 
-    //memasukan data ke tb_keluar
-    $stmt = $config->prepare("
-            INSERT INTO tb_keluar 
-                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, loker, tujuan, ttd, status_verifikasi)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ");
+        //memasukan data ke tb_keluar
+        $stmt = $config->prepare("
+                INSERT INTO tb_keluar 
+                    (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ");
 
-    $stmt->bind_param(
-        "sisisssss",
-        $kode_surat, 
-        $nomor_surat, 
-        $tanggal, 
-        $tentang, 
-        $kategori,
-        $loker, 
-        $tujuan, 
-        $ttd, 
-        $status_verifikasi
-    );
-    //eksekusi data
-    if ($stmt->execute()){
-        //ambil id keluar
-        $id_keluar = $stmt->insert_id;
-
-        //masukan detail ke tb_sppd
-        $stmt2 = $config->prepare(
-            "INSERT INTO tb_sppd (id_keluar, pejabat, petugas, jabatan, tempat, kendaraan, berangkat, pulang, pengikut, keterangan, isi)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        $stmt->bind_param(
+            "sisissss",
+            $kode_surat, 
+            $nomor_surat, 
+            $tanggal, 
+            $tentang, 
+            $kategori,
+            $tujuan, 
+            $ttd, 
+            $status_verifikasi
         );
+        //eksekusi data
+        if ($stmt->execute()){
+            //ambil id keluar
+            $id_keluar = $stmt->insert_id;
 
-        $stmt2->bind_param(
-            "issssssssss", 
-            $id_keluar, 
-            $pejabat, 
-            $petugas, 
-            $jabatan, 
-            $tempat, 
-            $kendaraan, 
-            $berangkat, 
-            $pulang, 
-            $pengikut, 
-            $keterangan,
-            $isi
-        );
-        $stmt2->execute();
+            //masukan detail ke tb_sppd
+            $stmt2 = $config->prepare(
+                "INSERT INTO tb_sppd (id_keluar, pejabat, petugas, jabatan, tempat, kendaraan, berangkat, pulang, pengikut, keterangan, isi)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            );
 
-        //eksekusi
-        echo "<script>
-            window.location.href = 'suratkeluar.php?success_tugasin=1';
-        </script>";
-        exit;
+            $stmt2->bind_param(
+                "issssssssss", 
+                $id_keluar, 
+                $pejabat, 
+                $petugas, 
+                $jabatan, 
+                $tempat, 
+                $kendaraan, 
+                $berangkat, 
+                $pulang, 
+                $pengikut, 
+                $keterangan,
+                $isi
+            );
+            $stmt2->execute();
 
-    } else {
-        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+            //eksekusi
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success_tugasin=1';
+            </script>";
+            exit;
+
+        } else {
+            $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+        }
     }
+    else {
+       $kode_surat     = $_POST['kode_surat'];
+       $nomor_surat   = $_POST['nomor_surat'];
+       $tanggal        = $_POST['tanggal'];
+         $tujuan         = $_POST['tempat'];
+         $kategori       = $_POST['kategori'];
+            $ttd            = $_POST['ttd'];
+        //data tambahan
+        $pejabat    = $_POST['pejabat'];
+        $petugas    = $_POST['pegawai'];
+        $jabatan    = $_POST['jabatan'];
+        $tempat     = $_POST['tempat'];
+        $kendaraan  = $_POST['kendaraan'];
+        $berangkat  = $_POST['berangkat'];
+        $pulang     = $_POST['pulang'];
+        $pengikut   = $_POST['pengikut'];
+        $keterangan = $_POST['keterangan'];
+        $isi        = $_POST['isi'];
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+        //memperbarui data di tb_keluar
+        $stmt = $config->prepare("
+            UPDATE tb_keluar 
+            SET kode_surat = ?, nomor_surat = ?, tanggal = ?, id_perihal = ?, kategori = ?, tujuan = ?, ttd = ?, status_verifikasi = ?
+            WHERE id_keluar = ?
+        ");
+        $stmt->bind_param(
+            "sisissssi",
+            $kode_surat, 
+            $nomor_surat, 
+            $tanggal, 
+            $tentang, 
+            $kategori,
+            $tujuan, 
+            $ttd, 
+            $status_verifikasi,
+            $id_keluar
+        );
+        //eksekusi data
+        if ($stmt->execute()){
+            //perbarui detail di tb_sppd
+            $stmt2 = $config->prepare(
+                "UPDATE tb_sppd 
+                SET pejabat = ?, petugas = ?, jabatan = ?, tempat = ?, kendaraan = ?, berangkat = ?, pulang = ?, pengikut = ?, keterangan = ?, isi = ?
+                WHERE id_keluar = ?"
+            );
+            $stmt2->bind_param(
+                "ssssssssssi", 
+                $pejabat, 
+                $petugas, 
+                $jabatan, 
+                $tempat, 
+                $kendaraan, 
+                $berangkat, 
+                $pulang, 
+                $pengikut, 
+                $keterangan,
+                $isi,
+                $id_keluar
+            );
+            $stmt2->execute();
 
+            //eksekusi
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success_tugasin=2';
+            </script>";
+            exit;
+
+        } 
+        else {
+            $errorMsg = "Gagal memperbarui data. Silakan coba lagi.";
+        }
+    }
 }
 
 $sql_instansi = "SELECT nama_instansi FROM tb_instansi ORDER BY nama_instansi ASC";
@@ -204,18 +277,6 @@ $result_instansi = $config->query($sql_instansi);
                         <label for="keterangan">Isi Keterangan Lainnya</label>
                         <input type="text" class="form-control" name="keterangan" id="keterangan" required>
                         <p><i>jika tidak ada keterangan lainnya maka isikan dengan simbol (-)</i></p>
-                    </div>
-                    <div class="form-group">
-                        <label for="loker">Loker Arsip File</label>
-                        <select class="form-control" id="loker" name="loker" required>
-                            <option value="">Pilih Kategori</option>
-                            <?php
-                            $q_loker = mysqli_query($config, "SELECT * FROM tb_loker WHERE kategori_loker = 'Loker Surat Keluar'");
-                            while ($data = mysqli_fetch_assoc($q_loker)) {
-                                echo "<option value='{$data['loker']}'>{$data['loker']}</option>";
-                            }
-                            ?>
-                        </select>
                     </div>
                     <div class="form-group">
                         <label for="ttd">Pilih Tanda Tangan</label>

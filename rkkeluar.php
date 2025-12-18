@@ -58,7 +58,6 @@ require_once 'include/config.php';
                                             <th>Instansi</th>
                                             <th>Perihal</th>
                                             <th>Tanggal</th>
-                                            <th>Loker</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -105,7 +104,6 @@ require_once 'include/config.php';
                                                 <td>" . htmlspecialchars($row['tujuan']) . "</td>
                                                 <td>" . htmlspecialchars($row['tentang']) . "</td>
                                                 <td>" . htmlspecialchars($row['tanggal']) . "</td>
-                                                <td>" . htmlspecialchars($row['loker']) . "</td>
                                             </tr>";
                                             $no++;
                                         }
