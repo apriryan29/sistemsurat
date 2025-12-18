@@ -17,13 +17,14 @@ $error_msg = '';
 $success_msg = '';
 $id_edit = 0;
 
-// Jika ada edit_id di GET, ambil data untuk diedit
+// ===== AMBIL DATA UNTUK EDIT =====
 if (isset($_GET['edit_id'])) {
     $id_edit = intval($_GET['edit_id']);
     $stmt = $config->prepare("SELECT * FROM tb_dokumen WHERE id_dokumen = ?");
     $stmt->bind_param("i", $id_edit);
     $stmt->execute();
     $result = $stmt->get_result();
+
     if ($result->num_rows > 0) {
         $edit_data = $result->fetch_assoc();
         $edit_mode = true;
@@ -33,105 +34,118 @@ if (isset($_GET['edit_id'])) {
     $stmt->close();
 }
 
-// Handle form submit untuk tambah atau edit
+// ===== SUBMIT FORM =====
 if (isset($_POST['submit'])) {
+
     $instansi = trim($_POST['instansi']);
-    $tanggal = trim($_POST['tanggal']);
+    $tanggal  = trim($_POST['tanggal']);
     $kategori = trim($_POST['kategori']);
-    $loker = trim($_POST['id_loker']);
-    $upload_file_name = $_FILES['nama_file']['name'] ?? '';
-    $upload_file_tmp = $_FILES['nama_file']['tmp_name'] ?? '';
+    $loker    = trim($_POST['id_loker']);
 
-    // Validasi input wajib
-    if (empty($instansi) || empty($tanggal) || empty($kategori) || (!$edit_mode && empty($upload_file_name))) {
-        $error_msg = "Semua Formulir harus diisi!";
+    $file_name = $_FILES['nama_file']['name'] ?? '';
+    $file_tmp  = $_FILES['nama_file']['tmp_name'] ?? '';
+    $file_size = $_FILES['nama_file']['size'] ?? 0;
+
+    // Validasi wajib
+    if (empty($instansi) || empty($tanggal) || empty($kategori) || empty($loker)) {
+        $error_msg = "Semua form wajib diisi kecuali unggah file.";
     } else {
-        if ($edit_mode) {
-            // EDIT MODE
-            // Jika ada file baru diupload, proses upload dan update nama_file
-            if (!empty($upload_file_name)) {
-                $allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png'];
 
-                $fileType = mime_content_type($upload_file_tmp);
-                $fileSize = $_FILES['nama_file']['size'];
+        // Konfigurasi upload
+        $allowedTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'image/jpeg',
+            'image/png'
+        ];
 
-                // Validasi tipe file dan ukuran
-                if (!in_array($fileType, $allowedTypes)) {
-                    $error_msg = "Tipe file tidak diizinkan. Harap unggah file PDF, DOC, DOCX, PPT, PPTX, XLSX, JPG, atau PNG.";
-                } elseif ($fileSize > 10 * 1024 * 1024) { // 10MB
-                    $error_msg = "Ukuran file harus kurang dari 10MB.";
-                } else {
-                    $targetDir = "uploads/";
-                    $targetFile = $targetDir . basename($upload_file_name);
-                    if (move_uploaded_file($upload_file_tmp, $targetFile)) {
-                        // Update termasuk file
-                        $stmt = $config->prepare("UPDATE tb_dokumen SET instansi=?, tanggal=?, kategori=?, id_loker=?, nama_file=? WHERE id_dokumen=?");
-                        $stmt->bind_param("sssssi", $instansi, $tanggal, $kategori, $loker, $targetFile, $id_edit);
-                    } else {
-                        $error_msg = "Unggah file gagal.";
-                    }
-                }
+        $uploadPath = null;
+
+        // ===== JIKA ADA FILE =====
+        if (!empty($file_name)) {
+
+            $fileType = mime_content_type($file_tmp);
+
+            if (!in_array($fileType, $allowedTypes)) {
+                $error_msg = "Tipe file tidak diizinkan.";
+            } elseif ($file_size > 10 * 1024 * 1024) {
+                $error_msg = "Ukuran file maksimal 10MB.";
             } else {
-                // Update tanpa mengubah file
-                $stmt = $config->prepare("UPDATE tb_dokumen SET instansi=?, tanggal=?, kategori=?, id_loker=? WHERE id_dokumen=?");
-                $stmt->bind_param("ssssi", $instansi, $tanggal, $kategori, $loker, $id_edit);
-            }
+                $uploadDir  = "uploads/";
+                $uploadPath = $uploadDir . time() . "_" . basename($file_name);
 
-            if (empty($error_msg)) {
-                if ($stmt->execute()) {
-                    $success_msg = "Data berhasil diperbarui.";
-                    $edit_mode = false;
-                    $edit_data = null;
-                    header("Location: arsipdokumen.php"); // redirect agar refresh tanpa parameter edit_id
-                    exit();
-                } else {
-                    $error_msg = "Gagal memperbarui data: " . htmlspecialchars($stmt->error);
-                }
-                $stmt->close();
-            }
-        } else {
-            // ADD MODE - Insert data baru
-            if (!empty($upload_file_name)) {
-                $allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png'];
-
-                $fileType = mime_content_type($upload_file_tmp);
-                $fileSize = $_FILES['nama_file']['size'];
-
-                // Validasi tipe file dan ukuran
-                if (!in_array($fileType, $allowedTypes)) {
-                    $error_msg = "Tipe file tidak diizinkan. Harap unggah file PDF, DOC, DOCX, PPT, PPTX, XLSX, JPG, atau PNG.";
-                } elseif ($fileSize > 10 * 1024 * 1024) { // 10MB
-                    $error_msg = "Ukuran file harus kurang dari 10MB.";
-                } else {
-                    $targetDir = "uploads/";
-                    $targetFile = $targetDir . basename($upload_file_name);
-                    if (move_uploaded_file($upload_file_tmp, $targetFile)) {
-                        $stmt = $config->prepare("INSERT INTO tb_dokumen (instansi, tanggal, kategori, id_loker, nama_file) VALUES (?, ?, ?, ?, ?)");
-                        if ($stmt) {
-                            $stmt->bind_param("sssss", $instansi, $tanggal, $kategori, $loker, $targetFile);
-                            if ($stmt->execute()) {
-                                $success_msg = "Data berhasil disimpan.";
-                            } else {
-                                $error_msg = "Gagal simpan data: " . htmlspecialchars($stmt->error);
-                            }
-                            $stmt->close();
-                        } else {
-                            $error_msg = "Persiapan statement gagal: {$config->error}";
-                        }
-                    } else {
-                        $error_msg = "Unggah file gagal.";
-                    }
+                if (!move_uploaded_file($file_tmp, $uploadPath)) {
+                    $error_msg = "Gagal mengunggah file.";
                 }
             }
+        }
+
+        // ===== PROSES DATABASE =====
+        if (empty($error_msg)) {
+
+            // ===== EDIT MODE =====
+            if ($edit_mode) {
+
+                if ($uploadPath) {
+                    // Update dengan file baru
+                    $stmt = $config->prepare(
+                        "UPDATE tb_dokumen 
+                         SET instansi=?, tanggal=?, kategori=?, id_loker=?, nama_file=? 
+                         WHERE id_dokumen=?"
+                    );
+                    $stmt->bind_param(
+                        "sssssi",
+                        $instansi, $tanggal, $kategori, $loker, $uploadPath, $id_edit
+                    );
+                } else {
+                    // Update tanpa ubah file
+                    $stmt = $config->prepare(
+                        "UPDATE tb_dokumen 
+                         SET instansi=?, tanggal=?, kategori=?, id_loker=? 
+                         WHERE id_dokumen=?"
+                    );
+                    $stmt->bind_param(
+                        "ssssi",
+                        $instansi, $tanggal, $kategori, $loker, $id_edit
+                    );
+                }
+
+            // ===== ADD MODE =====
+            } else {
+
+                $stmt = $config->prepare(
+                    "INSERT INTO tb_dokumen 
+                     (instansi, tanggal, kategori, id_loker, nama_file) 
+                     VALUES (?, ?, ?, ?, ?)"
+                );
+
+                $stmt->bind_param(
+                    "sssss",
+                    $instansi,
+                    $tanggal,
+                    $kategori,
+                    $loker,
+                    $uploadPath   // NULL jika tidak upload
+                );
+            }
+
+            // Eksekusi
+            if ($stmt->execute()) {
+                $success_msg = "Data berhasil disimpan";
+            } else {
+                $error_msg = "Database error: " . htmlspecialchars($stmt->error);
+            }
+
+            $stmt->close();
         }
     }
 }
 
-// Handle delete action (opsional, dari kode lama)
+// menghandle request hapus data
 if (isset($_GET['delete_id'])) {
     $delete_id = intval($_GET['delete_id']);
     $stmt = $config->prepare("DELETE FROM tb_dokumen WHERE id_dokumen = ?");
@@ -204,7 +218,7 @@ if (isset($_GET['delete_id'])) {
                                         <?php if ($edit_mode && !empty($edit_data['nama_file'])): ?>
                                             <small>File saat ini: <a href="<?= htmlspecialchars($edit_data['nama_file']) ?>" target="_blank">Lihat</a></small>
                                         <?php endif; ?>
-                                        <p><i>Disarankan mengunggah dengan format file dokumen<br> (pdf, docx, doc, png, atau jpg).</i></p>
+                                        <p><i>Format file dokumen (pdf, docx, doc, png, atau jpg).<br>Maksimal ukuran 10 MB</i></p>
                                     </div>
                                     <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
                                         <button type="submit" class="btn btn-primary" name="submit"><?= $edit_mode ? "Update" : "Simpan" ?></button>
@@ -259,15 +273,29 @@ if (isset($_GET['delete_id'])) {
                                     <tbody>
                                         <?php
                                         $no = 1;
-                                        $query = mysqli_query($config, "SELECT * FROM tb_dokumen");
+                                        $query = mysqli_query($config, "
+                                            SELECT * 
+                                            FROM tb_dokumen 
+                                            ORDER BY id_dokumen DESC
+                                        ");
+
                                         while ($row = mysqli_fetch_assoc($query)) {
                                             echo "<tr>
                                                     <td>{$no}</td>
                                                     <td>" . htmlspecialchars($row['instansi']) . "</td>
                                                     <td>" . htmlspecialchars($row['tanggal']) . "</td>
                                                     <td>" . htmlspecialchars($row['kategori']) . "</td>
-                                                    <td>" . htmlspecialchars($row['id_loker']) . "</td>
-                                                    <td><a href='" . htmlspecialchars($row['nama_file']) . "' target='_blank'>Lihat</a></td>
+                                                    <td>" . htmlspecialchars($row['id_loker']) . "</td>";
+                                                    ?>
+                                                    <td>
+                                                        <?php if (!empty($row['nama_file'])): ?>
+                                                            <a href="<?= htmlspecialchars($row['nama_file']) ?>" target="_blank">Lihat</a>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">Tidak ada file</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <?php
+                                            echo "
                                                     <td>
                                                         <a class='text-info' href='?edit_id={$row['id_dokumen']}' title='Edit'><i class='fe fe-edit fe-16'></i></a>
                                                         <a class='text-danger' href='?delete_id={$row['id_dokumen']}' title='Hapus' onclick='return confirm(\"Apakah kamu yakin ingin menghapus Dokumen ini?\");'><i class='fe fe-trash-2 fe-16'></i></a>
