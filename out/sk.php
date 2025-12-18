@@ -7,74 +7,74 @@ $result_kode = $config->query($sql_kode);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sk') {
 
-    //data induk
-    $kode_surat     = $_POST['kode_surat'];
-    $tahun = date("Y");
+        //data induk
+        $kode_surat     = $_POST['kode_surat'];
+        $tahun = date("Y");
 
-    // cari nomor terakhir berdasarkan kode_surat dan tahun
-    $q = mysqli_query($config, "
-        SELECT MAX(nomor_surat) AS last 
-        FROM tb_keluar 
-        WHERE kode_surat = '$kode_surat'
-        AND YEAR(tanggal) = '$tahun'
-    ");
+        // cari nomor terakhir berdasarkan kode_surat dan tahun
+        $q = mysqli_query($config, "
+            SELECT MAX(nomor_surat) AS last 
+            FROM tb_keluar 
+            WHERE kode_surat = '$kode_surat'
+            AND YEAR(tanggal) = '$tahun'
+        ");
 
-    $d = mysqli_fetch_assoc($q);
-    $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
-    $tentang        = $_POST['tentang'];
-    $tanggal        = $_POST['tanggal'];
-    $tujuan         = $_POST['tujuan'];
-    $kategori       = $_POST['kategori'];
-    $ttd            = $_POST['ttd'];
+        $d = mysqli_fetch_assoc($q);
+        $nomor_surat = ($d['last']) ? $d['last'] + 1 : 1;
+        $tentang        = $_POST['tentang'];
+        $tanggal        = $_POST['tanggal'];
+        $tujuan         = $_POST['tujuan'];
+        $kategori       = $_POST['kategori'];
+        $ttd            = $_POST['ttd'];
 
-    //data tambahan
-    $isi = $_POST['isi'];
-    $tembusan = $_POST['tembusan'];
+        //data tambahan
+        $isi = $_POST['isi'];
+        $tembusan = $_POST['tembusan'];
 
-    $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
 
-    //memasukan data ke tb_keluar
-    $stmt = $config->prepare("
-            INSERT INTO tb_keluar 
-                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ");
-    $stmt->bind_param(
-        "sisissss",
-        $kode_surat, 
-        $nomor_surat, 
-        $tanggal, 
-        $tentang, 
-        $kategori,
-        $tujuan, 
-        $ttd, 
-        $status_verifikasi
-    );
-    //eksekusi data
-    if ($stmt->execute()){
-        //ambil id keluar
-        $id_keluar = $stmt->insert_id;
-
-        //masukan detail ke tb_sk
-        $stmt2 = $config->prepare(
-            "INSERT INTO tb_sk (id_keluar, isi, tembusan)
-            VALUES (?, ?, ?)"
+        //memasukan data ke tb_keluar
+        $stmt = $config->prepare("
+                INSERT INTO tb_keluar 
+                    (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->bind_param(
+            "sisissss",
+            $kode_surat, 
+            $nomor_surat, 
+            $tanggal, 
+            $tentang, 
+            $kategori,
+            $tujuan, 
+            $ttd, 
+            $status_verifikasi
         );
-        $stmt2->bind_param(
-            "iss", $id_keluar, $isi, $tembusan);
-        
-        $stmt2->execute();
+        //eksekusi data
+        if ($stmt->execute()){
+            //ambil id keluar
+            $id_keluar = $stmt->insert_id;
+
+            //masukan detail ke tb_sk
+            $stmt2 = $config->prepare(
+                "INSERT INTO tb_sk (id_keluar, isi, tembusan)
+                VALUES (?, ?, ?)"
+            );
+            $stmt2->bind_param(
+                "iss", $id_keluar, $isi, $tembusan);
+            
+            $stmt2->execute();
 
 
-        //eksekusi
-        echo "<script>
-            window.location.href = 'suratkeluar.php?success_sk=1';
-        </script>";
-        exit;
-    }
-    else {
-        $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
-    }
+            //eksekusi
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success_sk=1';
+            </script>";
+            exit;
+        }
+        else {
+            $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+        }
 }
 ?>
 
@@ -126,8 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sk') {
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="tanggal">Tanggal</label>
-                        <input class="form-control" name="tanggal" type="date" required>
+                        <label for="tanggal">Tanggal Buat</label>
+                        <input class="form-control" name="tanggal" id="tanggal" type="date" required>
                     </div>
                     <div class="form-group">
                         <label for="tujuan">Tujuan Surat Keputusan</label>

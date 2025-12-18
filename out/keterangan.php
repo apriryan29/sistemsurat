@@ -8,6 +8,9 @@ $result_kode = $config->query($sql_kode);
 
 if($_SERVER['REQUEST_METHOD']=='POST' && $_POST['kategori'] === 'keterangan') {
     
+    $id_keluar = $_POST['id_keluar'];
+
+    if (empty($id_keluar)) {
     //data induk
     $kode_surat     = $_POST['kode_surat'];
     $tahun = date("Y");
@@ -80,6 +83,72 @@ if($_SERVER['REQUEST_METHOD']=='POST' && $_POST['kategori'] === 'keterangan') {
     }
     else {
         $errorMsg = "Gagal menyimpan data. Silakan coba lagi.";
+    }
+}
+else {
+    //update data surat keluar dan tb_keterangan
+        //data induk
+        $kode_surat     = $_POST['kode_surat'];
+        $tentang        = $_POST['tentang'];
+        $tanggal        = $_POST['tanggal'];
+        $tujuan         = $_POST['tujuan'];
+        $kategori       = $_POST['kategori'];
+        $ttd            = $_POST['ttd'];
+        //data tambahan
+        $lahir          = $_POST['lahir'];
+        $nis            = $_POST['nis'];
+        $sekolah        = $_POST['sekolah'];
+        $ortu           = $_POST['ortu'];
+        $isi            = $_POST['isi'];
+        $status_verifikasi = ($ttd === 'Tanpa Tanda Tangan') ? 'disetujui' : 'menunggu';
+        //update data ke tb_keluar
+        $stmt = $config->prepare("
+                UPDATE tb_keluar SET 
+                    kode_surat = ?,
+                    tanggal = ?, 
+                    id_perihal = ?, 
+                    kategori = ?, 
+                    tujuan = ?, 
+                    ttd = ?, 
+                    status_verifikasi = ?
+                WHERE id_keluar = ?
+        ");
+        $stmt->bind_param(
+            "ssissssi",
+            $kode_surat,
+            $tanggal, 
+            $tentang, 
+            $kategori,
+            $tujuan, 
+            $ttd, 
+            $status_verifikasi,
+            $id_keluar
+        );
+        //eksekusi data
+        if ($stmt->execute()){
+            //update detail ke tb_keterangan
+            $stmt2 = $config->prepare(
+                "UPDATE tb_keterangan SET 
+                    ttl = ?, 
+                    nis = ?, 
+                    sekolah = ?, 
+                    ortu = ?, 
+                    isi = ?
+                WHERE id_keluar = ?"
+            );
+            $stmt2->bind_param(
+                "sssssi", $lahir, $nis, $sekolah, $ortu, $isi, $id_keluar);
+            
+            $stmt2->execute();
+            //eksekusi
+            echo "<script>
+                window.location.href = 'suratkeluar.php?success_updateketerangan=1';
+            </script>";
+            exit;
+        }
+        else {
+            $errorMsg = "Gagal memperbarui data. Silakan coba lagi.";
+        }
     }
 }
 ?>
