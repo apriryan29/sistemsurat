@@ -289,6 +289,7 @@ if (isset($_GET['edit_id'])) {
                                         <th>Tujuan Surat</th>
                                         <th>Perihal</th>
                                         <th>Tanggal</th>
+                                        <th>Loker</th>
                                         <th>Status</th>
                                         <th>Cetak</th>
                                         <th>Action</th>
@@ -359,6 +360,7 @@ if (isset($_GET['edit_id'])) {
                                                     <td>".htmlspecialchars($row['tujuan'])."</td>
                                                     <td>".($row['tentang'])."</td>
                                                     <td>".htmlspecialchars($row['tanggal'])."</td>
+                                                    <td>".htmlspecialchars($row['loker'])."</td>
                                                     <td class='text-center'>{$status}</td>
                                                     <td class='text-center'>{$btnCetak}</td>
                                                     <td>
@@ -403,6 +405,7 @@ if (isset($_GET['edit_id'])) {
                                 <th>Tujuan</th>
                                 <th>Perihal</th>
                                 <th>Tanggal</th>
+                                <th>Loker</th>
                                 <th>File</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -470,6 +473,7 @@ if (isset($_GET['edit_id'])) {
                                     <td>{$row['tujuan']}</td>
                                     <td>{$row['tentang']}</td>
                                     <td>{$row['tanggal']}</td>
+                                    <td>{$row['loker']}</td>
                                     <td class='text-center'>{$preview}</td>
                                     <td>{$badge}</td>
                                     <td>{$aksi}</td>

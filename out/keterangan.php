@@ -27,6 +27,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && $_POST['kategori'] === 'keterangan') {
     $tanggal        = $_POST['tanggal'];
     $tujuan         = $_POST['tujuan'];
     $kategori       = $_POST['kategori'];
+    $loker          = $_POST['loker'];
     $ttd            = $_POST['ttd'];
 
     //data tambahan
@@ -41,17 +42,18 @@ if($_SERVER['REQUEST_METHOD']=='POST' && $_POST['kategori'] === 'keterangan') {
     //memasukan data ke tb_keluar
     $stmt = $config->prepare("
             INSERT INTO tb_keluar 
-                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, tujuan, ttd, status_verifikasi)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                (kode_surat, nomor_surat, tanggal, id_perihal, kategori, loker, tujuan, ttd, status_verifikasi)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     $stmt->bind_param(
-        "sisissss",
+        "sisisssss",
         $kode_surat, 
         $nomor_surat, 
         $tanggal, 
         $tentang, 
-        $kategori, 
+        $kategori,
+        $loker, 
         $tujuan, 
         $ttd, 
         $status_verifikasi
@@ -149,6 +151,18 @@ if($_SERVER['REQUEST_METHOD']=='POST' && $_POST['kategori'] === 'keterangan') {
                     <div class="form-group">
                         <label for="isi">Isi Surat Keterangan</label>
                         <textarea type="text" class="form-control" name="isi" placeholder="Masukkan Isi Surat Keterangan" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="loker">Loker Arsip File</label>
+                        <select class="form-control" id="loker" name="loker" required>
+                            <option value="">Pilih Kategori</option>
+                            <?php
+                            $q_loker = mysqli_query($config, "SELECT * FROM tb_loker WHERE kategori_loker = 'Loker Surat Keluar'");
+                            while ($data = mysqli_fetch_assoc($q_loker)) {
+                                echo "<option value='{$data['loker']}'>{$data['loker']}</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="ttd">Pilih Tanda Tangan</label>
