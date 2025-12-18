@@ -121,7 +121,6 @@ if (isset($_GET['delete_id'])) {
                 <select class="form-control" id="example-select">
                     <option selected>Pilih Kategori</option>
                     <option value="undangan">Surat Undangan</option>
-                    <option value="tugas">Surat Tugas</option>
                     <option value="sk">Surat Keputusan</option>
                     <option value="pemberitahuan">Surat Pemberitahuan</option>
                 </select>

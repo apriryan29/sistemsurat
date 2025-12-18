@@ -183,20 +183,7 @@ $result_instansi = $config->query($sql_instansi);
                     </div>
                     <div class="form-group">
                         <label for="tentang">Tentang Perihal</label>
-                        <select class="form-control" name="tentang" id="tentang" required>
-                            <option value="" disabled selected>Pilih Tentang</option>
-                            <?php
-                            // Ambil data dari tb_perihal untuk kategori 'pemberitahuan'
-                            $sql_perihal = "SELECT id_perihal, tentang FROM tb_perihal WHERE kategori = 'tugas'";
-                            $result_perihal = $config->query($sql_perihal);
-                            if ($result_perihal->num_rows > 0) {
-                                while ($row = $result_perihal->fetch_assoc()) {
-                                    echo '<option value="' . htmlspecialchars($row['id_perihal']) . '">' 
-                                    . htmlspecialchars($row['tentang']) . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
+                        <input class="form-control" name="tentang" required>
                     </div>
                     <div class="form-group">
                         <label for="tanggal">Tanggal Pelaksanaan</label>

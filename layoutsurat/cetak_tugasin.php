@@ -16,10 +16,6 @@ SELECT
     k.tujuan,
     k.tanggal,
     k.ttd,
-    p.tentang,
-    p.pembuka,
-    p.isi AS isi_perihal,
-    p.penutup,
     k.status_verifikasi,
     s.keperluan,
     s.waktu,
@@ -27,7 +23,6 @@ SELECT
     s.jabatan,
     s.keterangan
 FROM tb_keluar k
-JOIN tb_perihal p ON k.id_perihal = p.id_perihal
 LEFT JOIN tb_tugas s ON k.id_keluar = s.id_keluar
 WHERE k.id_keluar = $id LIMIT 1
 ";
