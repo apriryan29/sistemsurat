@@ -174,6 +174,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && $_POST['kategori'] === 'keterangan') {
                     </div>
                     <input type="hidden" name="kategori" value="keterangan">
                     <div class="modal-footer">
+                        <input type="hidden" name="id_keluar" id="id_keluar">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
