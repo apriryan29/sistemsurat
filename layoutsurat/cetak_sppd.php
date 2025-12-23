@@ -86,7 +86,7 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
 
 
 <div style="font-family: 'Times New Roman'; color: black;  margin-right: 2rem; margin-left: 1rem;">
-    <div style="text-align: center; margin-top: 3rem;">
+    <div style="text-align: center; margin-top: 1rem;">
         <p style="font-weight: bold; font-size: 24px;"><u>SURAT PERINTAH PERJALANAN DINAS</u> <br>Nomor : 
         <?= htmlspecialchars($data['nomor_surat']) ; ?>
         / III.4.AU/ <?= htmlspecialchars($data['kode_surat']) ; ?>
@@ -95,7 +95,7 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
     </div>
 
     
-    <table style="font-size: 22px; width: 100%; border: 1px solid black; text-align: start; margin-top : 3rem;">
+    <table style="font-size: 22px; width: 100%; border: 1px solid black; text-align: start; margin-top : 2rem;">
         <tr>
             <td style="border: 1px solid black; padding: 1rem;">01</td>
             <td style="border: 1px solid black; padding: 1rem;">Pejabat yang berwenang memberi perintah</td>
@@ -151,25 +151,51 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
         </tr>
     </table>
 
-    <table style="font-size: 22px; margin-left: 5rem; margin-right: 3rem; margin-top:2rem;">
+
+    <!-- TANDA TANGAN -->
+    <?php
+        // Jika TTD ada (apa saja), padding = 0, jika tidak ada = 8rem
+        $paddingTTD = ($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap') 
+            ? '0' 
+            : '8rem';
+    ?>
+    <table style="font-size: 22px; margin-left: 5rem; margin-right: 1rem; margin-top:1rem;">
         <tr>
             <td></td>
             <td style="padding-right: 0;">Dikeluarkan di</td>
-            <td>:</td>
-            <td>Sampang</td>
+            <td>: Sampang</td>
         </tr>
         <tr>
             <td></td>
             <td style="padding-right: 0;">Pada Tanggal</td>
-            <td>:</td>
-            <td><?= formatTanggal($data['tanggal']); ?></td>
+            <td>: <?= formatTanggal($data['tanggal']); ?></td>
         </tr>
         <tr>
             <td style="padding-right: 21rem;">Pemegang SPPD</td>
             <td colspan="2"><?= htmlspecialchars($data['pejabat']) ; ?></td>
         </tr>
-            <td style="padding-top: 8rem;"><?= htmlspecialchars($data['petugas']) ; ?></td>
-            <td colspan="2" style="padding-top: 8rem;">
+        <tr>
+            <td></td>
+            <td colspan="2" style="padding-top:<?= $paddingTTD ?>; position:relative;">
+                <!-- TANDA TANGAN -->
+                <?php if($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+                    <?php if(!empty($kepala['ttd'])): ?>
+                        <img src="../<?= $kepala['ttd']; ?>" width="330" style="transform: translateX(-40px);"><br>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <!-- CAP SEKOLAH -->
+                <?php if($data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+                    <?php if(!empty($kepala['ttd_cap'])): ?>
+                        <img src="../<?= $kepala['ttd_cap']; ?>" width="240"
+                            style="position:absolute; margin-top:-160px; margin-left:-180px;">
+                    <?php endif; ?>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <tr>
+            <td><?= htmlspecialchars($data['petugas']) ; ?></td>
+            <td colspan="2">
                 <?php
                 if ($data['pejabat'] === 'Kepala Sekolah') {
                     echo htmlspecialchars($namaKepala);
@@ -229,6 +255,14 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
             </tr>
             <tr>
                 <td colspan="2" style="width: 100%; border: 1px solid black; padding: 2rem;">
+
+                <!-- TANDA TANGAN -->
+                    <?php
+                        // Jika TTD ada (apa saja), padding = 0, jika tidak ada = 8rem
+                        $paddingTTD = ($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap') 
+                            ? '0' 
+                            : '8rem';
+                    ?>
                     <table>
                         <tr>
                             <td style="padding-right: 5rem;">Tiba kembali di</td>
@@ -252,7 +286,25 @@ $nbmKepala = $kepala['nbm_kepala'] ?? '-';
                             <td colspan="3" style="text-align: center;">SMK Muhammadiyah Sampang</td>
                         </tr>
                         <tr>
-                            <td colspan="3" style="text-align: center; padding-top: 10rem; color:black;">
+                            <td colspan="3"style="padding-top:<?= $paddingTTD ?>; position:relative; text-align: center;">
+                                <!-- TANDA TANGAN -->
+                                <?php if($data['ttd'] == 'Tanda Tangan Saja' || $data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+                                    <?php if(!empty($kepala['ttd'])): ?>
+                                        <img src="../<?= $kepala['ttd']; ?>" width="330"><br>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+
+                                <!-- CAP SEKOLAH -->
+                                <?php if($data['ttd'] == 'Tanda Tangan dan Cap'): ?>
+                                    <?php if(!empty($kepala['ttd_cap'])): ?>
+                                        <img src="../<?= $kepala['ttd_cap']; ?>" width="240"
+                                            style="position:absolute; margin-top:-150px; margin-left:-250px;">
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: center; color:black;">
                                 <?php
                                     if ($data['pejabat'] === 'Kepala Sekolah') {
                                         echo htmlspecialchars($namaKepala);

@@ -161,7 +161,7 @@ function editInstansi(id, pegawai, jabatan) {
 
     // Change button name for editing
     const updateButton = document.querySelector("button[name='add_pegawai']");
-    updateButton.innerText = 'Update';
+    updateButton.innerText = 'Perbarui';
     updateButton.name = 'edit_pegawai'; // Change name for editing
 
     // Show the modal

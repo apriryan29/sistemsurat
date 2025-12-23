@@ -33,8 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sppd') {
 
         //data tambahan
         $pejabat    = $_POST['pejabat'];
-        $petugas    = $_POST['pegawai'];
-        $jabatan    = $_POST['jabatan'];
+        $id_pegawai = intval($_POST['id_pegawai']);
+
+        // Ambil pegawai & jabatan dari tb_pegawai
+        $qPegawai = mysqli_query(
+            $config,
+            "SELECT pegawai, jabatan 
+            FROM tb_pegawai 
+            WHERE id_pegawai = $id_pegawai"
+        );
+
+        $p = mysqli_fetch_assoc($qPegawai);
+
+        $petugas = $p['pegawai'];
+        $jabatan = $p['jabatan'];
         $tempat     = $_POST['tempat'];
         $kendaraan  = $_POST['kendaraan'];
         $berangkat  = $_POST['berangkat'];
@@ -101,16 +113,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['kategori'] === 'sppd') {
         }
     }
     else {
-       $kode_surat     = $_POST['kode_surat'];
-       $nomor_surat   = $_POST['nomor_surat'];
-       $tanggal        = $_POST['tanggal'];
-         $tujuan         = $_POST['tempat'];
-         $kategori       = $_POST['kategori'];
-            $ttd            = $_POST['ttd'];
+        $kode_surat     = $_POST['kode_surat'];
+        $nomor_surat   = $_POST['nomor_surat'];
+        $tanggal        = $_POST['tanggal'];
+        $tujuan         = $_POST['tempat'];
+        $kategori       = $_POST['kategori'];
+        $ttd            = $_POST['ttd'];
         //data tambahan
         $pejabat    = $_POST['pejabat'];
-        $petugas    = $_POST['pegawai'];
-        $jabatan    = $_POST['jabatan'];
+        $id_pegawai = intval($_POST['id_pegawai']);
+
+        // Ambil pegawai & jabatan dari tb_pegawai
+        $qPegawai = mysqli_query(
+            $config,
+            "SELECT pegawai, jabatan 
+            FROM tb_pegawai 
+            WHERE id_pegawai = $id_pegawai"
+        );
+
+        $p = mysqli_fetch_assoc($qPegawai);
+
+        $petugas = $p['pegawai'];
+        $jabatan = $p['jabatan'];
         $tempat     = $_POST['tempat'];
         $kendaraan  = $_POST['kendaraan'];
         $berangkat  = $_POST['berangkat'];
@@ -233,12 +257,18 @@ $result_instansi = $config->query($sql_instansi);
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="petugas">Pegawai yang diperintah</label>
-                        <input type="text" class="form-control" name="pegawai" id="pegawai" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="jabatan">Jabatan Pegawai yang diperintah</label>
-                        <input type="text" class="form-control" name="jabatan" id="jabatan" required>
+                        <label>Pegawai yang diperintah</label>
+                        <select class="form-control" name="id_pegawai" required>
+                            <option value="" disabled selected>Pilih Pegawai</option>
+                            <?php
+                            $q = mysqli_query($config, "SELECT id_pegawai, pegawai FROM tb_pegawai");
+                            while ($p = mysqli_fetch_assoc($q)) {
+                                echo "<option value='{$p['id_pegawai']}'>
+                                        {$p['pegawai']}
+                                    </option>";
+                            }
+                            ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="tempat">Tempat Tujuan Perjalanan Dinas</label>
@@ -312,5 +342,23 @@ $(function() {
             format: 'DD-MM-YYYY' // Format tanggal
         }
     });
+});
+
+const berangkat = document.getElementById('berangkat');
+const pulang = document.getElementById('pulang');
+const form = document.getElementById('sppdForm');
+
+// Set tanggal pulang minimal sesuai tanggal berangkat
+berangkat.addEventListener('change', function() {
+    pulang.min = this.value;
+});
+
+// Validasi saat submit
+form.addEventListener('submit', function(e) {
+    if (berangkat.value >= pulang.value) {
+        e.preventDefault();
+        alert("Tanggal berangkat harus sebelum tanggal pulang!");
+        berangkat.focus();
+    }
 });
 </script>
