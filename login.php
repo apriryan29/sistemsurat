@@ -1,32 +1,40 @@
-<?php 
-// Mulai session
+<?php
 session_start();
-
-// Koneksi dengan database
 include 'include/config.php';
 
-// Menampilkan error
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    // Menghindari SQL Injection
-    $username = mysqli_real_escape_string($config, $_POST['username']);
-    $password = mysqli_real_escape_string($config, $_POST['password']);
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
-    // Query login
-    $query = "SELECT * FROM tb_users WHERE username = '$username' AND password = '$password'";
-    $result = mysqli_query($config, $query);
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
 
-    if (mysqli_num_rows($result) > 0) {
-        $user = mysqli_fetch_assoc($result);
-        $_SESSION['username'] = $username;
-        $_SESSION['level'] = $user['level']; // Simpan level jika diperlukan
+    // Prepared statement (AMAN)
+    $stmt = $config->prepare("
+        SELECT id_user, username, password, level 
+        FROM tb_users 
+        WHERE BINARY username = ?
+        AND BINARY password = ?
+        LIMIT 1
+    ");
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+
+        $_SESSION['id_user']  = $user['id_user'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['level']    = $user['level'];
+
         header("Location: dashboard.php");
         exit();
-    } else {
-        header("Location: index.php?error=1"); // Username atau password salah
-        exit();
     }
+
+    // Jika gagal
+    header("Location: index.php?error=1");
+    exit();
 }
 ?>
