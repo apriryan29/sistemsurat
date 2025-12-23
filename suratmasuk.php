@@ -61,6 +61,30 @@ if (isset($_GET['edit_id'])) {
 if (isset($_POST['suratmasuk'])) {
     $nomor = trim($_POST['nomor']);
     $instansi = trim($_POST['instansi']);
+    if (isset($_POST['suratmasuk'])) {
+        if (!empty($instansi)) {
+
+            // cek apakah instansi sudah ada
+            $stmtCheck = $config->prepare(
+                "SELECT id_instansi FROM tb_instansi WHERE nama_instansi = ?"
+            );
+            $stmtCheck->bind_param("s", $instansi);
+            $stmtCheck->execute();
+            $stmtCheck->store_result();
+
+            // jika belum ada → simpan
+            if ($stmtCheck->num_rows === 0) {
+                $stmtInsert = $config->prepare(
+                    "INSERT INTO tb_instansi (nama_instansi) VALUES (?)"
+                );
+                $stmtInsert->bind_param("s", $instansi);
+                $stmtInsert->execute();
+                $stmtInsert->close();
+            }
+
+            $stmtCheck->close();
+        }
+    }
     $tanggal = $_POST['tanggal'];
     $kategori = $_POST['kategori'];
     $loker = $_POST['id_loker'];
@@ -169,7 +193,7 @@ $result_instansi = $config->query($sql_instansi);
                                         </datalist>
                                     </div>
                                     <div class="form-group mb-3">
-                                        <label for="tanggal">Tanggal</label>
+                                        <label for="tanggal">Tanggal Surat</label>
                                         <input class="form-control" id="tanggal" name="tanggal" type="date" value="<?php echo $editMode ? htmlspecialchars($editData['tanggal']) : ''; ?>" required>
                                     </div>
                                     <div class="form-group mb-3">
@@ -285,11 +309,11 @@ $result_instansi = $config->query($sql_instansi);
                                                     <span class="text-muted">Tidak ada file</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
+                                            <td class ="text-center">
                                                 <a class="text-info" href="?edit_id=<?= $row['id_masuk'] ?>">
                                                     <i class="fe fe-edit fe-16"></i>
                                                 </a>
-                                                <a class="text-danger ml-2"
+                                                <a class="text-danger"
                                                 href="?delete_masuk=<?= $row['id_masuk'] ?>"
                                                 onclick="return confirm('Apakah kamu yakin ingin menghapus Dokumen ini?');">
                                                     <i class="fe fe-trash-2 fe-16"></i>

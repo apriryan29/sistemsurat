@@ -129,7 +129,12 @@ $level = $_SESSION['level']; // Pastikan variabel ini sudah diset saat login
                 <span class="ml-3 item-text">Profil</span>
               </a>
               <ul class="collapse list-unstyled pl-4 w-100" id="profile">
-                <a class="nav-link pl-3" href="profil.php"><span class="ml-1">Data Sekolah</span></a>
+                <li>
+                  <a class="nav-link pl-3" href="profil.php"><span class="ml-1">Data Sekolah</span></a>
+                </li>  
+                <li>
+                  <a class="nav-link pl-3" href="pegawai.php"><span class="ml-1">Data Pegawai</span></a>
+                </li> 
               </ul>
             </li>
             <li class="nav-item dropdown">

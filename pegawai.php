@@ -10,9 +10,11 @@ if (!isset($_SESSION['username'])) {
 // Function to handle adding new instansi
 if (isset($_POST['add_instansi'])) {
     $nama_instansi = $_POST['nama_instansi'];
+    $alamat = $_POST['alamat'];
+    $kategori = $_POST['kategori'];
 
-    $stmt = $config->prepare("INSERT INTO tb_instansi (nama_instansi) VALUES (?)");
-    $stmt->bind_param("s", $nama_instansi);
+    $stmt = $config->prepare("INSERT INTO tb_instansi (nama_instansi, alamat, kategori) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $nama_instansi, $alamat, $kategori);
     $stmt->execute();
     $stmt->close();
 }
@@ -21,8 +23,10 @@ if (isset($_POST['add_instansi'])) {
 if (isset($_POST['edit_instansi'])) {
     $id = $_POST['id_instansi'];
     $nama_instansi = $_POST['nama_instansi'];
+    $alamat = $_POST['alamat'];
+    $kategori = $_POST['kategori'];
 
-    $stmt = $config->prepare("UPDATE tb_instansi SET nama_instansi = ?, WHERE id_instansi = ?");
+    $stmt = $config->prepare("UPDATE tb_instansi SET nama_instansi = ?, alamat = ?, kategori = ? WHERE id_instansi = ?");
     $stmt->bind_param("sssi", $nama_instansi, $alamat, $kategori, $id);
     $stmt->execute();
     $stmt->close();
@@ -80,7 +84,9 @@ $result = $config->query("SELECT * FROM tb_instansi");
                                         <tr>
                                             <th>No.</th>
                                             <th>Nama Instansi</th>
-                                            <th class="text-center">Aksi</th>
+                                            <th>Alamat Instansi</th>
+                                            <th>Kategori</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -91,13 +97,21 @@ $result = $config->query("SELECT * FROM tb_instansi");
                                                 echo "<tr>
                                                     <td>{$row_number}</td>
                                                     <td>{$row['nama_instansi']}</td>
-                                                    <td class='text-center'>
-                                                        <a class='text-info' onclick='editInstansi({$row['id_instansi']}, \"{$row['nama_instansi']}\")'>
-                                                            <i class='fe fe-edit fe-16'></i>
-                                                        </a>
-                                                        <a class='text-danger' href='?delete={$row['id_instansi']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
-                                                            <i class='fe fe-trash-2 fe-16'></i>
-                                                        </a>
+                                                    <td>{$row['alamat']}</td>
+                                                    <td>{$row['kategori']}</td>
+                                                    <td>
+                                                        <ul class='nav'>
+                                                            <li class='nav-item'>
+                                                                <a class='nav-link text-info my-0' onclick='editInstansi({$row['id_instansi']}, \"{$row['nama_instansi']}\", \"{$row['alamat']}\")'>
+                                                                    <i class='fe fe-edit fe-16'></i>
+                                                                </a>
+                                                            </li>
+                                                            <li class='nav-item'>
+                                                                <a class='nav-link text-danger my-0' href='?delete={$row['id_instansi']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
+                                                                    <i class='fe fe-trash-2 fe-16'></i>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
                                                     </td>
                                                 </tr>";
                                                 $row_number++; // Increment row counter
@@ -128,6 +142,21 @@ $result = $config->query("SELECT * FROM tb_instansi");
                                         <label for="nama_instansi">Masukan Nama Instansi</label>
                                         <input type="text" class="form-control" id="nama_instansi" name="nama_instansi" placeholder="Isi Nama Instansi" required>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="alamat">Masukan Alamat Instansi</label>
+                                        <input type="text" class="form-control" id="alamat" name="alamat" placeholder="Isi Alamat Instansi" required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="kategori">Kategori</label>
+                                        <select class="form-control" id="kategori" name="kategori" required>
+                                            <option value="">Pilih Kategori</option>
+                                            <option value="Yayasan">Yayasan</option>
+                                            <option value="Dinas Pendidikan">Dinas Pendidikan</option>
+                                            <option value="Instansi Pemerintah">Instansi Pemerintah</option>
+                                            <option value="Sekolah">Sekolah</option>
+                                            <option value="Lainnya">Lainnya....</option>
+                                        </select>
+                                    </div>
                                     <button type="submit" class="btn btn-primary" name="add_instansi">Simpan</button>
                                 </form>
                             </div>
@@ -145,14 +174,16 @@ $result = $config->query("SELECT * FROM tb_instansi");
 <?php include 'include/footer.php'; ?>
 
 <script>
-function editInstansi(id, nama_instansi,) {
+function editInstansi(id, nama_instansi, alamat, kategori) {
     // Populate the modal with the current values
     document.getElementById('edit_id').value = id;
     document.getElementById('nama_instansi').value = nama_instansi;
+    document.getElementById('alamat').value = alamat;
+    document.getElementById('kategori').value = kategori;
 
     // Change button name for editing
     const updateButton = document.querySelector("button[name='add_instansi']");
-    updateButton.innerText = 'Perbarui';
+    updateButton.innerText = 'Update';
     updateButton.name = 'edit_instansi'; // Change name for editing
 
     // Show the modal
@@ -162,6 +193,8 @@ function editInstansi(id, nama_instansi,) {
 function clearModal() {
     document.getElementById('edit_id').value = '';
     document.getElementById('nama_instansi').value = '';
+    document.getElementById('alamat').value = '';
+    document.getElementById('kategori').value = '';
 
     // Reset button name for adding
     const addButton = document.querySelector("button[name='edit_instansi']");
