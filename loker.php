@@ -127,11 +127,11 @@ $result = $config->query("SELECT * FROM tb_loker");
                                                     <td>{$row_number}</td>
                                                     <td>{$row['loker']}</td>
                                                     <td>{$row['kategori_loker']}</td>
-                                                    <td>
+                                                    <td class='text-center'>
                                                         <a class='text-info' onclick='editInstansi({$row['id_loker']}, \"{$row['loker']}\")'>
                                                             <i class='fe fe-edit fe-16'></i>
                                                         </a>
-                                                        <a class='text-danger ml-2'' href='?delete={$row['id_loker']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
+                                                        <a class='text-danger' href='?delete={$row['id_loker']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
                                                             <i class='fe fe-trash-2 fe-16'></i>
                                                         </a>
                                                     </td>

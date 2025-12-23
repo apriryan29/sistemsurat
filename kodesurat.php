@@ -97,19 +97,13 @@ $result = $config->query("SELECT * FROM tb_kode");
                                                     <td>{$row_number}</td> <!-- Display row number -->
                                                     <td>{$row['kode_surat']}</td>
                                                     <td>{$row['pokok_kode']}</td>
-                                                    <td>
-                                                        <ul class='nav'>
-                                                            <li class='nav-item'>
-                                                                <a class='nav-link text-info my-0' onclick='editKode({$row['id_kode']}, \"{$row['kode_surat']}\", \"{$row['pokok_kode']}\")'>
-                                                                    <i class='fe fe-edit fe-16'></i>
-                                                                </a>
-                                                            </li>
-                                                            <li class='nav-item'>
-                                                                <a class='nav-link text-danger my-0' href='?delete={$row['id_kode']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
-                                                                    <i class='fe fe-trash-2 fe-16'></i>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
+                                                    <td class='text-center'>
+                                                        <a class='text-info my-0' onclick='editKode({$row['id_kode']}, \"{$row['kode_surat']}\", \"{$row['pokok_kode']}\")'>
+                                                            <i class='fe fe-edit fe-16'></i>
+                                                        </a>
+                                                        <a class='text-danger my-0' href='?delete={$row['id_kode']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
+                                                            <i class='fe fe-trash-2 fe-16'></i>
+                                                        </a>
                                                     </td>
                                                 </tr>";
                                                 $row_number++; // Increment row counter
