@@ -145,6 +145,17 @@
       justify-content: center;
     }
   }
+    .error-message{
+        display:none;
+        background:#f8d7da;
+        color:#721c24;
+        padding:10px 14px;
+        margin-bottom:15px;
+        border:1px solid #f5c6cb;
+        border-radius:6px;
+        font-size:14px;
+    }
+
 </style>
 </head>
 <body>
@@ -156,14 +167,27 @@
 
 <!-- menampilkan login gagal dan kembali ke halaman login -->
     <script>
-      window.onload = function(){
-        const urlParms = new URLSearchParams(window.location.search);
-        if(urlParms.has('error')){
-          alert("Login gagal: Username atau Password salah!");
-        }
+      window.onload = function () {
+          const urlParams = new URLSearchParams(window.location.search);
+          const errorBox = document.getElementById('passwordError');
+          const usernameErrorBox = document.getElementById('usernameError');
+
+          if (urlParams.has('error')) {
+              errorBox.textContent = "Username atau Password salah!";
+              errorBox.style.display = 'block';
+
+              setTimeout(() => {
+                  errorBox.style.display = 'none';
+              }, 2000);
+          }
       }
-    </script>    
-<!-- start isi form login -->
+      </script>
+   
+      <div id="passwordError" class="error-message" role="alert"></div>
+      <div id="usernameError" class="error-message" role="alert"></div>
+
+
+  <!-- start isi form login -->
     <form action="login.php" method="POST" id="loginForm" novalidate>
       <label for="username">Username</label>
       <input
@@ -176,7 +200,6 @@
         placeholder="Masukkan username"
         required
       />
-      <div id="usernameError" class="error-message" role="alert"></div>
 
       <label for="password">Password</label>
       <input
@@ -189,8 +212,8 @@
         placeholder="Masukkan kata sandi"
         required
       />
-      <div id="passwordError" class="error-message" role="alert"></div>
       <div class="links">
+        <a href="password.php">Lupa Kata Sandi?</a>
       </div>
 
       <button type="submit" aria-label="Login ke akun">Masuk</button>
