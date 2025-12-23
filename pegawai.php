@@ -8,26 +8,24 @@ if (!isset($_SESSION['username'])) {
 }
 
 // Function to handle adding new instansi
-if (isset($_POST['add_instansi'])) {
-    $nama_instansi = $_POST['nama_instansi'];
-    $alamat = $_POST['alamat'];
-    $kategori = $_POST['kategori'];
+if (isset($_POST['add_pegawai'])) {
+    $pegawai = $_POST['pegawai'];
+    $jabatan = $_POST['jabatan'];
 
-    $stmt = $config->prepare("INSERT INTO tb_instansi (nama_instansi, alamat, kategori) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $nama_instansi, $alamat, $kategori);
+    $stmt = $config->prepare("INSERT INTO tb_pegawai (pegawai, jabatan) VALUES (?, ?)");
+    $stmt->bind_param("ss", $pegawai, $jabatan);
     $stmt->execute();
     $stmt->close();
 }
 
 // Function to handle editing an existing instansi
-if (isset($_POST['edit_instansi'])) {
-    $id = $_POST['id_instansi'];
-    $nama_instansi = $_POST['nama_instansi'];
-    $alamat = $_POST['alamat'];
-    $kategori = $_POST['kategori'];
+if (isset($_POST['edit_pegawai'])) {
+    $id = $_POST['id_pegawai'];
+    $pegawai = $_POST['pegawai'];
+    $jabatan = $_POST['jabatan'];
 
-    $stmt = $config->prepare("UPDATE tb_instansi SET nama_instansi = ?, alamat = ?, kategori = ? WHERE id_instansi = ?");
-    $stmt->bind_param("sssi", $nama_instansi, $alamat, $kategori, $id);
+    $stmt = $config->prepare("UPDATE tb_pegawai SET pegawai = ?, jabatan = ? WHERE id_pegawai = ?");
+    $stmt->bind_param("sssi", $pegawai, $jabatan, $id);
     $stmt->execute();
     $stmt->close();
 }
@@ -36,14 +34,14 @@ if (isset($_POST['edit_instansi'])) {
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
 
-    $stmt = $config->prepare("DELETE FROM tb_instansi WHERE id_instansi = ?");
+    $stmt = $config->prepare("DELETE FROM tb_pegawai WHERE id_pegawai = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $stmt->close();
 }
 
-// Fetch existing instansi to display in the table
-$result = $config->query("SELECT * FROM tb_instansi");
+// Fetch existing pegawai to display in the table
+$result = $config->query("SELECT * FROM tb_pegawai");
 ?>
 
 <!-- Memanggil header -->
@@ -54,7 +52,7 @@ $result = $config->query("SELECT * FROM tb_instansi");
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12">
-                <h2 class="mb-4 page-title">Daftar Instansi</h2>
+                <h2 class="mb-4 page-title">Daftar Pegawai SMK</h2>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12"></div>
@@ -66,7 +64,7 @@ $result = $config->query("SELECT * FROM tb_instansi");
                     </div>
                 </div>
 
-                <h2 class="h5 page-title text-muted">Data Instansi</h2>
+                <h2 class="h5 page-title text-muted">Data Pegawai</h2>
                 <div class="row my-4">
                     <div class="col-md-12">
                         <div class="card shadow">
@@ -76,17 +74,16 @@ $result = $config->query("SELECT * FROM tb_instansi");
                                         type="text" 
                                         id="searchInput" 
                                         class="form-control" 
-                                        placeholder="Cari Data Instansi disini...!" 
+                                        placeholder="Cari Data Pegawai disini...!" 
                                         onkeyup="filterTable()">
                                 </div>
                                 <table class="table datatables" id="dataTable-1">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Nama Instansi</th>
-                                            <th>Alamat Instansi</th>
-                                            <th>Kategori</th>
-                                            <th>Aksi</th>
+                                            <th>Nama Pegawai</th>
+                                            <th>Jabatan</th>
+                                            <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -96,22 +93,15 @@ $result = $config->query("SELECT * FROM tb_instansi");
                                             while ($row = $result->fetch_assoc()) {
                                                 echo "<tr>
                                                     <td>{$row_number}</td>
-                                                    <td>{$row['nama_instansi']}</td>
-                                                    <td>{$row['alamat']}</td>
-                                                    <td>{$row['kategori']}</td>
-                                                    <td>
-                                                        <ul class='nav'>
-                                                            <li class='nav-item'>
-                                                                <a class='nav-link text-info my-0' onclick='editInstansi({$row['id_instansi']}, \"{$row['nama_instansi']}\", \"{$row['alamat']}\")'>
-                                                                    <i class='fe fe-edit fe-16'></i>
-                                                                </a>
-                                                            </li>
-                                                            <li class='nav-item'>
-                                                                <a class='nav-link text-danger my-0' href='?delete={$row['id_instansi']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
-                                                                    <i class='fe fe-trash-2 fe-16'></i>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
+                                                    <td>{$row['pegawai']}</td>
+                                                    <td>{$row['jabatan']}</td>
+                                                    <td class='text-center'>
+                                                        <a class='text-info' onclick='editInstansi({$row['id_pegawai']}, \"{$row['pegawai']}\", \"{$row['jabatan']}\")'>
+                                                            <i class='fe fe-edit fe-16'></i>
+                                                        </a>
+                                                        <a class='text-danger' href='?delete={$row['id_pegawai']}' onclick='return confirm(\"Yakin ingin menghapus?\");'>
+                                                            <i class='fe fe-trash-2 fe-16'></i>
+                                                        </a>
                                                     </td>
                                                 </tr>";
                                                 $row_number++; // Increment row counter
@@ -137,27 +127,16 @@ $result = $config->query("SELECT * FROM tb_instansi");
                             </div>
                             <div class="modal-body">
                                 <form method="POST" action="">
-                                    <input type="hidden" id="edit_id" name="id_instansi" value="">
+                                    <input type="hidden" id="edit_id" name="id_pegawai" value="">
                                     <div class="form-group">
-                                        <label for="nama_instansi">Masukan Nama Instansi</label>
-                                        <input type="text" class="form-control" id="nama_instansi" name="nama_instansi" placeholder="Isi Nama Instansi" required>
+                                        <label for="pegawai">Masukan Nama Pegawai</label>
+                                        <input type="text" class="form-control" id="pegawai" name="pegawai" placeholder="Isi Nama Pegawai" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="alamat">Masukan Alamat Instansi</label>
-                                        <input type="text" class="form-control" id="alamat" name="alamat" placeholder="Isi Alamat Instansi" required>
+                                        <label for="jabatan">Masukan Jabatan</label>
+                                        <input type="text" class="form-control" id="jabatan" name="jabatan" placeholder="Isi Jabatan" required>
                                     </div>
-                                    <div class="form-group mb-3">
-                                        <label for="kategori">Kategori</label>
-                                        <select class="form-control" id="kategori" name="kategori" required>
-                                            <option value="">Pilih Kategori</option>
-                                            <option value="Yayasan">Yayasan</option>
-                                            <option value="Dinas Pendidikan">Dinas Pendidikan</option>
-                                            <option value="Instansi Pemerintah">Instansi Pemerintah</option>
-                                            <option value="Sekolah">Sekolah</option>
-                                            <option value="Lainnya">Lainnya....</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary" name="add_instansi">Simpan</button>
+                                    <button type="submit" class="btn btn-primary" name="add_pegawai">Simpan</button>
                                 </form>
                             </div>
                         </div>
@@ -174,17 +153,16 @@ $result = $config->query("SELECT * FROM tb_instansi");
 <?php include 'include/footer.php'; ?>
 
 <script>
-function editInstansi(id, nama_instansi, alamat, kategori) {
+function editInstansi(id, pegawai, jabatan) {
     // Populate the modal with the current values
     document.getElementById('edit_id').value = id;
-    document.getElementById('nama_instansi').value = nama_instansi;
-    document.getElementById('alamat').value = alamat;
-    document.getElementById('kategori').value = kategori;
+    document.getElementById('pegawai').value = pegawai;
+    document.getElementById('jabatan').value = jabatan;
 
     // Change button name for editing
-    const updateButton = document.querySelector("button[name='add_instansi']");
+    const updateButton = document.querySelector("button[name='add_pegawai']");
     updateButton.innerText = 'Update';
-    updateButton.name = 'edit_instansi'; // Change name for editing
+    updateButton.name = 'edit_pegawai'; // Change name for editing
 
     // Show the modal
     $('#kode').modal('show');
@@ -192,14 +170,13 @@ function editInstansi(id, nama_instansi, alamat, kategori) {
 
 function clearModal() {
     document.getElementById('edit_id').value = '';
-    document.getElementById('nama_instansi').value = '';
-    document.getElementById('alamat').value = '';
-    document.getElementById('kategori').value = '';
+    document.getElementById('pegawai').value = '';
+    document.getElementById('jabatan').value = '';
 
     // Reset button name for adding
-    const addButton = document.querySelector("button[name='edit_instansi']");
+    const addButton = document.querySelector("button[name='edit_pegawai']");
     addButton.innerText = 'Simpan';
-    addButton.name = 'add_instansi'; // Change back to add
+    addButton.name = 'add_pegawai'; // Change back to add
 }
 
 // Reset the modal when it is closed
