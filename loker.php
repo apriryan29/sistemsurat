@@ -120,7 +120,7 @@ $result = $config->query("SELECT * FROM tb_loker");
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $row_number = 1; // Initialize row counter [ID LOKER PERLU DIPERBAIKI SUPAYA DAPAT MENAMPILKAN JUMLAH SURAT YANG MENGGUNAKAN LOKER TERSEBUTA]
+                                        $row_number = 1;
                                         if ($result->num_rows > 0) {
                                             while ($row = $result->fetch_assoc()) {
                                                 echo "<tr>
@@ -136,7 +136,7 @@ $result = $config->query("SELECT * FROM tb_loker");
                                                         </a>
                                                     </td>
                                                 </tr>";
-                                                $row_number++; // Increment row counter
+                                                $row_number++;
                                             }
                                         }
                                         ?>
