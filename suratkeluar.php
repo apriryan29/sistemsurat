@@ -70,23 +70,46 @@ if ($lavel == 'admin' && isset($_GET['delete_id'])) {
     $stmt->close();
 }
 
+// ================= TOLAK SURAT =================
+if ($lavel == 'kepala' && isset($_POST['tolak_surat'])) {
+    $id      = intval($_POST['id_keluar']);
+    $catatan = trim($_POST['catatan']);
 
-if ($lavel == 'kepala' && isset($_GET['id']) && isset($_GET['aksi'])) {
-    $id   = intval($_GET['id']);
-    $aksi = $_GET['aksi'];
-
-    if ($aksi == 'setujui') {
-        $status = 'disetujui';
-    } elseif ($aksi == 'tolak') {
-        $status = 'ditolak';
+    if ($catatan == '') {
+        $error_msg = "Catatan revisi wajib diisi.";
     } else {
-        $status = 'menunggu';
-    }
+        $stmt = $config->prepare("
+            UPDATE tb_keluar 
+            SET status_verifikasi = 'ditolak',
+                catatan = ?
+            WHERE id_keluar = ?
+        ");
+        $stmt->bind_param("si", $catatan, $id);
+        $stmt->execute();
+        $stmt->close();
 
-    mysqli_query($config, "UPDATE tb_keluar SET status_verifikasi='$status' WHERE id_keluar=$id");
+        header("Location: ".$_SERVER['PHP_SELF']);
+        exit();
+    }
+}
+// ================= SETUJUI SURAT =================
+if ($lavel == 'kepala' && isset($_GET['approve_id'])) {
+    $id = intval($_GET['approve_id']);
+
+    $stmt = $config->prepare("
+        UPDATE tb_keluar 
+        SET status_verifikasi = 'disetujui',
+            catatan = NULL
+        WHERE id_keluar = ?
+    ");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+
     header("Location: ".$_SERVER['PHP_SELF']);
     exit();
 }
+
 
 $query = mysqli_query($config, "
     SELECT 
@@ -290,6 +313,7 @@ if (isset($_GET['edit_id'])) {
                                         <th>Perihal</th>
                                         <th>Tanggal</th>
                                         <th>Status</th>
+                                        <th>Revisi</th>
                                         <th>Cetak</th>
                                         <th>Action</th>
                                     </tr>
@@ -321,6 +345,12 @@ if (isset($_GET['edit_id'])) {
                                             } else {
                                                 $status = "<span class='badge badge-warning'>MENUNGGU</span>";
                                             }
+
+
+                                            //baca catatan revisi
+                                            $catatan = $row['catatan'] ?? '-';
+                                            $ringkas = (strlen($catatan) > 20) ? substr($catatan, 0, 20) . '...' : $catatan;
+
 
                                             // FILE CETAK SESUAI KATEGORI
                                             switch ($row['kategori']) {
@@ -360,10 +390,26 @@ if (isset($_GET['edit_id'])) {
                                                     <td>".($row['tentang'])."</td>
                                                     <td>".htmlspecialchars($row['tanggal'])."</td>
                                                     <td class='text-center'>{$status}</td>
+                                                    "?>
+                                                    <td><?php if ($catatan != '-'): ?>
+                                                            <?= $ringkas ?>
+                                                            <a href="#"
+                                                            class="text-primary ml-1"
+                                                            data-toggle="modal"
+                                                            data-target="#catatanModal"
+                                                            data-catatan="<?= htmlspecialchars($catatan) ?>">
+                                                            baca
+                                                            </a>
+                                                        <?php else: ?>
+                                                            -
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <?php
+                                                    echo "
                                                     <td class='text-center'>{$btnCetak}</td>
-                                                    <td>
+                                                    <td class='text-center'>
                                                         <a class='text-info' href='?edit_id={$row['id_keluar']}'><i class='fe fe-edit fe-16'></i></a>
-                                                        <a class='text-danger ml-2' href='?delete_id={$row['id_keluar']}' 
+                                                        <a class='text-danger' href='?delete_id={$row['id_keluar']}' 
                                                         onclick='return confirm(\"Apakah kamu yakin ingin menghapus Dokumen ini?\");'>
                                                         <i class='fe fe-trash-2 fe-16'></i>
                                                         </a>
@@ -376,6 +422,22 @@ if (isset($_GET['edit_id'])) {
                                         ?>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="modal fade" id="catatanModal" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Catatan Revisi</h5>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <textarea id="isiCatatan" class="form-control" rows="10" readonly></textarea>
+                                </div>
+
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -444,14 +506,15 @@ if (isset($_GET['edit_id'])) {
 
                                 if ($status == 'menunggu') {
                                     $aksi = "
-                                        <a href='?id={$row['id_keluar']}&aksi=setujui' class='btn btn-sm btn-success'
+                                        <a href='?approve_id={$row['id_keluar']}' class='btn btn-sm btn-success'
                                         onclick=\"return confirm('Setujui surat ini?')\">✔ Setujui</a>
 
-                                        <a href='?id={$row['id_keluar']}&aksi=tolak' class='btn btn-sm btn-danger'
-                                        onclick=\"return confirm('Tolak surat ini?')\">✖ Tolak</a>
+                                        <button class='btn btn-sm btn-danger' data-toggle='modal' data-target='#tolakModal' data-id='{$row['id_keluar']}'>✘ Tolak</button>
                                     ";
                                 } else {
-                                    $aksi = "<i class='fe fe-lock'></i>";
+                                    $aksi = "
+                                        <i class='fe fe-lock'></i>
+                                ";
                                 }
 
                                 // Kepala sekolah SELALU bisa melihat surat apapun statusnya
@@ -482,6 +545,34 @@ if (isset($_GET['edit_id'])) {
                         </tbody>
                     </table>
                 </div>
+                <div class="modal fade" id="tolakModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <form method="POST" action="">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Catatan Revisi Surat</h5>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <input type="hidden" name="id_keluar" id="tolak_id">
+
+                                    <div class="form-group">
+                                        <label>Catatan Revisi</label>
+                                        <textarea name="catatan" class="form-control" required></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" name="tolak_surat" class="btn btn-danger">
+                                        Tolak Surat
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -554,4 +645,14 @@ setTimeout(function() {
 
 }, 3000);
 
+$('#tolakModal').on('show.bs.modal', function (event) {
+    let button = $(event.relatedTarget);
+    let id = button.data('id');
+    $('#tolak_id').val(id);
+});
+$('#catatanModal').on('show.bs.modal', function (event) {
+    let button = $(event.relatedTarget);
+    let catatan = button.data('catatan');
+    $('#isiCatatan').val(catatan);
+});
 </script>

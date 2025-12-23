@@ -160,33 +160,107 @@ $(function () {
             
 
             // Tampilkan loading spinner selama beberapa detik sebelum membuka jendela baru
-            setTimeout(function() {
-                var printWindow = window.open('', '_blank', 'width=1000,height=600');
-                printWindow.document.write('<html><head><title>Laporan Arsip Dokumen</title>');
-                printWindow.document.write('<style>body{font-family: Times New Roman, sans-serif; padding: 2rem;} table{width: 100%; border-collapse: collapse;} th, td{border: 1px solid #000; padding: 8px;} th{text-align: left;}</style>');
-                printWindow.document.write('</head><body>');
-                printWindow.document.write('<h1>Laporan Arsip Dokumen</h1>');
-                printWindow.document.write('<p>Rentang Tanggal: ' + dateRange + '</p>');
-                printWindow.document.write('<table><thead><tr><th>Instansi</th><th>Kategori</th><th>Tanggal</th></tr></thead><tbody>');
+           setTimeout(function () {
 
-                dataRows.forEach(function(item) {
-                    printWindow.document.write('<tr>');
-                    printWindow.document.write('<td>' + item.instansi + '</td>');
-                    printWindow.document.write('<td>' + item.kategori + '</td>');
-                    printWindow.document.write('<td>' + item.tanggal + '</td>');
-                    printWindow.document.write('</tr>');
-                });
+                fetch('kop.php')
+                    .then(response => response.text())
+                    .then(kopSurat => {
 
-                printWindow.document.write('</tbody></table>');
-                printWindow.document.write('</body></html>');
-                printWindow.document.close();
-                printWindow.focus();
-                printWindow.print();
-                printWindow.close();
-                // Sembunyikan tombol loading setelah proses selesai
-                loadingBtn.hide();
-                $('#printBtn').show(); // Tampilkan kembali tombol cetak
-            }, 1000); // Menampilkan spinner selama 3 detik
+                        var printWindow = window.open('', '_blank');
+                        printWindow.document.write(`
+                            <html>
+                            <head>
+                                <title>Laporan Dokumen Masuk</title>
+                                <style>
+                        body {
+                            font-family: "Times New Roman", serif;
+                            font-size: 12pt;
+                        }
+
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+
+                        th, td {
+                            border: 1px solid #000;
+                            padding: 6px;
+                        }
+
+                        th {
+                            text-align: center;
+                        }
+
+                        @media print {
+                            @page {
+                                size: 215.9mm 330.2mm;
+                                margin: 20mm;
+                                margin-top: 5mm;
+                            }
+
+                            body {
+                                margin: 0;
+                            }
+
+                            tr {
+                                page-break-inside: avoid;
+                            }
+
+                            .page-break {
+                                page-break-before: always;
+                            }
+                        }
+                    </style>
+                            </head>
+                            <body>
+                        `);
+
+                        // ===== KOP SURAT =====
+                        printWindow.document.write(kopSurat);
+
+                        // ===== JUDUL LAPORAN =====
+                        printWindow.document.write(`
+                            <h3 style="text-align:center;">LAPORAN DOKUMEN</h3>
+                            <p>Rentang Tanggal: ${dateRange}</p>
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Instansi</th>
+                                        <th>Kategori</th>
+                                        <th>Tanggal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `);
+
+                        dataRows.forEach(function (item) {
+                            printWindow.document.write(`
+                                <tr>
+                                    <td>${item.instansi}</td>
+                                    <td>${item.kategori}</td>
+                                    <td>${item.tanggal}</td>
+                                </tr>
+                            `);
+                        });
+
+                        printWindow.document.write(`
+                                </tbody>
+                            </table>
+                            </body>
+                            </html>
+                        `);
+
+                        printWindow.document.close();
+                        printWindow.focus();
+                        printWindow.print();
+                        printWindow.close();
+
+                        loadingBtn.hide();
+                        $('#printBtn').show();
+                    });
+
+            }, 1000);
         });
     });
 });
